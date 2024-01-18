@@ -1,2 +1,2 @@
 # collaboration_tool_project
- Implementing collaboration tools using Django and React Nactive
+ Implementing collaboration tools using flask Framework and React Nactive
