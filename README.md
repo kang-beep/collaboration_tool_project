@@ -1,5 +1,5 @@
 # collaboration_tool_project
- Implementing collaboration tools using flask Framework and React Nactive
+ Implementing teamup tools using flask Framework and React Nactive
 
 팀장 
 
