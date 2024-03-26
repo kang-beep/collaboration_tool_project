@@ -1,5 +1,5 @@
 # collaboration_tool_project
- Implementing collaboration tools using flask Framework and React Nactive
+ Implementing teamup tools using Django Framework and React Nactive
 
 1. 캡스톤디자인 목표
    가. 캡스톤 디자인 목표
