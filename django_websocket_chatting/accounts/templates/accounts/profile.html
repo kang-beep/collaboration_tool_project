@@ -5,6 +5,9 @@
 
     <ul>
         <li>username: {{ user.username }}</li>
+        <li>name: {{ user.name }}</li>
         <li>last_login: {{ user.last_login }}</li>
+        
+        <li>profile: <img src="{{ user.profile_picture.url }}" alt="My Image" width="300" height="200"></li>
     </ul>
 {% endblock %}

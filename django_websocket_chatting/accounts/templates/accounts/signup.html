@@ -1,0 +1,30 @@
+<!-- signup.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입</title>
+</head>
+<body>
+    <h2>회원가입</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label for="id_username">사용자명:</label><br>
+        <input type="text" id="id_username" name="username"><br>
+        <label for="id_password">비밀번호:</label><br>
+        <input type="password" id="id_password" name="password"><br>
+        <label for="id_password2">비밀번호 확인:</label><br>
+        <input type="password" id="id_password2" name="password2"><br>
+        <label for="id_email">이메일:</label><br>
+        <input type="email" id="id_email" name="email"><br>
+        <label for="id_name">이름:</label><br>
+        <input type="text" id="id_name" name="name"><br>
+        <label for="id_contact">연락처:</label><br>
+        <input type="text" id="id_contact" name="contact"><br>
+        <label for="id_profile_picture">프로필 사진:</label><br>
+        <input type="file" id="id_profile_picture" name="profile_picture"><br>
+        <button type="submit">가입</button>
+    </form>
+</body>
+</html>

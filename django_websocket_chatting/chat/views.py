@@ -79,5 +79,6 @@ def room_users(request, room_pk):
     username_list = room.get_online_usernames()
 
     return JsonResponse({
-        "username_list": username_list,
+        "username_list" : username_list,
     })
+
