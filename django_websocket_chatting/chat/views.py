@@ -8,6 +8,18 @@ from django.shortcuts import render, redirect, get_object_or_404
 from chat.forms import RoomForm
 from chat.models import Room
 
+
+from django.shortcuts import render
+from django.http import HttpResponse
+
+
+def test(request):
+    message = request.GET.get('abc')
+    print(message)
+
+    return HttpResponse("안녕?")
+
+
 # 채팅의 초기 페이지를 보여주는 뷰 함수입니다.
 def index(request):
     # 모든 채팅방 정보를 가져옵니다.

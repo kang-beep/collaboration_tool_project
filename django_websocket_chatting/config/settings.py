@@ -41,7 +41,6 @@ DEBUG = True
 
 AUTH_USER_MODEL = 'accounts.CustomUser'
 
-ALLOWED_HOSTS = []
 
 # Application definition
 
@@ -58,10 +57,12 @@ INSTALLED_APPS = [
     'chat',
     'accounts',
     'django_bootstrap5',
+    'corsheaders',  # CORS 추가
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',  # CORS 추가
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -69,6 +70,13 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+CORS_ORIGIN_WHITELIST = (
+    'http://127.0.0.1:8000', 'http://localhost:3000'
+)
+
+CORS_ALLOW_CREDENTIALS = True
+
 
 ROOT_URLCONF = 'config.urls'
 
@@ -112,7 +120,7 @@ CHANNEL_LAYERS = {
         },
     },
 }
-
+ALLOWED_HOSTS = ['10.0.2.2'] 
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
