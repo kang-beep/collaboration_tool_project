@@ -54,8 +54,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    
     'chat',
     'accounts',
+    "document_ocr",
+    
     'django_bootstrap5',
     'corsheaders',  # CORS 추가
 ]
@@ -120,7 +123,8 @@ CHANNEL_LAYERS = {
         },
     },
 }
-ALLOWED_HOSTS = ['10.0.2.2'] 
+
+ALLOWED_HOSTS = ['10.0.2.2', "127.0.0.1"] 
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -158,6 +162,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
