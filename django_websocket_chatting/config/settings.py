@@ -34,6 +34,7 @@ def get_secret(setting, secrets=secrets):
         error_msg = "Set the {} environment variable".format(setting)
         raise ValueError(error_msg)
 
+
 SECRET_KEY = get_secret("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -120,7 +121,9 @@ CHANNEL_LAYERS = {
         },
     },
 }
-ALLOWED_HOSTS = ['10.0.2.2'] 
+
+# android sdk default localhost
+ALLOWED_HOSTS = ['10.0.2.2', '127.0.0.1'] 
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

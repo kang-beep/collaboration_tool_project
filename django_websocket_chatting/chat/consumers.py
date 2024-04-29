@@ -14,6 +14,7 @@ class ChatConsumer(JsonWebsocketConsumer):
         self.group_name = ""  # group_name을 빈 문자열로 초기화합니다.
         self.room = None  # room 객체를 None으로 초기화합니다.
 
+
     # WebSocket이 연결 과정 중일 때 호출됩니다.
     def connect(self):
         user = self.scope["user"]  # scope에서 사용자를 가져옵니다.
@@ -55,6 +56,7 @@ class ChatConsumer(JsonWebsocketConsumer):
 
                 # WebSocket 연결을 수락합니다.
                 self.accept()
+
 
     # WebSocket이 닫힐 때 호출됩니다.
     def disconnect(self, code):
@@ -101,6 +103,7 @@ class ChatConsumer(JsonWebsocketConsumer):
             )
         else:
             print(f"잘못된 메시지 유형 : ${_type}")
+
 
     # 사용자가 채팅에 참가할 때의 처리입니다.
     def chat_user_join(self, message_dict):
