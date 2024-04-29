@@ -1,25 +1,12 @@
-import "./App.css";
-import React, { useState } from "react";
-import axios from "axios";
-
-function App() {
-  const [text, setText] = useState("없음");
-  
-  const clicked = () => {
-    axios
-      .get("http://127.0.0.1:8000", {
-    
-      })
-      .then((response) => setText(JSON.stringify(response.data)));
-  };
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import AppNavigator from './navigation/AppNavigator';
 
 
+export default function App() {
   return (
-    <div>
-      <h1>{text}</h1>
-      <button onClick={clicked}>클릭</button>
-    </div>
+    <NavigationContainer>
+      <AppNavigator />
+    </NavigationContainer>
   );
 }
-
-export default App;

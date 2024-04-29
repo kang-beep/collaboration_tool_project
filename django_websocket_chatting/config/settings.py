@@ -73,7 +73,7 @@ MIDDLEWARE = [
 ]
 
 CORS_ORIGIN_WHITELIST = (
-    'http://127.0.0.1:8000', 'http://localhost:3000'
+    'http://127.0.0.1:8000', 'http://localhost:3000',
 )
 
 CORS_ALLOW_CREDENTIALS = True
@@ -121,9 +121,7 @@ CHANNEL_LAYERS = {
         },
     },
 }
-
-# android sdk default localhost
-ALLOWED_HOSTS = ['10.0.2.2', '127.0.0.1'] 
+ALLOWED_HOSTS = ['10.0.2.2', "localhost", "127.0.0.1"] 
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
