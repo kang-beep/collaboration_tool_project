@@ -4,7 +4,7 @@
 스마트 챗: OCR, NER, STT 기능을 갖춘 통합 Ai 기반 협업 플랫폼
 
 # 구현
-Django + mongo DB + redis
+Django + react_native + mongo DB + redis
 
 - 대화 내용 요약 기능
 -  Django를 활용한 실시간 비동기 채팅 시스템 개발
