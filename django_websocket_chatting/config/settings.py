@@ -54,11 +54,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     'rest_framework',
-    'chat',
-    'accounts',
     'django_bootstrap5',
     'corsheaders',  # CORS 추가
+
+    'chat',
+    'accounts',
+    'docsumm',
 ]
 
 MIDDLEWARE = [
