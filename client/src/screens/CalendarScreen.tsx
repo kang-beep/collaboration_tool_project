@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
 import { Calendar } from 'react-native-calendars';
-import Navbar from '../components/Navbar'; // 경로 확인 필요
 
 export default function CalendarPage({ navigation }) {
   // 일정 데이터를 상태로 관리
@@ -20,7 +19,6 @@ export default function CalendarPage({ navigation }) {
 
   return (
     <View>
-      <Navbar navigation={navigation} />
       <Text style={styles.header}>Calendar</Text>
       <Calendar
         onDayPress={(day) => {
