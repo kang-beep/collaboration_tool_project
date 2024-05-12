@@ -7,11 +7,14 @@
 - stopwords.txt 에서 불용어를 사용. 불용어 추가를 원하면 해당 파일에 추가
 - 핵심 키워드는 최대 5개 이며, 무조건 5개가 나오지 않음. 예시코드 사용시 이를 고려할 것.
 
+## 출처
+keybert 모델: https://github.com/MaartenGr/KeyBERT?tab=readme-ov-file#embeddings
+한글 sentence transformer 모델: https://github.com/jhgan00/ko-sentence-transformers?tab=readme-ov-file
 """
 
 import re
 
-from sentence_transformers import SentenceTransformer, util
+from sentence_transformers import SentenceTransformer
 from keybert import KeyBERT
 
 
@@ -43,4 +46,4 @@ for keyword in keywords:
     processed_keyword = re.sub(stopwords_pattern, "", keyword[0])
     processed_keywords.add(processed_keyword)
 
-print("전체 키워드: ", *processed_keywords)
+print("전체 키워드: ", *processed_keywords)  # ex. 샌즈, 최종보스
