@@ -5,15 +5,13 @@
     Django 리로딩 시간 및 views 렌더링 시간을 줄임.
 
 ## 사용법
-    from lazy_load_model import ModelLoader
+    from docsumm.utils.lazy_loader import LazyLoader
 
-    model_loader = ModelLoader()
+    model_loader = LazyLoader()
     model = model_loader.get_model()
     tokenizer = model_loader.get_tokenizer()
 
 """
-
-
 
 import torch
 from transformers import (
