@@ -9,7 +9,4 @@ def generate_doc_summ(request: HttpRequest):
     
     """
     
-    if request.method == "POST":
-        return redirect("docsumm:result-doc-summ")
-    
     return render(request, "docsumm/generate_doc_summ.html")
