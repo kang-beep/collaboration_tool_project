@@ -18,6 +18,9 @@ from transformers import (
     PreTrainedTokenizerFast, BartForConditionalGeneration,
     BertTokenizer, BertModel
 )
+from sentence_transformers import SentenceTransformer
+from keybert import KeyBERT
+
 
 class LazyLoader():
     """
@@ -39,6 +42,10 @@ class LazyLoader():
             ## Extractive Summary.
             cls._instance.kobert_tokenizer = None
             cls._instance.kobert_model = None
+            
+            ## KeyBert. Keyword Extraction
+            cls._instance.keybert_model = None
+            cls._instance.kor_sentence_transformer = None
 
         return cls._instance
 
@@ -101,9 +108,19 @@ class LazyLoader():
         return self.kobert_model
 
 
+    def get_keybert_model(self):
+        """
+        키워드 추출을 위한 keybert 모델 로드
+        
+        Returns:
+            - keybert 모델 객체 반환
+            
+        """
+        
+        if self.keybert_model is None:
+            st_model = SentenceTransformer("jhgan/ko-sroberta-multitask")
+            self.keybert_model = KeyBERT(model=st_model)
+            
+        return self.keybert_model
 
-
-"""
-
-
-"""
+    
