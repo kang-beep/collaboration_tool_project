@@ -4,21 +4,35 @@
 
 {% block content %}
 
+<style>
+  /* 추가 CSS 스타일 */
+  body {
+      margin-bottom: 250px; /* 페이지 하단에 50px 여백 추가 */
+  }
+
+  /* 페이지 하단 여백을 위한 추가 스타일 */
+  .footer-space {
+      height: 50px; /* 여백의 높이 */
+      width: 100%; /* 전체 너비를 채우도록 설정 */
+  }
+</style>
+
+
 <div class="container mt-3">
   <div id="top-title" class="text-center py-5">
     <h1>문서 요약하기 - ver.텍스트</h1>
   </div>
 
   <div class="text-center pb-3">
-    <form method="POST" action="{% url 'docsumm:generate-doc-summ' %}">
+    <form id="docForm" method="POST">
       {% csrf_token %}
       <div class="form-group">
-          <label for="exampleFormControlTextarea1">문서내용 입력창.</label>
-          <textarea class="form-control" id="exampleFormControlTextarea1" rows="10" placeholder="문서내용을 입력해주세요."></textarea>
+          <label for="docs-input">문서내용 입력창.</label>
+          <textarea class="form-control" id="docs-input" name="docs-input" rows="10" placeholder="문서내용을 입력해주세요."></textarea>
       </div>
 
       <div class="py-4">
-        <button class="btn btn-primary btn-lg" type="submit">
+        <button class="btn btn-primary btn-lg" id="docsumm-btn">
           요약하기!
         </button>
       </div>
@@ -28,58 +42,102 @@
 
   <hr>
 
-  <div class="text-center">
+  <div class="text-center ">
     <p>결과는 아래에 표기됩니다.</p>
   </div>
 
-  <div class="row">
-    <div class="col-md-8">
-        <div id="top-title" class="text-center py-3">
-          <h1>결과 출력</h1>
-          <p>uuid 아이디</p>
-        </div>
+<br><br>
 
-        <hr>
-        
-        <!-- 결과 내역 출력 -->
-    </div>
-    
-    <!-- 오른쪽 사이드바 -->
-    <div class="col-md-4">
-      <div class="b-example-divider b-example-vr"></div>
-      <a href="/" class="d-flex align-items-center flex-shrink-0 p-3 link-body-emphasis text-decoration-none border-bottom">
-          <svg class="bi pe-none me-2" width="30" height="24"><use xlink:href="#bootstrap"/></svg>
-          <span class="fs-5 fw-semibold">List group</span>
-        </a>
-        <div class="list-group list-group-flush border-bottom scrollarea">
-          <a href="#" class="list-group-item list-group-item-action active py-3 lh-sm" aria-current="true">
-            <div class="d-flex w-100 align-items-center justify-content-between">
-              <strong class="mb-1">List group item heading</strong>
-              <small>Wed</small>
-            </div>
-            <div class="col-10 mb-1 small">Some placeholder content in a paragraph below the heading and date.</div>
-          </a>
-          <a href="#" class="list-group-item list-group-item-action py-3 lh-sm">
-            <div class="d-flex w-100 align-items-center justify-content-between">
-              <strong class="mb-1">List group item heading</strong>
-              <small class="text-body-secondary">Tues</small>
-            </div>
-            <div class="col-10 mb-1 small">Some placeholder content in a paragraph below the heading and date.</div>
-          </a>
-          <a href="#" class="list-group-item list-group-item-action py-3 lh-sm">
-            <div class="d-flex w-100 align-items-center justify-content-between">
-              <strong class="mb-1">List group item heading</strong>
-              <small class="text-body-secondary">Mon</small>
-            </div>
-            <div class="col-10 mb-1 small">Some placeholder content in a paragraph below the heading and date.</div>
-          </a>
-      </div>
-
-    </div>
+<div id="top-title" class="text-center py-3">
+  <h1>결과 출력</h1>
+  <p>uuid 아이디</p>
 </div>
+
+<hr>
+
+<!-- 결과 내역 출력 -->
+
+<div class="text-center">
+  <div class="spinner-border" id="summ-loading-spinner" style="width: 10rem; height: 10rem; display: none;" role="status">
+    <span class="sr-only"></span>
+  </div>
+</div>
+<div id="result-summ"></div>
+
+
+
 
 </div>
 
+<!-- 페이지 전체 하단에 여백을 주기 위한 요소 -->
+<div class="footer-space"></div>
+
+
+
+<!-- jquery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<!-- ajx 요청 -->
+<script>
+  // CSRF 토큰 가져오기
+  var csrftoken = $('[name=csrfmiddlewaretoken]').val();
+
+  $(document).ready(function() {
+      // 버튼 클릭 이벤트 리스너
+      $('#docsumm-btn').click(function(e) {
+          e.preventDefault();  // 폼 기본 제출 방지
+
+          // ajax 요청이 시작하면 버튼 숨기기.
+          $(this).prop('disabled', true);
+          
+          // 이전 결과 삭제
+          $('#result-summ').html("");
+          
+          // 로딩 스피너 표시
+          $('#summ-loading-spinner').show();
+
+          // 결과 페이지로 미리 이동
+          $('html, body').animate({
+            scrollTop: $('#result-summ').offset().top
+          }, "fast");
+  
+          // 폼 데이터 수집
+          var formData = new FormData($('#docForm')[0]);  // FormData 객체 생성
+  
+          // AJAX 요청
+          $.ajax({
+              url: 'api/docsumm/',  // 요청을 보낼 서버의 URL 주소
+              type: 'POST',  // HTTP 요청 방식(GET, POST 등)
+              data: formData,  // HTTP 요청과 함께 서버로 보낼 데이터
+              processData: false,  // processData 옵션 비활성화
+              contentType: false,  // contentType 옵션 비활성화
+              beforeSend: function(xhr) {
+                  // CSRF 토큰 설정
+                  xhr.setRequestHeader("X-CSRFToken", csrftoken);
+              },
+              
+              success: function(data) {
+                  console.log("Success:", data);  // 성공 시 서버로부터 반환된 데이터
+                  // 결과 내용을 웹 페이지에 표시
+
+                  $('#result-summ').html('<p><b>키워드</b>: ' + data.keywords + '</p><p><b>요약</b>: ' + data.summary + '</p>');
+              },
+
+              error: function(xhr, status, error) {
+                  console.log("Error:", error);  // 실패 시 에러 정보
+              },
+
+              complete: function() {
+                // 비활성화 해제
+                $('#docsumm-btn').prop('disabled', false);
+                // 로딩 스피너 숨김
+                $('#summ-loading-spinner').hide();
+              }
+          });
+      });
+  });
+  </script>
+  
 {% endblock %}
 
 
