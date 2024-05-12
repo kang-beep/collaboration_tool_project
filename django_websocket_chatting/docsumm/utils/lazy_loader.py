@@ -1,8 +1,16 @@
 """
-싱글톤 패턴으로 구현된 토크나이저 및 모델 로더.
-실제로 필요할 때, 토큰 및 모델 객체를 반환하게 해줌으로써,
-Django 리로딩 시간 및 views 렌더링 시간을 줄임.
- 
+## 개요
+    싱글톤 패턴으로 구현된 토크나이저 및 모델 로더.
+    실제로 필요할 때, 토큰 및 모델 객체를 반환하게 해줌으로써,
+    Django 리로딩 시간 및 views 렌더링 시간을 줄임.
+
+## 사용법
+    from lazy_load_model import ModelLoader
+
+    model_loader = ModelLoader()
+    model = model_loader.get_model()
+    tokenizer = model_loader.get_tokenizer()
+
 """
 
 
@@ -98,13 +106,6 @@ class LazyLoader():
 
 
 """
-사용법.
-
-from lazy_load_model import ModelLoader
-
-model_loader = ModelLoader()
-model = model_loader.get_model()
-tokenizer = model_loader.get_tokenizer()
 
 
 """
