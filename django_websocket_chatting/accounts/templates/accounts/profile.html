@@ -7,7 +7,10 @@
         <li>username: {{ user.username }}</li>
         <li>name: {{ user.name }}</li>
         <li>last_login: {{ user.last_login }}</li>
-        
+        {% if user.profile_picture.url != None %}
         <li>profile: <img src="{{ user.profile_picture.url }}" alt="My Image" width="300" height="200"></li>
+        {% else %}
+        <li>profile: None </li>
+        {% endif %}
     </ul>
 {% endblock %}

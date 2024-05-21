@@ -1,10 +1,11 @@
 # 필요한 라이브러리와 모듈을 임포트합니다.
-from asgiref.sync import async_to_sync
-from channels.layers import get_channel_layer
-from django.conf import settings
-from django.db import models
-from django.db.models.signals import post_delete
-from config.json_extended import ExtendedJSONEncoder, ExtendedJSONDecoder
+from asgiref.sync import async_to_sync  # 비동기 코드를 동기 코드로 변환해주는 유틸리티.
+from channels.layers import get_channel_layer   # Django Channels에서 채널 레이어를 가져오는 함수
+from django.conf import settings    # Django 설정 모듈
+from django.db import models    # Django ORM에서 사용되는 모델 모듈
+from django.db.models.signals import post_delete    # DJango의 모델이 삭제될 때 실행되는 시그널
+from config.json_extended import ExtendedJSONEncoder, ExtendedJSONDecoder   # 사용자 정의 JSON 인코더 및 디코더
+from accounts.models import Team
 
 # 온라인 상태인 사용자를 관리하는 Mixin 클래스입니다.
 class OnlineUserMixin(models.Model):
@@ -24,7 +25,7 @@ class OnlineUserMixin(models.Model):
     def get_online_users(self):
         return self.online_user_set.all()
 
-    # 온라인 사용자의 이름만 리스트로 반환합니다.
+    # 온라인 사용자의 '이름'만 리스트로 반환합니다.
     def get_online_usernames(self):
         qs = self.get_online_users().values_list("username", flat=True)
         return list(qs)
@@ -36,13 +37,19 @@ class OnlineUserMixin(models.Model):
     # 사용자가 채팅방에 입장할 때의 동작을 정의합니다.
     def user_join(self, channel_name, user):
         try:
+            # RoomMember 모델에서 현재 채팅방('self')과 사용자를 기준으로 객체를 검색
             room_member = RoomMember.objects.get(room=self, user=user)
         except RoomMember.DoesNotExist:
+            # 해당 객체가 없으면 새 RoomMember 객체를 생성
             room_member = RoomMember(room=self, user=user)
 
+        # room_member.channel_names가 비어있는지 확인 비어있으면 사용자가 처음으로 입장했다는 것을 알림
         is_new_join = len(room_member.channel_names) == 0
+
+        # 사용자의 channel_name을 room_member의 channel_names 필드에 추가합니다. 
         room_member.channel_names.add(channel_name)
 
+        # room_member 객체가 데이터베이스에 아직 저장되지 않았다면('pk가 None')객체를 새로 저장합니다.
         if room_member.pk is None:
             room_member.save()
         else:
@@ -53,10 +60,13 @@ class OnlineUserMixin(models.Model):
     # 사용자가 채팅방에서 나갈 때의 동작을 정의합니다.
     def user_leave(self, channel_name, user):
         try:
+            # RoomMember 모델에서 현재 채팅방('self')과 사용자를 기준으로 객체를 검색합니다.
             room_member = RoomMember.objects.get(room=self, user=user)
         except RoomMember.DoesNotExist:
+            # 사용자가 채팅방에 없으면 예외를 던져 True를 반환하고 함수 종료
             return True
 
+        # 사용자의 channel_name을 room_member의 channel_names필드에서 제거
         room_member.channel_names.remove(channel_name)
         if not room_member.channel_names:
             room_member.delete()
@@ -64,6 +74,12 @@ class OnlineUserMixin(models.Model):
         else:
             room_member.save(update_fields=["channel_names"])
             return False
+
+
+# Team, Room 중간 테이블 정의
+class TeamRoom(models.Model):
+    team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='team_rooms')
+    room = models.ForeignKey('Room', on_delete=models.CASCADE, related_name='team_rooms')
 
 # 채팅방을 나타내는 모델입니다.
 class Room(OnlineUserMixin, models.Model):
@@ -75,6 +91,9 @@ class Room(OnlineUserMixin, models.Model):
     )
     # 채팅방의 이름을 나타내는 필드입니다.
     name = models.CharField(max_length=100)
+
+    # TeamRoom 모델과 다대다 연결
+    teams = models.ManyToManyField(Team, through='TeamRoom', related_name='rooms', verbose_name='소속 팀')
 
     # 채팅방을 최신 생성 순으로 정렬합니다.
     class Meta:

@@ -55,10 +55,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'chat',
-    'accounts',
     'django_bootstrap5',
     'corsheaders',  # CORS 추가
+
+    # custom define app
+    'chat',
+    'accounts',
+    'home'
 ]
 
 MIDDLEWARE = [
@@ -158,7 +161,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+# 프로젝트 전역 static 디렉토리
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+
+# 앱 내 static 디렉토리를 자동으로 찾습니다.
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

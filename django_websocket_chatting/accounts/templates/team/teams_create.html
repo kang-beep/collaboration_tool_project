@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teams</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .team { border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; }
+        .team img { max-width: 100%; height: auto; }
+        form { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Create a New Team</h2>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <tr>
+                <th><label for="id_name">Name:</label></th>
+                <td><input type="text" name="name" required id="id_name"></td>
+            </tr>
+            
+            <tr>
+                <th><label for="id_description">Description:</label></th>
+                <td><textarea name="description" cols="40" rows="10" id="id_description"></textarea></td>
+            </tr>
+            <tr>
+                <th><label for="id_team_image">Team image:</label></th>
+                <td><input type="file" name="team_image" id="id_team_image"></td>
+            </tr>
+            <button type="submit">Create Team</button>
+        </form>
+    </div>
+</body>
+</html>

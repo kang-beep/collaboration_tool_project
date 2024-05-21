@@ -2,6 +2,7 @@ import json
 
 # JSONEncoder의 확장 클래스를 정의합니다.
 # 이 클래스는 Python의 set 객체를 JSON으로 인코딩하기 위한 로직을 포함합니다.
+# set 객체를 Json으로 변환하기 위한 작업
 class ExtendedJSONEncoder(json.JSONEncoder):
     def default(self, obj):
         # obj가 set 객체의 인스턴스일 경우, JSON 표현을 반환합니다.

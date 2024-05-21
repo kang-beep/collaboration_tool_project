@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import CustomUser
+from .models import CustomUser, Team
 
 class CustomUserSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(write_only=True, required=True)
@@ -13,3 +13,8 @@ class CustomUserSerializer(serializers.ModelSerializer):
         validated_data.pop('password2', None)  # password2 필드를 validated_data에서 제외
         return super().create(validated_data)
     
+class TeamSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Team
+        fields = ['name', 'description', 'team_image']
+        
