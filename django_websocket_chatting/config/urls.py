@@ -19,14 +19,21 @@ from django.urls import path, include
 from django.views.generic import RedirectView
 from django.conf import settings
 from django.conf.urls.static import static
+from home.views import front_view
 
 urlpatterns = [
+    
+    path('', front_view , name='home'),
     path('admin/', admin.site.urls),
     path('accounts/', include('accounts.urls')),
     path('chat/', include('chat.urls')),
     path('home/', include('home.urls')),
     path('docsumm/', include('docsumm.urls')),
-    path('', RedirectView.as_view(pattern_name="chat:index"), name="root"),
+    path('eventcalendar/', include('eventcalendar.urls')),
+    path('teams/', include('teams.urls')),
+    
+    
+    # path('', RedirectView.as_view(pattern_name="chat:index"), name="root"),
 ] 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_URL)

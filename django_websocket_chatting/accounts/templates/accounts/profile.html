@@ -1,16 +1,19 @@
 {% extends "accounts/base.html" %}
 
 {% block content %}
-    <h2>{{ user.username }}'s 프로필</h2>
-
-    <ul>
-        <li>username: {{ user.username }}</li>
-        <li>name: {{ user.name }}</li>
-        <li>last_login: {{ user.last_login }}</li>
-        {% if user.profile_picture.url != None %}
-        <li>profile: <img src="{{ user.profile_picture.url }}" alt="My Image" width="300" height="200"></li>
-        {% else %}
-        <li>profile: None </li>
-        {% endif %}
-    </ul>
+    <div class="profile-container">
+        <h2>{{ user.username }}'s 프로필</h2>
+        <ul class="profile-details">
+            <li><strong>사용자명:</strong> {{ user.username }}</li>
+            <li><strong>이름:</strong> {{ user.name }}</li>
+            <li><strong>마지막 로그인:</strong> {{ user.last_login }}</li>
+            {% if user.profile_picture %}
+            <li><strong>프로필 사진:</strong><br>
+                <img src="{{ user.profile_picture.url }}" alt="My Image" class="profile-image">
+            </li>
+            {% else %}
+            <li><strong>프로필 사진:</strong> None</li>
+            {% endif %}
+        </ul>
+    </div>
 {% endblock %}

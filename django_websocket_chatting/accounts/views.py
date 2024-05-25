@@ -48,7 +48,7 @@ def user_login(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('accounts:profile')  # 로그인 성공 시 이동할 페이지
+            return redirect('home:main')  # 로그인 성공 시 이동할 페이지
         else:
             return render(request, 'accounts/login.html', {'error_message': '유효하지 않은 사용자 이름 또는 비밀번호입니다.'})
     else:
@@ -64,30 +64,4 @@ def profile(request):
     return render(request, 'accounts/profile.html')
 
 
-@login_required
-@api_view(['GET'])
-def teams_list(request):
-    user = request.user
-    teams = user.teams.all()  # 현재 유저가 속한 팀 목록
-    return render(request, 'team/teams_list.html', {'teams': teams})
-
-
-@login_required
-@api_view(['GET', 'POST'])
-def teams_create(request):
-    
-    if request.method == 'GET':
-        teams = Team.objects.all()
-        form = TeamSerializer()
-        return render(request, 'team/teams_create.html', {'teams': teams, 'form': form})
-
-
-    elif request.method == 'POST':
-        serializer = TeamSerializer(data=request.data)
-        if serializer.is_valid():
-            team = serializer.save()
-            request.user.teams.add(team)
-            return redirect('accounts:teams_list')
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     

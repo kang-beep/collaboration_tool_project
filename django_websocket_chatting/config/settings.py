@@ -60,10 +60,12 @@ INSTALLED_APPS = [
     'corsheaders',  # CORS 추가
 
     # custom define app
-    'home'
+    'home',
     'chat',
     'accounts',
     'docsumm',
+    'eventcalendar',
+    'teams',
 ]
 
 MIDDLEWARE = [
@@ -112,10 +114,15 @@ ASGI_APPLICATION = 'config.asgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'mariadb_container',
+        'USER': 'kang-beep',
+        'PASSWORD': '2468!!',
+        'HOST': '127.0.0.1',  # 로컬호스트 IP
+        'PORT': '6306',
     }
 }
+
 
 # django channels layer
 CHANNEL_LAYERS = {
@@ -163,13 +170,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = '/static/'
-# 프로젝트 전역 static 디렉토리
-STATICFILES_DIRS = [
-    BASE_DIR / "static",
-]
+
 
 # 앱 내 static 디렉토리를 자동으로 찾습니다.
-STATIC_ROOT = BASE_DIR / "staticfiles"
+STATIC_ROOT = BASE_DIR / "static"
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
