@@ -5,6 +5,9 @@ from pororo.pororo import SUPPORTED_TASKS
 from utils.image_convert import convert_coord, crop
 from utils.pre_processing import load_with_filter, roi_filter
 from easyocr import Reader
+from docx import Document
+import fitz
+import os
 import warnings
 
 warnings.filterwarnings('ignore')
@@ -94,9 +97,41 @@ class EasyPororoOcr(BaseOcr):
 
 if __name__ == "__main__":
     m_ocr = EasyPororoOcr()
-    image_path = input("이미지 경로 입력: ")
+    input_path = input("이미지 경로 입력: ")
+    file_extension = os.path.splitext(input_path)[1].lower()
 
-    image = load_with_filter(image_path)
+    if file_extension in ['.jpg', '.jpeg', '.png', '.bmp', '.gif', '.tiff']:
+        image = load_with_filter(input_path)
+        text = m_ocr.run_ocr(image)
+        print('OCR 결과값:', text)
+        
+    elif file_extension == '.pdf':
+        pdf_document = fitz.open(input_path)
+        
+        for page_num in range(pdf_document.page_count):
+            page = pdf_document.load_page(page_num)
+            pix = page.get_pixmap()
+            img_path = f'output_page_{page_num}.png'
+            pix.save(img_path)
+            
+            image = load_with_filter(img_path)
+            text = m_ocr.run_ocr(image)
+            print(f'OCR 결과값 (페이지 {page_num + 1}):', text)
+            os.remove(img_path)  # 임시 파일 삭제 # 바뀐 이미지 확인 원할경우 해당 코드 삭제
+    
+    elif file_extension == '.docx':
+        def extract_text_from_docx(docx_file):
+            doc = Document(docx_file)
+            text = ""
+            for paragraph in doc.paragraphs:
+                text += paragraph.text + "\n"
+            return text
 
-    text = m_ocr.run_ocr(image)
-    print('OCR 결과값:', text)
+        # DOCX 파일의 텍스트 추출
+        text = extract_text_from_docx(input_path)
+
+        # 추출된 텍스트 출력
+        print(text)
+        
+    else:
+        print("지원되지 않는 파일 형식입니다. (pdf or 이미지 파일만 지원가능)")
