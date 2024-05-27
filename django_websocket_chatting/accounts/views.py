@@ -10,8 +10,8 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth import login, authenticate
 from django.views.decorators.csrf import csrf_protect
 
-from .serializers import CustomUserSerializer, TeamSerializer
-from .models import Team
+from .serializers import CustomUserSerializer
+
 
 
 @api_view(['GET', 'POST'])
@@ -30,10 +30,10 @@ def signup(request):
             user = serializer.save()
 
             # 자동 로그인
-            user = authenticate(username=serializer.validated_data.get('username'), password=password)
-            if user is not None:
-                login(request, user)
-            return redirect('chat:index')  # 회원가입 성공 시 이동할 페이지
+            # user = authenticate(username=serializer.validated_data.get('username'), password=password)
+            # if user is not None:
+            #     login(request, user)
+            return redirect('accounts:login')  # 회원가입 성공 시 이동할 페이지
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     else:
         print(request , "request 데이터 입니다.")
@@ -48,14 +48,14 @@ def user_login(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('home:main')  # 로그인 성공 시 이동할 페이지
+            return redirect('teams:teams_list')  # 로그인 성공 시 이동할 페이지
         else:
             return render(request, 'accounts/login.html', {'error_message': '유효하지 않은 사용자 이름 또는 비밀번호입니다.'})
     else:
         return render(request, 'accounts/login.html')
     
 logout = LogoutView.as_view(
-    next_page="accounts:login",
+    next_page="home:front",
 )
 
 

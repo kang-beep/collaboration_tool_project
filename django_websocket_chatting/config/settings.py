@@ -112,16 +112,26 @@ ASGI_APPLICATION = 'config.asgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+### default sqlite path settings
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'mariadb_container',
-        'USER': 'kang-beep',
-        'PASSWORD': '2468!!',
-        'HOST': '127.0.0.1',  # 로컬호스트 IP
-        'PORT': '6306',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+
+### docker maria DB container 에 연동하는 코드
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'mariadb_container',
+#         'USER': 'kang-beep',
+#         'PASSWORD': '2468!!',
+#         'HOST': '127.0.0.1',  # 로컬호스트 IP
+#         'PORT': '6306',
+#     }
+# }
 
 
 # django channels layer

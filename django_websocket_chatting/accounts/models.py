@@ -18,3 +18,4 @@ class CustomUser(AbstractUser):
     
     # 다대다 관계 설정
     teams = models.ManyToManyField(Team, related_name='users', verbose_name='소속 팀')
+    

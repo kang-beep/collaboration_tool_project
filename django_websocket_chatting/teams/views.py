@@ -1,7 +1,14 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from rest_framework.decorators import api_view
+from django.shortcuts import render, redirect
 
+
+from rest_framework.decorators import api_view
+from rest_framework import serializers,status
+from rest_framework.response import Response
+
+from .serializers import TeamSerializer
+from .models import Team
 # Create your views here.
 
 @login_required
@@ -27,7 +34,7 @@ def teams_create(request):
         if serializer.is_valid():
             team = serializer.save()
             request.user.teams.add(team)
-            return redirect('accounts:teams_list')
+            return redirect('teams:teams_list')
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     

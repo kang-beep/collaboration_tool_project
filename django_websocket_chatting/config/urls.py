@@ -31,7 +31,7 @@ urlpatterns = [
     path('docsumm/', include('docsumm.urls')),
     path('eventcalendar/', include('eventcalendar.urls')),
     path('teams/', include('teams.urls')),
-    
+    path('eventcalendar/', include('eventcalendar.urls')),
     
     # path('', RedirectView.as_view(pattern_name="chat:index"), name="root"),
 ] 
