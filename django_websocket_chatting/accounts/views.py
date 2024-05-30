@@ -9,9 +9,11 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import login, authenticate
 from django.views.decorators.csrf import csrf_protect
+from django.shortcuts import render, get_object_or_404
 
 from .serializers import CustomUserSerializer
 
+from .models import Friendship, CustomUser
 
 
 @api_view(['GET', 'POST'])
@@ -63,5 +65,9 @@ logout = LogoutView.as_view(
 def profile(request):
     return render(request, 'accounts/profile.html')
 
+
+@login_required
+def send_friend_request(request, user_id):
+    to_user = get_object_or_404(CustomUser, id=user_id)
 
     

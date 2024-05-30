@@ -1,12 +1,11 @@
-<!-- calendar/templates/calendar/calendar.html -->
 <!DOCTYPE html>
-<html lang="en">
+<html lang="kr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calendar</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.5.1/main.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.css" rel="stylesheet">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -23,14 +22,72 @@
         <div id="calendar"></div>
     </div>
 
+    <!-- Event Modal -->
+    <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="eventModalLabel">Event</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="eventForm">
+                        <input type="hidden" id="eventId">
+                        <div class="form-group">
+                            <label for="eventTitle">Event Title</label>
+                            <input type="text" class="form-control" id="eventTitle" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="eventDescription">Event Description</label>
+                            <textarea class="form-control" id="eventDescription"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="eventStart">Start Time</label>
+                            <input type="datetime-local" class="form-control" id="eventStart" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="eventEnd">End Time</label>
+                            <input type="datetime-local" class="form-control" id="eventEnd" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="saveEventButton">Save changes</button>
+                    <button type="button" class="btn btn-primary" id="updateEventButton" style="display:none;">Update</button>
+                    <button type="button" class="btn btn-danger" id="deleteEventButton" style="display:none;">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@5.5.1/main.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@5.5.1/main.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/timegrid@5.5.1/main.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/interaction@5.5.1/main.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/list@5.5.1/main.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/locales-all.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
     <script>
+        // CSRF 토큰 설정 함수
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        const csrftoken = getCookie('csrftoken');
+        const userId = {{ request.user.id }};
+
         document.addEventListener('DOMContentLoaded', function() {
             var calendarEl = document.getElementById('calendar');
             var calendar = new FullCalendar.Calendar(calendarEl, {
@@ -40,40 +97,137 @@
                     center: 'title',
                     right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
                 },
-                events: '/calendar/api/events/',
-                editable: true,
-                selectable: true,
-                eventClick: function(info) {
-                    alert('Event: ' + info.event.title);
-                    // Change the border color just for fun
-                    info.el.style.borderColor = 'red';
-                },
-                dateClick: function(info) {
-                    var title = prompt('Event Title:');
-                    var start = info.dateStr;
-                    if (title) {
-                        calendar.addEvent({
-                            title: title,
-                            start: start,
-                            allDay: true
-                        });
-                        // Save the event to the server
-                        axios.post('/calendar/api/events/', {
-                            title: title,
-                            start_time: start,
-                            end_time: start,
-                            user: {{ request.user.id }}
-                        })
+                events: function(fetchInfo, successCallback, failureCallback) {
+                    axios.get('/eventcalendar/api/events/')
                         .then(response => {
-                            console.log(response);
+                            console.log(response.data); // API 응답 데이터를 확인합니다.
+                            // FullCalendar가 예상하는 필드 이름으로 변환
+                            const events = response.data.map(event => ({
+                                title: event.title,
+                                start: event.start_time,
+                                end: event.end_time,
+                                id: event.id,
+                                description: event.description,
+                                user: event.user
+                            }));
+                            successCallback(events);
                         })
                         .catch(error => {
                             console.log(error);
+                            failureCallback(error);
                         });
-                    }
+                },
+                editable: true,
+                selectable: true,
+                eventClick: function(info) {
+                    $('#eventId').val(info.event.id);
+                    $('#eventTitle').val(info.event.title);
+                    $('#eventDescription').val(info.event.extendedProps.description);
+                    $('#eventStart').val(info.event.start.toISOString().slice(0,16));
+                    $('#eventEnd').val(info.event.end ? info.event.end.toISOString().slice(0,16) : info.event.start.toISOString().slice(0,16));
+                    
+                    $('#saveEventButton').hide();
+                    $('#updateEventButton').show();
+                    $('#deleteEventButton').show();
+                    $('#eventModal').modal('show');
+                },
+                dateClick: function(info) {
+                    $('#eventId').val('');
+                    $('#eventTitle').val('');
+                    $('#eventDescription').val('');
+                    $('#eventStart').val(info.dateStr + 'T00:00:00');
+                    $('#eventEnd').val(info.dateStr + 'T00:00:00');
+                    
+                    $('#saveEventButton').show();
+                    $('#updateEventButton').hide();
+                    $('#deleteEventButton').hide();
+                    $('#eventModal').modal('show');
                 }
             });
             calendar.render();
+
+            $('#saveEventButton').on('click', function() {
+                var title = $('#eventTitle').val();
+                var description = $('#eventDescription').val();
+                var start = $('#eventStart').val();
+                var end = $('#eventEnd').val();
+
+                if (title && start && end) {
+                    axios.post('/eventcalendar/api/events/', {
+                        title: title,
+                        start_time: start,
+                        end_time: end,
+                        description: description,
+                        user: userId
+                    }, {
+                        headers: {
+                            'X-CSRFToken': csrftoken
+                        }
+                    })
+                    .then(response => {
+                        // 새로운 이벤트가 성공적으로 저장되면 캘린더를 다시 로드합니다.
+                        calendar.refetchEvents();
+                        $('#eventModal').modal('hide');
+                        $('#eventForm')[0].reset();
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    });
+                } else {
+                    alert('Please fill out all required fields.');
+                }
+            });
+
+            $('#updateEventButton').on('click', function() {
+                var eventId = $('#eventId').val();
+                var title = $('#eventTitle').val();
+                var description = $('#eventDescription').val();
+                var start = $('#eventStart').val();
+                var end = $('#eventEnd').val();
+
+                if (title && start && end) {
+                    axios.put(`/eventcalendar/api/events/${eventId}/`, {
+                        title: title,
+                        start_time: start,
+                        end_time: end,
+                        description: description,
+                        user: userId
+                    }, {
+                        headers: {
+                            'X-CSRFToken': csrftoken
+                        }
+                    })
+                    .then(response => {
+                        // 이벤트가 성공적으로 업데이트되면 캘린더를 다시 로드합니다.
+                        calendar.refetchEvents();
+                        $('#eventModal').modal('hide');
+                        $('#eventForm')[0].reset();
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    });
+                } else {
+                    alert('Please fill out all required fields.');
+                }
+            });
+
+            $('#deleteEventButton').on('click', function() {
+                var eventId = $('#eventId').val();
+                axios.delete(`/eventcalendar/api/events/${eventId}/`, {
+                    headers: {
+                        'X-CSRFToken': csrftoken
+                    }
+                })
+                .then(response => {
+                    // 이벤트가 성공적으로 삭제되면 캘린더를 다시 로드합니다.
+                    calendar.refetchEvents();
+                    $('#eventModal').modal('hide');
+                    $('#eventForm')[0].reset();
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+            });
         });
     </script>
 </body>
