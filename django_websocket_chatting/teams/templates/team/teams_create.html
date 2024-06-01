@@ -3,13 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teams</title>
+    <title>Create a New Team</title>
     <style>
-        body { font-family: Arial, sans-serif; }
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-        .team { border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; }
-        .team img { max-width: 100%; height: auto; }
-        form { margin-top: 20px; }
+        body { 
+            font-family: 'Roboto', sans-serif; 
+            background-color: #E0F7FA; /* 연한 민트색 배경 */
+            color: #004D40; /* 어두운 민트색 텍스트 */
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        .container { 
+            max-width: 500px; 
+            margin: 50px auto; 
+            padding: 20px; 
+            background-color: #FFFFFF; /* 흰색 배경 */
+            border-radius: 10px; 
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h2 { 
+            margin-bottom: 20px; 
+            color: #00796B; /* 진한 민트색 텍스트 */
+            font-size: 24px;
+        }
+        form { 
+            background-color: #E0F7FA; /* 연한 민트색 배경 */
+            border-radius: 10px; 
+            padding: 20px; 
+            text-align: left; 
+        }
+        label { 
+            font-weight: bold; 
+            margin-bottom: 5px;
+            display: inline-block;
+        }
+        input[type="text"], textarea, input[type="file"] {
+            width: 100%; 
+            padding: 10px; 
+            margin-bottom: 15px; 
+            border: 1px solid #ddd; 
+            border-radius: 5px; 
+            box-sizing: border-box; 
+            font-size: 16px;
+        }
+        button[type="submit"] {
+            background-color: #004D40; /* 어두운 민트색 배경 */
+            color: white; /* 하얀색 텍스트 */
+            border: none; 
+            padding: 15px 20px; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            font-size: 16px;
+            width: 100%;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        button[type="submit"]:hover {
+            background-color: #00796B; /* 진한 민트색 배경 */
+        }
+        #imagePreview img {
+            max-width: 100%; 
+            height: auto; 
+            border-radius: 5px; 
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -17,19 +73,32 @@
         <h2>Create a New Team</h2>
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
-            <tr>
-                <th><label for="id_name">Name:</label></th>
-                <td><input type="text" name="name" required id="id_name"></td>
-            </tr>
+            <div>
+                <label for="id_team_image">Team Profile Image:</label><br>
+                <input type="file" name="team_image" id="id_team_image" onchange="previewImage(event)">
+            </div>
+            <div id="imagePreview"></div>
             
-            <tr>
-                <th><label for="id_description">Description:</label></th>
-                <td><textarea name="description" cols="40" rows="10" id="id_description"></textarea></td>
-            </tr>
-            <tr>
-                <th><label for="id_team_image">Team image:</label></th>
-                <td><input type="file" name="team_image" id="id_team_image"></td>
-            </tr>
+            <script>
+                function previewImage(event) {
+                    var reader = new FileReader();
+                    reader.onload = function(){
+                        var output = document.getElementById('imagePreview');
+                        output.innerHTML = '<img src="' + reader.result + '">';
+                    }
+                    reader.readAsDataURL(event.target.files[0]);
+                }
+            </script>
+
+            <div>
+                <label for="id_name">Team Name:</label><br>
+                <input type="text" name="name" required id="id_name">
+            </div>
+            <div>
+                <label for="id_description">Team Description:</label><br>
+                <textarea name="description" cols="40" rows="5" id="id_description"></textarea>
+            </div>
+
             <button type="submit">Create Team</button>
         </form>
     </div>

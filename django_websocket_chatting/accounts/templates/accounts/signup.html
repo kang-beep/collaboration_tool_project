@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,17 +12,16 @@
             height: 100vh;
             margin: 0;
             font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #71b7e6, #9b59b6);
+            background: #F4F6F9;
             padding: 0;
         }
         .signup-container {
             background: white;
-            padding: 1rem;
+            padding: 2rem;
             border-radius: 1rem;
             box-shadow: 0 0 1rem rgba(0, 0, 0, 0.1);
             width: 90%;
             max-width: 400px;
-            height: 90vh;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
@@ -35,19 +34,19 @@
             font-size: 1.5rem;
         }
         .input-group {
-            margin-bottom: 0.5rem;
+            margin-bottom: 1rem;
             text-align: left;
             width: 100%;
         }
         .input-group label {
             display: block;
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.5rem;
             color: #666;
             font-size: 1rem;
         }
         .input-group input {
             width: 100%;
-            padding: 0.5rem;
+            padding: 0.75rem;
             border: 1px solid #ccc;
             border-radius: 0.5rem;
             font-size: 1rem;
@@ -73,37 +72,33 @@
 <body>
     <div class="signup-container">
         <h2>회원가입</h2>
-        <form method="post" enctype="multipart/form-data" action="{% url 'accounts:signup' %}" style="width: 100%;">
+        <form method="post" enctype="multipart/form-data" action="{% url 'accounts:signup' %}">
             {% csrf_token %}
             <div class="input-group">
-                <label for="id_username">사용자명:</label>
+                <label for="id_username">사용자명</label>
                 <input type="text" id="id_username" name="username" required>
             </div>
             <div class="input-group">
-                <label for="id_password">비밀번호:</label>
+                <label for="id_password">비밀번호</label>
                 <input type="password" id="id_password" name="password" required>
             </div>
             <div class="input-group">
-                <label for="id_password2">비밀번호 확인:</label>
+                <label for="id_password2">비밀번호 확인</label>
                 <input type="password" id="id_password2" name="password2" required>
             </div>
             <div class="input-group">
-                <label for="id_email">이메일:</label>
-                <input type="email" id="id_email" name="email" required>
-            </div>
-            <div class="input-group">
-                <label for="id_name">이름:</label>
+                <label for="id_name">이름</label>
                 <input type="text" id="id_name" name="name" required>
             </div>
             <div class="input-group">
-                <label for="id_contact">연락처:</label>
+                <label for="id_contact">연락처</label>
                 <input type="text" id="id_contact" name="contact" required>
             </div>
             <div class="input-group">
-                <label for="id_profile_picture">프로필 사진:</label>
+                <label for="id_profile_picture">프로필 사진</label>
                 <input type="file" id="id_profile_picture" name="profile_picture">
             </div>
-            <button type="submit" class="signup-button">가입</button>
+            <button type="submit" class="signup-button">Create an account</button>
         </form>
     </div>
 </body>
