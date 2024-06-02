@@ -35,7 +35,7 @@ def room_new(request, team_id):
     else:
         form = RoomForm()
 
-    return render(request, "chat/room_form.html", {
+    return render(request, "chat/room_new.html", { # 06/02 "chat/room_form.html" -> "chat/room_new.html" / room_form.html -> room_new.html로 파일명 수정
         "form": form,
         "team": team,
     })

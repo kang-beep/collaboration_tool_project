@@ -12,7 +12,7 @@
         {% endfor %}
     </ul>
 
-    <a href="{% url 'chat:room_new' %}">
+    <a href="{% url 'chat:room_new' team.id %}">
         새 채팅방 만들기
     </a>
 {% endblock %}

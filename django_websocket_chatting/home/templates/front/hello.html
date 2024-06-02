@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://kit.fontawesome.com/dab690a483.js" crossorigin="anonymous"></script>
     <title>AideaChat</title>
     <style>
         body {
@@ -12,7 +13,7 @@
             height: 100vh;
             margin: 0;
             font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #71b7e6, #9b59b6);
+            background: linear-gradient(135deg, rgb(28, 207, 183), #c2f1f1);
             padding: 0;
             overflow: hidden;
         }
@@ -42,13 +43,13 @@
             padding: 0.75rem 1.5rem;
             border: none;
             border-radius: 0.5rem;
-            background: #2ecc71;
+            background: #026d68;
             color: white;
             font-size: 1rem;
             cursor: pointer;
         }
         .start-button:hover, .login-button:hover {
-            background: #27ae60;
+            background: #81f0ea;
         }
         .modal {
             display: none;
@@ -63,6 +64,7 @@
             box-shadow: 0 -1rem 1rem rgba(0, 0, 0, 0.1);
             transform: translateY(100%);
             transition: transform 0.3s ease-in-out;
+            background-color: #9fd1ca;
         }
         .modal.open {
             display: block;
@@ -83,6 +85,7 @@
             margin: 0;
             font-size: 1.5rem;
             color: #333;
+            
         }
         .close-button {
             background: none;
@@ -91,7 +94,7 @@
             cursor: pointer;
         }
         .input-group {
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.7rem;
             text-align: left;
             width: 100%;
         }
@@ -109,25 +112,45 @@
             font-size: 1rem;
         }
         .login-submit {
-            width: 100%;
+            width: 50%;
             padding: 0.75rem;
             border: none;
             border-radius: 0.5rem;
-            background: #3498db;
+            background: #026d68;
             color: white;
             font-size: 1.25rem;
             cursor: pointer;
             margin-top: 1rem;
+            margin-left: 120px;
         }
         .login-submit:hover {
             background: #2980b9;
         }
+        .fa-comment-dots {
+             color: rgb(250, 255, 254);
+             margin-bottom: 370px;      
+        }
+        .icon{
+            margin-right: -280px;
+            margin-left: 200px;
+        }
+        .container h1 {
+            color:rgb(15, 163, 143); 
+        }
+        .modal-header h2 {
+            margin-right: -500;
+        }
+        .fa-comments {
+            color:rgb(250, 255, 254);
+        }
     </style>
 </head>
 <body>
+    <div class="icon"><i class="fas fa-solid fa-comment-dots fa-7x"></i></div>
     <div class="container">
-        <h1>AideaChat</h1>
-        <div class="message" id="welcome-message">협업을 AI와 쉽게 해보세요</div>
+         <h1>Aidea
+            Chat</h1>
+        <div class="message" id="welcome-message">C H A T A P P  &  M E S S A G E</div>
         <button class="start-button" id="start-button">시작하기</button>
         <button class="login-button" id="login-button">로그인</button>
     </div>
@@ -135,20 +158,21 @@
     <div class="modal" id="login-modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>로그인</h2>
+                <h2></h2>
+                <i class="fas fa-regular fa-comments fa-5x"></i>
                 <button class="close-button" id="close-button">&times;</button>
             </div>
             <form method="post" action="{% url 'accounts:login' %}">
                 {% csrf_token %}
                 <div class="input-group">
-                    <label for="username">사용자명:</label>
+                    <label for="username">ID:</label>
                     <input type="text" id="username" name="username" required>
                 </div>
                 <div class="input-group">
-                    <label for="password">비밀번호:</label>
+                    <label for="password">Passward:</label>
                     <input type="password" id="password" name="password" required>
                 </div>
-                <button type="submit" class="login-submit">로그인</button>
+                <button type="submit" class="login-submit">Login</button>
             </form>
         </div>
     </div>

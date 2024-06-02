@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>새 채팅방 만들기</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            background-color: #B2DFDB; /* 민트색 배경 */
+            color: #004D40; /* 어두운 민트색 텍스트 */
+            text-align: center;
+        }
+        .container { 
+            max-width: 900px; 
+            margin: 0 auto; 
+            padding: 20px; 
+        }
+        h2 { 
+            margin-bottom: 40px; 
+            color: #00796B; /* 진한 민트색 텍스트 */
+        }
+        .my-3 {
+            background-color: #E0F7FA; /* 연한 민트색 배경 */
+            border-radius: 10px; 
+            padding: 20px; 
+        }
+        .btn-primary {
+            background-color: #00796B; /* 진한 민트색 배경 */
+            border-color: #00796B;
+        }
+        .btn-primary:hover {
+            background-color: #004D40; /* 어두운 민트색 배경 */
+            border-color: #004D40;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>새 채팅방 만들기</h2>
+        
+        <div class="my-3">
+            <form action="" method="post">
+                {% csrf_token %}
+                <!-- Room form fields go here -->
+                <div class="form-group">
+                    <label for="roomName">Room Name</label>
+                    <input type="text" class="form-control" id="roomName" name="room_name" required>
+                </div>
+                <div class="form-group">
+                    <label for="roomDescription">Room Description</label>
+                    <textarea class="form-control" id="roomDescription" name="room_description" rows="3"></textarea>
+                </div>
+                <input type="submit" value="만들기" class="btn btn-primary" />
+            </form>
+        </div>
+
+        <a href="/chat/teams/{{ team.id }}/" class="btn btn-primary">
+            대기실로 이동
+        </a>        
+    </div>
+</body>
+</html>

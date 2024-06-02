@@ -91,7 +91,7 @@ class Room(OnlineUserMixin, models.Model):
     )
     # 채팅방의 이름을 나타내는 필드입니다.
     name = models.CharField(max_length=100)
-
+    ##### 여기에 forms.py의 필드에 Description 필드를 추가할 수 있도록 모델에 추가가 필요한데, 이 부분은 논의하기
     # TeamRoom 모델과 다대다 연결
     teams = models.ManyToManyField(Team, through='TeamRoom', related_name='rooms', verbose_name='소속 팀')
 
