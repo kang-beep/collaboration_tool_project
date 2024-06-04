@@ -14,6 +14,8 @@
             font-family: Arial, sans-serif;
             background: #F4F6F9;
             padding: 0;
+            background-color: #9fd1ca;
+            
         }
         .signup-container {
             background: white;
@@ -27,6 +29,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            
         }
         .signup-container h2 {
             margin-bottom: 1rem;
@@ -56,46 +59,54 @@
             padding: 0.75rem;
             border: none;
             border-radius: 0.5rem;
-            background: #2ecc71;
+            background: #357C76;
             color: white;
             font-size: 1.25rem;
             cursor: pointer;
             text-decoration: none;
             display: inline-block;
             margin-top: 1rem;
+            
         }
         .signup-button:hover {
             background: #27ae60;
+        }
+        .head {
+            color:rgb(36, 120, 109);;
+            text-align: center;
+           
         }
     </style>
 </head>
 <body>
     <div class="signup-container">
-        <h2>회원가입</h2>
+        <div class="head">
+          <h2>Welcome to</h2><h1>Aldea CHAT</h1>
+        <div>
         <form method="post" enctype="multipart/form-data" action="{% url 'accounts:signup' %}">
             {% csrf_token %}
             <div class="input-group">
-                <label for="id_username">사용자명</label>
+                <label for="id_username">🍀-ID</label>
                 <input type="text" id="id_username" name="username" required>
             </div>
             <div class="input-group">
-                <label for="id_password">비밀번호</label>
+                <label for="id_password">🍀-Passward</label>
                 <input type="password" id="id_password" name="password" required>
             </div>
             <div class="input-group">
-                <label for="id_password2">비밀번호 확인</label>
+                <label for="id_password2">🍀-Check your password</label>
                 <input type="password" id="id_password2" name="password2" required>
             </div>
             <div class="input-group">
-                <label for="id_name">이름</label>
+                <label for="id_name">🍀-Name</label>
                 <input type="text" id="id_name" name="name" required>
             </div>
             <div class="input-group">
-                <label for="id_contact">연락처</label>
+                <label for="id_contact">🍀-Phone number</label>
                 <input type="text" id="id_contact" name="contact" required>
             </div>
             <div class="input-group">
-                <label for="id_profile_picture">프로필 사진</label>
+                <label for="id_profile_picture">🍀-Profile picture</label>
                 <input type="file" id="id_profile_picture" name="profile_picture">
             </div>
             <button type="submit" class="signup-button">Create an account</button>
