@@ -62,7 +62,23 @@
             color: #004D40; /* 어두운 민트색 텍스트 */
             border: 1px solid #B2DFDB; /* 민트색 테두리 */
         }
+    
+        /* 미디어 쿼리 추가 */
+        @media (max-width: 576px) {
+            .container {
+                max-width: 100%;
+                padding: 10px;
+            }
+            #calendar {
+                max-width: 100%;
+                padding: 10px;
+            }
+            .modal-content {
+                padding: 10px;
+            }
+        }
     </style>
+    
 </head>
 <body>
     <div class="container">

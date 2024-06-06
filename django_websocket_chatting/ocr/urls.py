@@ -1,7 +1,7 @@
+# ocr/urls.py
 from django.urls import path
-from . import views
+from .views import OCRView
 
 urlpatterns = [
-    path('', views.index, name='index'),
-    path('result/<int:pk>/', views.result, name='result'),
+    path('', OCRView.as_view(), name='ocr-home'),
 ]

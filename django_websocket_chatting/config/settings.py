@@ -66,6 +66,7 @@ INSTALLED_APPS = [
     'docsumm',
     'eventcalendar',
     'teams',
+    'ocr'
 ]
 
 MIDDLEWARE = [

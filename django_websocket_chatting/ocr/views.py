@@ -1,25 +1,21 @@
-from django.shortcuts import render, redirect
-from django.http import HttpResponse
-from .forms import OcrForm
-from .models import OcrResult
-from .utils import EasyPororoOcr
-import os
+# ocr/views.py
+from django.shortcuts import render
+from django.http import JsonResponse
+from django.views import View
+from django.core.files.storage import FileSystemStorage
 
-def index(request):
-    if request.method == 'POST':
-        form = OcrForm(request.POST, request.FILES)
-        if form.is_valid():
-            ocr_instance = form.save()
-            ocr = EasyPororoOcr()
-            img_path = ocr_instance.image.path
-            result = ocr.run_ocr(img_path)
-            ocr_instance.result = "\n".join(result)
-            ocr_instance.save()
-            return redirect('result', pk=ocr_instance.pk)
-    else:
-        form = OcrForm()
-    return render(request, 'ocr/index.html', {'form': form})
+class OCRView(View):
+    def get(self, request):
+        return render(request, 'ocr/upload.html')
+    def post(self, request):
+        if request.method == 'POST' and request.FILES.get('ocr_image'):
+            ocr_image = request.FILES['ocr_image']
+            fs = FileSystemStorage()
+            filename = fs.save(ocr_image.name, ocr_image)
+            uploaded_file_url = fs.url(filename)
+            # 여기서 OCR 함수를 호출하여 파일을 처리합니다
+            # 예: text = your_ocr_function(fs.path(filename))
+            text = "Sample OCR Result"  # 임시 텍스트
+            return JsonResponse({'uploaded_file_url': uploaded_file_url, 'text': text})
+        return JsonResponse({'error': 'No file uploaded'}, status=400)
 
-def result(request, pk):
-    ocr_instance = OcrResult.objects.get(pk=pk)
-    return render(request, 'ocr/result.html', {'ocr_instance': ocr_instance})
