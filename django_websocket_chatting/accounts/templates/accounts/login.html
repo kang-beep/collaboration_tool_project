@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://kit.fontawesome.com/dab690a483.js" crossorigin="anonymous"></script>
     <title>Login</title>
     <style>
         body {
@@ -12,7 +13,7 @@
             height: 100vh;
             margin: 0;
             font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #71b7e6, #9b59b6);
+            background: linear-gradient(135deg, rgb(28, 207, 183), #c2f1f1);
         }
         .login-container {
             background: white;
@@ -25,7 +26,7 @@
         }
         .login-container h2 {
             margin-bottom: 1.25rem;
-            color: #333;
+            color: #026d68;
             font-size: 2rem;
         }
         .input-group {
@@ -46,14 +47,15 @@
             font-size: 1rem;
         }
         .login-button {
-            width: 100%;
+            width: 45%;
             padding: 0.75rem;
             border: none;
             border-radius: 0.5rem;
-            background: #3498db;
+            background: #026d68;
             color: white;
             font-size: 1.25rem;
             cursor: pointer;
+            margin: 10px;
         }
         .login-button:hover {
             background: #2980b9;
@@ -74,11 +76,16 @@
         .signup-button:hover {
             background: #27ae60;
         }
+        .fa-comment-dots {
+            color:rgb(15, 163, 143);
+          
+        }
     </style>
 </head>
 <body>
     <div class="login-container">
-        <h2>Login</h2>
+        <div><i class="fas fa-solid fa-comment-dots fa-7x"></i></div>
+        <h2>" Login "</h2>
         <form method="post" action="{% url 'accounts:login' %}">
             {% csrf_token %}
             <div class="input-group">
@@ -92,7 +99,7 @@
             <button type="submit" class="login-button">Login</button>
         </form>
         <br>
-        <a href="{% url 'accounts:signup' %}" class="login-button">Create Account!</a>
+        <a href="{% url 'accounts:signup' %}" class="login-button">Create  Account ‼️</a>
     </div>
 </body>
 </html>
