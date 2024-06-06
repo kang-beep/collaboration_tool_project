@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://kit.fontawesome.com/3c8aeb941b.js" crossorigin="anonymous"></script>
     <title>Create a New Team</title>
     <style>
         body { 
             font-family: 'Roboto', sans-serif; 
-            background-color: #E0F7FA; /* 연한 민트색 배경 */
-            color: #004D40; /* 어두운 민트색 텍스트 */
+            background-color: #B2DFDB;/* 연한 민트색 배경 */
+            color: #00796b; /* 어두운 민트색 텍스트 */
             text-align: center;
             margin: 0;
             padding: 0;
@@ -20,6 +21,7 @@
             background-color: #FFFFFF; /* 흰색 배경 */
             border-radius: 10px; 
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 150px;
         }
         h2 { 
             margin-bottom: 20px; 
@@ -66,15 +68,24 @@
             border-radius: 5px; 
             margin-top: 10px;
         }
+        .fa-plus {
+            margin: 10px;
+            
+        }
     </style>
 </head>
 <body>
     <div class="container">
+        
+        <div><i class="fa-solid fa-user-group fa-4x"></i><i class="fas fa-solid fa-plus fa-2x"></i></div>
+        <!-- 기존 서연이 이모티콘
+        <i class="fas fa-solid fa-plus fa-2x"></i><i class="fa-solid fa-users-rectangle fa-5x"></i>
+        -->
         <h2>Create a New Team</h2>
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <div>
-                <label for="id_team_image">Team Profile Image:</label><br>
+                <label for="id_team_image">🍀 - Team Profile Image:</label><br>
                 <input type="file" name="team_image" id="id_team_image" onchange="previewImage(event)">
             </div>
             <div id="imagePreview"></div>
@@ -91,11 +102,11 @@
             </script>
 
             <div>
-                <label for="id_name">Team Name:</label><br>
+                <label for="id_name">🍀 - Team Name:</label><br>
                 <input type="text" name="name" required id="id_name">
             </div>
             <div>
-                <label for="id_description">Team Description:</label><br>
+                <label for="id_description">🍀 - Team Description:</label><br>
                 <textarea name="description" cols="40" rows="5" id="id_description"></textarea>
             </div>
 

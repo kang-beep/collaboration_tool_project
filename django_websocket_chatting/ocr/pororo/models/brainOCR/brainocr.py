@@ -1,13 +1,3 @@
-"""
-This code is primarily based on the following:
-https://github.com/JaidedAI/EasyOCR/blob/8af936ba1b2f3c230968dc1022d0cd3e9ca1efbb/easyocr/easyocr.py
-
-Basic usage:
->>> from pororo import Pororo
->>> ocr = Pororo(task="ocr", lang="ko")
->>> ocr("IMAGE_FILE")
-"""
-
 import ast
 from logging import getLogger
 from typing import List

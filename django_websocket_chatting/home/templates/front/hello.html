@@ -25,10 +25,6 @@
             box-shadow: 0 0 1rem rgba(0, 0, 0, 0.1);
             width: 90%;
             max-width: 400px;
-
-            
-            
-           
         }
         .container h1 {
             font-size: 2rem;
@@ -41,7 +37,7 @@
             opacity: 1;
             transition: opacity 2s;
         }
-        .start-button, .login-button {
+        .start-button, .login-button, .signup-button {
             display: none;
             margin-top: 2rem;
             padding: 0.75rem 1.5rem;
@@ -51,8 +47,9 @@
             color: white;
             font-size: 1rem;
             cursor: pointer;
+            width: 115px;
         }
-        .start-button:hover, .login-button:hover {
+        .start-button:hover, .login-button:hover, .signup-button:hover {
             background: #81f0ea;
         }
         .modal {
@@ -89,7 +86,6 @@
             margin: 0;
             font-size: 1.5rem;
             color: #333;
-            
         }
         .close-button {
             background: none;
@@ -125,29 +121,25 @@
             font-size: 1.25rem;
             cursor: pointer;
             margin-top: 1rem;
-            
         }
         .login-submit:hover {
             background: white;
-            color:#026d68;
+            color: #026d68;
         }
         .fa-comment-dots {
-            color:rgb(15, 163, 143);
-          
+            color: rgb(15, 163, 143);
         }
-       
-        
         .container h1 {
-            color:rgb(15, 163, 143); 
+            color: rgb(15, 163, 143);
         }
         .modal-header h2 {
             margin-right: -500;
         }
         .fa-comments {
-            color:rgb(250, 255, 254);
+            color: rgb(250, 255, 254);
         }
         .parent {
-            margin-left:-20px   
+            margin-left: -20px;
         }
     </style>
 </head>
@@ -156,11 +148,11 @@
     <div class="parent">
         <div class="container">
             <div class="icon"><i class="fas fa-solid fa-comment-dots fa-7x"></i></div>
-          <h1>Aidea
-                Chat</h1>
-          <div class="message" id="welcome-message">C H A T A P P  &  M E S S A G E</div>
-          <button class="start-button" id="start-button">시작하기</button>
-          <button class="login-button" id="login-button">로그인</button>
+            <h1>Aidea Chat</h1>
+            <div class="message" id="welcome-message">C H A T A P P & M E S S A G E</div>
+            <button class="start-button" id="start-button">시작하기</button>
+            <button class="login-button" id="login-button">로그인</button>
+            <button class="signup-button" id="signup-button">회원가입</button>
         </div>
     </div>
 
@@ -191,6 +183,7 @@
             const message = document.getElementById("welcome-message");
             const startButton = document.getElementById("start-button");
             const loginButton = document.getElementById("login-button");
+            const signupButton = document.getElementById("signup-button");
             const loginModal = document.getElementById("login-modal");
             const closeButton = document.getElementById("close-button");
 
@@ -205,6 +198,7 @@
             startButton.addEventListener("click", function() {
                 startButton.style.display = "none";
                 loginButton.style.display = "inline-block";
+                signupButton.style.display = "inline-block";
             });
 
             loginButton.addEventListener("click", function() {
@@ -213,6 +207,10 @@
 
             closeButton.addEventListener("click", function() {
                 loginModal.classList.remove("open");
+            });
+
+            signupButton.addEventListener("click", function() {
+                window.location.href = "{% url 'accounts:signup' %}";
             });
         });
     </script>

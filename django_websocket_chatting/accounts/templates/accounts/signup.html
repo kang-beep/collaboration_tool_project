@@ -86,27 +86,27 @@
         <form method="post" enctype="multipart/form-data" action="{% url 'accounts:signup' %}">
             {% csrf_token %}
             <div class="input-group">
-                <label for="id_username">🍀-ID</label>
+                <label for="id_username">🍀 - ID</label>
                 <input type="text" id="id_username" name="username" required>
             </div>
             <div class="input-group">
-                <label for="id_password">🍀-Passward</label>
+                <label for="id_password">🍀 - Passward</label>
                 <input type="password" id="id_password" name="password" required>
             </div>
             <div class="input-group">
-                <label for="id_password2">🍀-Check your password</label>
+                <label for="id_password2">🍀 - Check your password</label>
                 <input type="password" id="id_password2" name="password2" required>
             </div>
             <div class="input-group">
-                <label for="id_name">🍀-Name</label>
+                <label for="id_name">🍀 - Name</label>
                 <input type="text" id="id_name" name="name" required>
             </div>
             <div class="input-group">
-                <label for="id_contact">🍀-Phone number</label>
+                <label for="id_contact">🍀 - Phone number</label>
                 <input type="text" id="id_contact" name="contact" required>
             </div>
             <div class="input-group">
-                <label for="id_profile_picture">🍀-Profile picture</label>
+                <label for="id_profile_picture">🍀 - Profile picture</label>
                 <input type="file" id="id_profile_picture" name="profile_picture">
             </div>
             <button type="submit" class="signup-button">Create an account</button>
