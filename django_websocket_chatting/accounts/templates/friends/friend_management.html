@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Friends List</title>
+</head>
+<body>
+    <h2>Friends List</h2>
+    <ul>
+        {% for friend in friends %}
+            <li>{{ friend.username }}</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Received Friend Requests</h2>
+    <ul>
+        {% for request in received_requests %}
+            <li>
+                {{ request.from_user.username }}
+                <form method="post" action="{% url 'accounts:send-friend-request' request.pk %}">
+                    {% csrf_token %}
+                    <button type="submit">Accept</button>
+                </form>
+                <form method="post" action="{% url 'accounts:reject-friend-request' request.pk %}">
+                    {% csrf_token %}
+                    <button type="submit">Reject</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <h2>Send Friend Request</h2>
+    <form method="post" action="{% url 'accounts:send-friend-request' %}">
+        {% csrf_token %}
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+        <button type="submit">Send Request</button>
+    </form>
+</body>

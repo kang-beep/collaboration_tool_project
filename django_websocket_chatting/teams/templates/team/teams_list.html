@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Teams</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .team { border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; }
+        .team img { max-width: 100%; height: auto; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        
+        <h1>My Teams</h1>
+        <div>
+            <h2> <a href="{% url 'teams:teams_create' %}">New Create Teams!</a> </h2>
+        </div>
+        <div>
+            <h2> Team_list </h2>
+        </div>
+        <ul>
+            {% for team in teams %}
+                <li class="team">
+                    <h2>
+                        <a href="{% url 'chat:team_rooms' team.id %}">{{ team.name }}</a>
+                    </h2>
+                    <p>{{ team.description }}</p>
+                    {% if team.team_image %}
+                        <img src="{{ team.team_image.url }}" alt="{{ team.name }}">
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+        
+    </div>
+    
+</body>
+</html>
