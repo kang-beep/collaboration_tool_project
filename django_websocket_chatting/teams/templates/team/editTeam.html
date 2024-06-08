@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teams List</title>
+    <script>
+        function editTeam(teamId) {
+            const teamName = prompt("Edit team name:");
+            if (teamName) {
+                fetch(`/edit_team/${teamId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name: teamName })
+                }).then(response => {
+                    if (response.ok) {
+                        document.querySelector(`#team-${teamId} .team-name`).textContent = teamName;
+                    } else {
+                        alert('Failed to edit the team.');
+                    }
+                });
+            }
+        }
+
+        function deleteTeam(teamId) {
+            fetch(`/delete_team/${teamId}`, {
+                method: 'DELETE'
+            }).then(response => {
+                if (response.ok) {
+                    document.getElementById(`team-${teamId}`).remove();
+                } else {
+                    alert('Failed to delete the team.');
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+    <h1>Teams List</h1>
+    <ul id="teams-list">
+        <!-- 팀 목록이 여기에 추가됩니다 -->
+        {% for team in teams %}
+        <li id="team-{{ team.id }}">
+            <span class="team-name">{{ team.name }}</span>
+            <button onclick="editTeam({{ team.id }})">Edit</button>
+            <button onclick="deleteTeam({{ team.id }})">Delete</button>
+        </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

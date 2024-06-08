@@ -4,151 +4,282 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat Rooms</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/3c8aeb941b.js" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <style>
-        body { 
-            font-family: Arial, sans-serif; 
-            background-color: #B2DFDB; /* 민트색 배경 */
-            color: #004D40; /* 어두운 민트색 텍스트 */
-            text-align: center;
-            padding: 0;
+        body {
+            background-color: #B2DFDB;
+            font-family: Arial, sans-serif;
             margin: 0;
+            padding: 0;
             height: 100vh;
+            overflow: hidden;
+        }
+        .container-fluid {
             display: flex;
-            justify-content: center;
-            align-items: center;
+            height: 100%;
+            padding: 0;
         }
-        .container { 
-            background: white;
-            padding: 2rem;
-            border-radius: 1rem;
-            box-shadow: 0 0 1rem rgba(0, 0, 0, 0.1);
-            max-width: 900px; 
-            margin: 0 auto; 
-            width: 100%;
+        .header {
+            background-color: #ffffff7a;
+            padding: 10px;
+            text-align: center;
+            color: #00796b;
+            border: 1px solid #00796b;
+            border-radius: 40px; 
+            margin-top: 20px
+
         }
-        h1 { 
-            margin-bottom: 40px; 
-            color: #00796B; /* 진한 민트색 텍스트 */
+        .header h1 {
+            margin: 0;
         }
         .chat-list {
-            display: flex; 
-            overflow-x: auto; /* 가로 스크롤 추가 */
-            gap: 20px;
             list-style-type: none;
             padding: 0;
-            margin: 0 0 40px 0;
-            scrollbar-width: thin; /* Firefox */
-            -ms-overflow-style: none;  /* Internet Explorer 10+ */
+            margin: 20px;
+            overflow-y: auto;
+            height: calc(70vh - 60px);
+            background: #ffffff7a;
+            box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
         }
-        .chat-list::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
+        .chat-list li {
+            background-color: white;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+            display: flex;
+            align-items: center;
         }
-        .chat-list::-webkit-scrollbar-thumb {
-            background-color: #00796B;
-            border-radius: 4px;
+        .chat-list li a {
+            text-decoration: none;
+            color: #212121;
+            font-weight: bold;
+            flex-grow: 1;
         }
-        .chat-list::-webkit-scrollbar-track {
-            background-color: #E0F7FA;
-        }
-        .chat-room {
-            background-color: #E0F7FA; /* 연한 민트색 배경 */
-            border-radius: 10px; 
-            padding: 20px; 
-            width: 120px; /* 채팅방 항목의 너비를 줄임 */
-            text-align: center; 
-            transition: transform 0.3s;
-            text-decoration: none; /* 링크의 밑줄 제거 */
-            color: #004D40; /* 어두운 민트색 텍스트 */
-            position: relative; /* 상대 위치 */
-            display: flex; /* 추가 */
-            flex-direction: column; /* 추가 */
-            align-items: center; /* 추가 */
-            justify-content: center; /* 추가 */
-        }
-        .chat-room:hover {
-            transform: scale(1.1);
-        }
-        .chat-room .chat-icon {
+        .chat-list .chat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
             background-color: #00bcd4;
-            border-radius: 50%; 
-            width: 60px; 
-            height: 60px; 
-            margin-bottom: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
             color: white;
-        }
-        .chat-room a {
-            text-decoration: none;
-            color: #004D40;
-            font-weight: bold;
-            display: block;
-            margin-top: 10px;
+            font-size: 20px;
+            margin-right: 15px;
         }
         .new-chat-btn {
-            margin-bottom: 40px;
+            display: block;
+            margin: 20px;
+            text-align: center;
         }
         .new-chat-btn a {
-            color: white; /* 하얀색 텍스트 */
-            font-size: 18px; 
-            text-decoration: none; 
-            background-color: #00796B; /* 진한 민트색 배경 */
-            padding: 10px 20px; 
-            border-radius: 5px; 
-            transition: background-color 0.3s, color 0.3s;
+            text-decoration: none;
+            background-color: #00bcd4;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+            transition: background-color 0.3s;
         }
         .new-chat-btn a:hover {
-            background-color: #004D40; /* 어두운 민트색 배경 */
+            background-color: #00acc1;
         }
-        .btn-primary {
-            background-color: #00796B; /* 진한 민트색 배경 */
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            color: white;
-            font-size: 18px;
-            transition: background-color 0.3s, color 0.3s;
-            margin-top: 20px;
-            text-decoration: none;
+        main {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 20px;
         }
-        .btn-primary:hover {
-            background-color: #004D40; /* 어두운 민트색 배경 */
+        .calendar-container {
+            height: 100%%;
+            background-color: #FFFFFF;
+            {% comment %} border: 1px solid #00acc1; {% endcomment %}
+            margin-bottom: 20px;
+            padding: 0px;
+            cursor: pointer;
+      
+            
         }
+        .card-body {
+            background-color: #E0F7FA;
+            border-radius: 30px;
+                
+        }
+        .card {
+            border-radius: 60px;
+            box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+            margin:20px;
+        }
+        .fa-readme{
+          padding-top:20px;
+          color: #00796b;
+        }
+        .fa-quote-left{
+          margin-left: 140px;
+          color: #00796b;
+        }
+        .fa-quote-right {
+          color: #00796b;
+          margin-left: 110px;
+        }
+        .container {
+          background: #f8f9fa59;
+          border-radius: 80px; 
+          height: 550px;
+          margin-top: 30px;
+          box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+          text-align: center;
+
+        }
+        .carousel-item active{
+          box-sizing: border-box;
+        }
+        #carouselExampleIndicators {
+          max-width: 300px; /* 원하는 너비로 설정 */
+          max-height: 300px; 
+          margin: 0 auto; 
+          
+        }
+        #carouselExampleIndicators .carousel-inner img {
+          width: 100%;
+          height: auto;
+          max-height: 300px; 
+        }
+        .container-secound {
+          text-align: center;
+          padding-bottom: 10px;
+          margin: 0 auto;
+          border-bottom: 3px solid #f8f9faf2;;
+
+          
+          
+      }
+      .fa-comment {
+        margin-left: 10px; 
+        color: white;
+        padding: 5px;
+        text-shadow: 0px 0px 10px #0000008c;
+      }
+      .textCht{
+        font-family: Arial, sans-serif;
+        font-size: 2rem;
+        color:white;
+        text-shadow: 0px 0px 10px #0000008c;
+        
+        
+        font-weight: bold; 
+      }
+    
     </style>
 </head>
+
 <body>
-    <div class="container">
+
+    <div class="container-secound">
+      <div><span class="textCht">Aidea Chat</span><i class="fa-regular fa-comment fa-3x"></i></div>
+    </div>
+    <div class="container-fluid">
         <!-- Main content -->
         <main role="main" class="main-content">
-            <div class="header">
-                <h1>{{ team.name }} - 채팅방 목록</h1>
-            </div>
-            
-            <ul class="chat-list">
-                {% for room in room_list|slice:":" %} {# 채팅방 목록은 개수만큼 전체가 나타나도록 #}
-                <li class="chat-room">
-                    <div class="chat-icon">{{ room.name|slice:":1" }}</div>
-                    <a href="{% url 'chat:room_chat' room.pk %}">{{ room.name }}</a>
-                </li>
-                {% endfor %}
-            </ul>
+            <div class="row">
+                <div id="carouselExampleIndicators" class="carousel slide">
+                    <div class="carousel-indicators">
+                      <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                      <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                      <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                    </div>
+                    <div class="carousel-inner">
+                      <div class="carousel-item active">
+                        
+                        <!-- Calendar space (30%) -->
+                        <a href="{% url 'eventcalendar:calendar' %}" class="col-md-12 calendar-container" style="text-decoration: none; color: inherit;">
+                        
+                        <img src="https://thumbnail10.coupangcdn.com/thumbnails/remote/492x492ex/image/vendor_inventory/5a3b/1fc08c53cd15ae8210074886a4a0a46bfa9c64c068fc20826fe539069067.jpg" class="d-block h-20" alt="...">
+                        <!-- Add your calendar implementation here -->
+                        </a>
+                        
+                      </div>
+                      <div class="carousel-item">
+                        <img src="..." class="d-block w-100" alt="...">
+                      </div>
+                      <div class="carousel-item">
+                        <img src="..." class="d-block w-100" alt="...">
+                      </div>
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                      <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                      <span class="visually-hidden">Next</span>
+                    </button>
+                  </div>
+                <!-- Chat rooms (70%) -->
+                <div class="col-md-12">
+                    <div class="header">
+                        <h1>{{ team.name }} - Chat Room </h1>
+                    </div>
+                    <ul class="chat-list">
+                        {% for room in room_list %}
+                        <li>
+                            <div class="chat-icon">{{ room.name|slice:":1" }}</div>
+                            <a href="{% url 'chat:room_chat' room.pk %}">{{ room.name }}</a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    <div class="new-chat-btn">
+                        <a href="{% url 'chat:room_new' team.id %}">새 채팅방 만들기</a>
+                    </div>
+                    <div class="card" style="width: 18rem;">
+                        <img src="..." class="card-img-top" alt="...">
+                        <div class="card-body">
+                          <h5 class="card-title">Card title</h5>
+                          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                          <a href="#" class="btn btn-primary">Go somewhere</a>
+                        </div>
+                    </div>
 
-            <div class="new-chat-btn">
-                <a href="{% url 'chat:room_new' team.id %}">새 채팅방 만들기</a>
-            </div>
-
-            <div class="calendar-container">
-                <a href="{% url 'eventcalendar:calendar' %}" class="btn btn-primary">Calendar 보기</a>
-            </div>
-            <!-- Button to navigate to OCR home URL -->
-            <div>
-                <a href="{% url 'ocr-home' %}" class="btn btn-primary">OCR Home 바로가기</a>
+                    <div class="card" style="width: 18rem;">
+                        <img src="..." class="card-img-top" alt="...">
+                        <div class="card-body">
+                          <h5 class="card-title">Card title</h5>
+                          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                          <a href="#" class="btn btn-primary">Go somewhere</a>
+                        </div>
+                    </div>
+                    <div class="container">
+                      
+                     <div> <i class="fa-brands fa-readme fa-4x"></i>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6 mb-3 mb-sm-0">
+                          <div class="card">
+                            <div class="card-body">
+                              <h5 class="card-title">Special title treatment</h5>
+                              <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                              <a href="#" class="btn btn-primary">Go somewhere</a>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="card">
+                            <div class="card-body">
+                              <h5 class="card-title">Special title treatment</h5>
+                              <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                              <a href="#" class="btn btn-primary">Go somewhere</a>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                </div>
             </div>
         </main>
+        
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>
