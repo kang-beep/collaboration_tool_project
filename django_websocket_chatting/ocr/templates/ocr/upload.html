@@ -145,6 +145,16 @@
             display: none;
             max-width: 100%;
             height: auto;
+            margin-top: 1rem;
+        }
+        #result {
+            margin-top: 1rem;
+        }
+        #ocr_result {
+            margin-top: 1rem;
+            white-space: pre-wrap;
+            text-align: left;
+            color: #333;
         }
     </style>
     <script>
@@ -169,7 +179,7 @@
                 } else {
                     document.getElementById("uploaded_image").src = data.uploaded_file_url;
                     document.getElementById("uploaded_image").style.display = "block";
-                    document.getElementById("ocr_result").innerText = data.text;
+                    document.getElementById("ocr_result").innerText = data.text.join('\n');
                 }
             })
             .catch(error => {
@@ -190,7 +200,7 @@
         <div id="result">
             <h2>OCR Result</h2>
             <img id="uploaded_image" src="#" alt="Uploaded Image">
-            <p id="ocr_result"></p>
+            <pre id="ocr_result"></pre>
         </div>
     </div>
 </body>

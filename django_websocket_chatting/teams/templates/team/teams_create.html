@@ -85,7 +85,7 @@
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <div>
-                <label for="id_team_image">🍀 - Team Profile Image:</label><br>
+                <label for="id_team_image"><i class="fa-solid fa-clover"></i> - Team Profile Image:</label><br>
                 <input type="file" name="team_image" id="id_team_image" onchange="previewImage(event)">
             </div>
             <div id="imagePreview"></div>
@@ -102,11 +102,11 @@
             </script>
 
             <div>
-                <label for="id_name">🍀 - Team Name:</label><br>
+                <label for="id_name"><i class="fa-solid fa-clover"></i> - Team Name:</label><br>
                 <input type="text" name="name" required id="id_name">
             </div>
             <div>
-                <label for="id_description">🍀 - Team Description:</label><br>
+                <label for="id_description"><i class="fa-solid fa-clover"></i> - Team Description:</label><br>
                 <textarea name="description" cols="40" rows="5" id="id_description"></textarea>
             </div>
 
