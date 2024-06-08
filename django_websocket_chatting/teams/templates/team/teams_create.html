@@ -70,47 +70,63 @@
         }
         .fa-plus {
             margin: 10px;
-            
+        }
+        .error-message {
+            color: red;
+            font-size: 14px;
+            margin-top: 5px;
+            margin-bottom: 15px;
         }
     </style>
 </head>
 <body>
     <div class="container">
         
-        <div><i class="fa-solid fa-user-group fa-4x"></i><i class="fas fa-solid fa-plus fa-2x"></i></div>
-        <!-- 기존 서연이 이모티콘
-        <i class="fas fa-solid fa-plus fa-2x"></i><i class="fa-solid fa-users-rectangle fa-5x"></i>
-        -->
-        <h2>Create a New Team</h2>
+        <div><i class="fa-solid fa-users-viewfinder fa-5x"></i></div>
+        <h2>새로운 팀 생성하기</h2>
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <div>
-                <label for="id_team_image"><i class="fa-solid fa-clover"></i> - Team Profile Image:</label><br>
+                <label for="id_team_image"><i class="fa-solid fa-clover"></i> - 팀 프로필 이미지 :</label><br>
                 <input type="file" name="team_image" id="id_team_image" onchange="previewImage(event)">
+                <div id="errorMessage" class="error-message"></div>
+                <div id="imagePreview"></div>
             </div>
-            <div id="imagePreview"></div>
-            
+
             <script>
                 function previewImage(event) {
+                    var file = event.target.files[0];
+                    var fileType = file.type;
+                    var validImageTypes = ["image/gif", "image/jpeg", "image/png", "image/jpg"];
+
+                    if (!validImageTypes.includes(fileType)) {
+                        var errorMessage = document.getElementById('errorMessage');
+                        errorMessage.innerHTML = "이미지 파일이 아닙니다.<br>.gif / .jpeg / .png / .jpg 파일만 프로필 선택 가능";
+                        document.getElementById('imagePreview').innerHTML = '';
+                        return;
+                    } else {
+                        document.getElementById('errorMessage').textContent = '';
+                    }
+
                     var reader = new FileReader();
                     reader.onload = function(){
                         var output = document.getElementById('imagePreview');
                         output.innerHTML = '<img src="' + reader.result + '">';
                     }
-                    reader.readAsDataURL(event.target.files[0]);
+                    reader.readAsDataURL(file);
                 }
             </script>
 
             <div>
-                <label for="id_name"><i class="fa-solid fa-clover"></i> - Team Name:</label><br>
+                <label for="id_name"><i class="fa-solid fa-clover"></i> -  팀 이름:</label><br>
                 <input type="text" name="name" required id="id_name">
             </div>
             <div>
-                <label for="id_description"><i class="fa-solid fa-clover"></i> - Team Description:</label><br>
+                <label for="id_description"><i class="fa-solid fa-clover"></i> - 팀 설명 :</label><br>
                 <textarea name="description" cols="40" rows="5" id="id_description"></textarea>
             </div>
 
-            <button type="submit">Create Team</button>
+            <button type="submit">팀 생성</button>
         </form>
     </div>
 </body>
