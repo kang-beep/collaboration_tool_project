@@ -30,7 +30,7 @@
         .team {
             background-color: #E0F7FA; /* 연한 민트색 배경 */
             border-radius: 10px; 
-            padding: 20px; 
+            padding: 15px; 
             width: 120px; 
             text-align: center; 
             transition: transform 0.3s;
@@ -57,6 +57,11 @@
             align-items: center;
             justify-content: center;
             font-size: 16px;
+            color: #004D40; /* 어두운 민트색 텍스트 */
+        }
+        .team h2 {
+            font-size: 18px; /* 글꼴 크기 줄임 */
+            margin: 10px 0; /* 팀 이름과 팀 설명 간격 줄임 */
             color: #004D40; /* 어두운 민트색 텍스트 */
         }
         .team p {
@@ -95,23 +100,27 @@
         .manage-teams button:hover {
             background-color: #004D40; /* 어두운 민트색 배경 */
         }
-        .edit-mode .team:hover::after {
-            content: '편집'; /* 편집 텍스트 표시 */
-            position: absolute; /* 절대 위치 */
-            top: 5px; /* 위쪽 여백 */
-            left: 5px; /* 왼쪽 여백 */
-            background-color: rgba(0, 0, 0, 0.5); /* 반투명 검은색 배경 */
-            color: white; /* 흰색 텍스트 */
-            padding: 5px; /* 내부 여백 */
-            border-radius: 5px; /* 모서리 둥글게 */
-        }
-        .edit-mode .team.selected::after {
-            content: '삭제'; /* 삭제 텍스트 표시 */
-        }
         .fa-comments{
             color:rgb(15, 163, 143);
         }
-    </style>
+        .delete-button {
+            display: none;
+            background-color: #b71c1c;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+        .edit-mode .delete-button {
+            display: block;
+        }
+        .delete-button:hover {
+            background-color: #9a0007;
+        }
+    </style>    
 </head>
 <body>
     <div class="container">
@@ -122,7 +131,7 @@
         </div>
         <div class="team-list">
             {% for team in teams %}
-                <a class="team" href="{% url 'chat:team_rooms' team.id %}" data-id="{{ team.id }}" data-creator-id="{{ team.creator.id }}">
+                <a class="team" href="{% url 'chat:team_rooms' team.id %}" id="team-{{ team.id }}">
                     {% if team.team_image %}
                         <img src="{{ team.team_image.url }}" alt="{{ team.name }}">
                     {% else %}
@@ -130,6 +139,7 @@
                     {% endif %}
                     <h2>{{ team.name }}</h2>
                     <p>{{ team.description }}</p>
+                    <button class="delete-button" onclick="deleteTeam({{ team.id }}); event.preventDefault();">팀 삭제</button>
                 </a>
             {% endfor %}
         </div>
@@ -137,6 +147,49 @@
             <button onclick="toggleEditMode()">팀 목록 편집</button>
         </div>
     </div>
-    
+
+    <!-- 
+        스크립트 코드 "팀 삭제"에 대한 부분이 정상작동 안됨.
+        모델에 팀 소유자에 대한 필드 추가해야 하는지 검토 필요.
+    -->
+    <script>
+        function toggleEditMode() {
+            document.body.classList.toggle('edit-mode');
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        function deleteTeam(teamId) {
+            if (confirm("정말로 이 팀을 삭제하시겠습니까?")) {
+                fetch(`/delete_team/${teamId}/`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken')
+                    }
+                }).then(response => {
+                    if (response.ok) {
+                        document.getElementById(`team-${teamId}`).remove();
+                    } else {
+                        response.json().then(data => {
+                            alert(data.error);
+                        });
+                    }
+                });
+            }
+        }
+    </script>
 </body>
 </html>

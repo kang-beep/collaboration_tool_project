@@ -39,20 +39,15 @@ def teams_create(request):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-    
-def edit_team(request, team_id):
-    if request.method == 'PUT':
-        data = json.loads(request.body)
-        team = get_object_or_404(Team, id=team_id)
-        team.name = data['name']
-        team.save()
-        return JsonResponse({'status': 'success'})
-    return JsonResponse({'status': 'fail'}, status=400)
 
-
+@login_required
+@require_http_methods(["DELETE"])
 def delete_team(request, team_id):
-    if request.method == 'DELETE':
-        team = get_object_or_404(Team, id=team_id)
+    team = get_object_or_404(Team, id=team_id)
+    try:
         team.delete()
         return JsonResponse({'status': 'success'})
-    return JsonResponse({'status': 'fail'}, status=400)
+    except Exception as e:
+        return JsonResponse({'status': 'fail', 'error': str(e)}, status=400)
+
+

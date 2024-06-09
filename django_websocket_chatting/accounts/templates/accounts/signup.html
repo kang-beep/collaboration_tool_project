@@ -16,7 +16,6 @@
             background: #F4F6F9;
             padding: 0;
             background-color: #9fd1ca;
-            
         }
         .signup-container {
             background: white;
@@ -30,7 +29,6 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            
         }
         .signup-container h2 {
             margin-bottom: 1rem;
@@ -41,6 +39,7 @@
             margin-bottom: 1rem;
             text-align: left;
             width: 100%;
+            position: relative;
         }
         .input-group label {
             display: block;
@@ -48,12 +47,19 @@
             color: #666;
             font-size: 1rem;
         }
-        .input-group input {
+        .input-group input, .input-group textarea, .input-group input[type="file"] {
             width: 100%;
             padding: 0.75rem;
             border: 1px solid #ccc;
             border-radius: 0.5rem;
             font-size: 1rem;
+            box-sizing: border-box;
+        }
+        .error-message {
+            color: red;
+            font-size: 14px;
+            margin-top: 5px;
+            margin-bottom: 15px;
         }
         .signup-button {
             width: 100%;
@@ -67,51 +73,84 @@
             text-decoration: none;
             display: inline-block;
             margin-top: 1rem;
-            
         }
         .signup-button:hover {
             background: #27ae60;
         }
         .head {
-            color:rgb(36, 120, 109);;
+            color: rgb(36, 120, 109);
             text-align: center;
-           
+        }
+        #imagePreview img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
     <div class="signup-container">
         <div class="head">
-          <h2>Welcome to</h2><h1>Aldea CHAT</h1>
-        <div>
+            <h2>Welcome to</h2><h1>Aldea CHAT</h1>
+        </div>
         <form method="post" enctype="multipart/form-data" action="{% url 'accounts:signup' %}">
             {% csrf_token %}
             <div class="input-group">
-                <label for="id_username">🍀 - ID</label>
-                <input type="text" id="id_username" name="username" required>
+                <label for="id_username">🍀 - 아이디</label>
+                <input type="text" id="id_username" name="username" required value="{{ form.username }}">
             </div>
             <div class="input-group">
-                <label for="id_password">🍀 - Passward</label>
+                <label for="id_password">🍀 - 비밀번호</label>
                 <input type="password" id="id_password" name="password" required>
             </div>
             <div class="input-group">
-                <label for="id_password2">🍀 - Check your password</label>
+                <label for="id_password2">🍀 - 비밀번호 확인</label>
                 <input type="password" id="id_password2" name="password2" required>
+                {% if error_message %}
+                    <div class="error-message">{{ error_message }}</div>
+                {% endif %}
             </div>
             <div class="input-group">
-                <label for="id_name">🍀 - Name</label>
-                <input type="text" id="id_name" name="name" required>
+                <label for="id_name">🍀 - 이름</label>
+                <input type="text" id="id_name" name="name" required value="{{ form.name }}">
             </div>
             <div class="input-group">
-                <label for="id_contact">🍀 - Phone number</label>
-                <input type="text" id="id_contact" name="contact" required>
+                <label for="id_contact">🍀 - 전화번호</label>
+                <input type="text" id="id_contact" name="contact" required placeholder="000-0000-0000" value="{{ form.contact }}">
             </div>
             <div class="input-group">
-                <label for="id_profile_picture">🍀 - Profile picture</label>
-                <input type="file" id="id_profile_picture" name="profile_picture">
+                <label for="id_profile_picture">🍀 - 프로필 사진</label>
+                <input type="file" id="id_profile_picture" name="profile_picture" onchange="previewImage(event)">
+                <div id="errorMessage" class="error-message"></div>
+                <div id="imagePreview"></div>
             </div>
-            <button type="submit" class="signup-button">Create an account</button>
+            <button type="submit" class="signup-button">회원가입</button>
         </form>
     </div>
+
+    <script>
+        function previewImage(event) {
+            var file = event.target.files[0];
+            var fileType = file.type;
+            var validImageTypes = ["image/gif", "image/jpeg", "image/png", "image/jpg"];
+
+            if (!validImageTypes.includes(fileType)) {
+                var errorMessage = document.getElementById('errorMessage');
+                errorMessage.innerHTML = "이미지 파일이 아닙니다.<br>.gif / .jpeg / .png / .jpg 파일만 프로필 선택 가능";
+                document.getElementById('imagePreview').innerHTML = '';
+                return;
+            } else {
+                document.getElementById('errorMessage').textContent = '';
+            }
+
+            var reader = new FileReader();
+            reader.onload = function(){
+                var output = document.getElementById('imagePreview');
+                output.innerHTML = '<img src="' + reader.result + '">';
+            }
+            reader.readAsDataURL(file);
+        }
+    </script>
 </body>
 </html>
