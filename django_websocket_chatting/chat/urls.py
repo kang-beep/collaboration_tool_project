@@ -15,10 +15,12 @@ app_name = "chat"
 # ]
 
 urlpatterns = [
-    path('', views.index, name='index'),
+    # path('', views.index, name='index'),
+    # index 페이지 역할을 team_rooms가 함
     path('teams/<int:team_id>/', views.team_rooms, name='team_rooms'),
     path('teams/<int:team_id>/rooms/new/', views.room_new, name='room_new'),
     path('rooms/<int:room_pk>/', views.room_chat, name='room_chat'),
     path('rooms/<int:room_pk>/delete/', views.room_delete, name='room_delete'),
     path('rooms/<int:room_pk>/users/', views.room_users, name='room_users'),
+    
 ]
