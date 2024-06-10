@@ -24,14 +24,19 @@ def team_rooms(request, team_id):
 @login_required
 def room_new(request, team_id):
     team = get_object_or_404(Team, id=team_id)
+    print(team)
     if request.method == "POST":
+        print("form 날라옴")
         form = RoomForm(request.POST)
         if form.is_valid():
+            print("데이터 유효함")
             created_room = form.save(commit=False)
             created_room.owner = request.user
             created_room.save()
-            TeamRoom.objects.create(team=team, room=created_room)
+            TeamRoom.objects.create(team_id=team.id, room=created_room)
             return redirect("chat:team_rooms", team_id=team.id)
+        else : 
+            print("데이터 유효하지 않음")
     else:
         form = RoomForm()
 
