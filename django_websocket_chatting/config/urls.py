@@ -23,7 +23,8 @@ from home.views import front_view
 
 urlpatterns = [
     
-    path('', front_view , name='home'),
+    #path('', front_view , name='home'),
+    path('', RedirectView.as_view(pattern_name='accounts:login'), name='home'),
     path('admin/', admin.site.urls),
     path('accounts/', include('accounts.urls')),
     path('chat/', include('chat.urls')),
@@ -31,6 +32,7 @@ urlpatterns = [
     path('docsumm/', include('docsumm.urls')),
     path('eventcalendar/', include('eventcalendar.urls', namespace='eventcalendar')),
     path('teams/', include('teams.urls')),
+    path('ocr/', include('ocr.urls')),
     
     # path('', RedirectView.as_view(pattern_name="chat:index"), name="root"),
 ] 

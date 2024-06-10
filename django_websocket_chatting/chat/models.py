@@ -91,7 +91,6 @@ class Room(OnlineUserMixin, models.Model):
     )
     # 채팅방의 이름을 나타내는 필드입니다.
     name = models.CharField(max_length=100)
-
     # TeamRoom 모델과 다대다 연결
     teams = models.ManyToManyField(Team, through='TeamRoom', related_name='rooms', verbose_name='소속 팀')
 

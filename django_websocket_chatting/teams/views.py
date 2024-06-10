@@ -1,15 +1,16 @@
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
+import json
 from django.shortcuts import render, redirect
-
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_http_methods
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 
 from rest_framework.decorators import api_view
-from rest_framework import serializers,status
+from rest_framework import serializers, status
 from rest_framework.response import Response
 
 from .serializers import TeamSerializer
 from .models import Team
-# Create your views here.
 
 @login_required
 @api_view(['GET'])
@@ -38,3 +39,15 @@ def teams_create(request):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+
+@login_required
+@require_http_methods(["DELETE"])
+def delete_team(request, team_id):
+    team = get_object_or_404(Team, id=team_id)
+    try:
+        team.delete()
+        return JsonResponse({'status': 'success'})
+    except Exception as e:
+        return JsonResponse({'status': 'fail', 'error': str(e)}, status=400)
+
+

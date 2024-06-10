@@ -89,3 +89,7 @@ db.sqlite3
 key.json
 
 venv/
+
+# Default ignored files
+/shelf/
+/workspace.xml

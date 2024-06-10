@@ -35,7 +35,7 @@ def room_new(request, team_id):
     else:
         form = RoomForm()
 
-    return render(request, "chat/room_form.html", {
+    return render(request, "chat/room_new.html", {
         "form": form,
         "team": team,
     })
