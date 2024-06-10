@@ -1,10 +1,11 @@
 from django.contrib.auth.views import LoginView, LogoutView
-from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import login, authenticate
 from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.http import require_POST, require_GET
+from django.http import JsonResponse
 
 from rest_framework.decorators import api_view
 from rest_framework import status, generics
@@ -70,7 +71,8 @@ class SendFriendRequestView(generics.CreateAPIView):
     serializer_class = FriendRequestSerializer
     
     def create(self, request, *args, **kwargs):
-        to_user = get_object_or_404(CustomUser, username=request.data.get['to_user'])
+        print(request.data.get('to_user'))
+        to_user = get_object_or_404(CustomUser, username=request.data.get('to_user'))
         if FriendRequest.objects.filter(from_user=request.user, to_user=to_user).exists():
             return Response({'detail': 'Friend request already sent'}, status=status.HTTP_400_BAD_REQUEST)
         
@@ -86,7 +88,7 @@ class AcceptFriendRequestView(generics.UpdateAPIView):
     def update(self, request, *args, **kwargs):
         friend_request = get_object_or_404(FriendRequest, pk=kwargs['pk'])
         if friend_request.to_user != request.user:
-            return Response({'detail': 'Not your friend request. '}, status= status.HTTP_400_BAD_REQUEST)
+            return Response({'detail': 'Not your friend request. '}, status=status.HTTP_400_BAD_REQUEST)
         friend_request.accept()
         return Response({'detail': 'Friend request accepted.'}, status=status.HTTP_200_OK)
 
@@ -94,7 +96,7 @@ class AcceptFriendRequestView(generics.UpdateAPIView):
 class RejectFriendRequestView(generics.DestroyAPIView):
     permission_calsses = [IsAuthenticated]
     
-    def delete(selef, request, *args, **kwargs ):
+    def delete(self, request, *args, **kwargs ):
         friend_request = get_object_or_404(FriendRequest, pk=kwargs['pk'])
         if friend_request.to_user != request.user:
             return Response({'detail': 'Not your friend request.'}, status=status.HTTP_400_BAD_REQUEST)
@@ -122,3 +124,16 @@ def friend_management(request):
     })
     
 
+# 친구 프로필 데이터 반환
+@login_required
+@require_GET
+def friend_profile(request):
+    friend_id = request.GET.get('id')
+    friend = get_object_or_404(CustomUser, id=friend_id)
+    profile_data = {
+        'username': friend.username,
+        'name': friend.name,
+        'email': friend.email,
+        'id': friend.id,
+    }
+    return JsonResponse(profile_data)

@@ -4,35 +4,138 @@
     <title>Friends List</title>
 </head>
 <body>
-    <h2>Friends List</h2>
-    <ul>
-        {% for friend in friends %}
-            <li>{{ friend.username }}</li>
-        {% endfor %}
-    </ul>
+    <div class="container">
+        <h2>Friends List</h2>
+        <ul>
+            {% for friend in friends %}
+                <li>
+                    <a href="#" class="friend-profile" data-id="{{ friend.id }}" data-toggle="modal" data-target="#profileModal">{{ friend.username }}</a>
+                </li>
+            {% endfor %}
+        </ul>
 
-    <h2>Received Friend Requests</h2>
-    <ul>
-        {% for request in received_requests %}
-            <li>
-                {{ request.from_user.username }}
-                <form method="post" action="{% url 'accounts:send-friend-request' request.pk %}">
-                    {% csrf_token %}
-                    <button type="submit">Accept</button>
-                </form>
-                <form method="post" action="{% url 'accounts:reject-friend-request' request.pk %}">
-                    {% csrf_token %}
-                    <button type="submit">Reject</button>
-                </form>
-            </li>
-        {% endfor %}
-    </ul>
+        <h2>Received Friend Requests</h2>
+        <ul>
+            {% for request in received_requests %}
+                <li>
+                    {{ request.from_user.username }}
+                    <form method="post" action="{% url 'accounts:accept-friend-request' request.pk %}">
+                        {% csrf_token %}
+                        <button type="submit">Accept</button>
+                    </form>
+                    <form method="post" action="{% url 'accounts:reject-friend-request' request.pk %}">
+                        {% csrf_token %}
+                        <button type="submit">Reject</button>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
 
-    <h2>Send Friend Request</h2>
-    <form method="post" action="{% url 'accounts:send-friend-request' %}">
-        {% csrf_token %}
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required>
-        <button type="submit">Send Request</button>
-    </form>
+        <h2>Send Friend Request</h2>
+        <form method="post" action="{% url 'accounts:send-friend-request' %}">
+            {% csrf_token %}
+            <div>친구추가할 친구의 아이디를 입력해주세요(별칭아님)</div>
+            <label for="to_user">Username:</label>
+            <input type="text" id="to_user" name="to_user" required>
+            <button type="submit">Send Request</button>
+        </form>
+
+        <!-- Friend Profile Modal -->
+        <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="profileModalLabel">Friend Profile</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p id="profile-info"></p>
+                        <button id="chat-button" class="btn btn-primary">Start Chat</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $('.friend-profile').click(function() {
+                const friendId = $(this).data('id');
+                $.ajax({
+                    url: `{% url 'accounts:friend_profile' %}`,
+                    method: 'GET',
+                    data: {id: friendId},
+                    success: function(data) {
+                        $('#profile-info').html(`<strong>Username:</strong> ${data.username}<br><strong>Name:</strong> ${data.name}<br><strong>Email:</strong> ${data.email}`);
+                        $('#chat-button').data('id', data.id);
+                    }
+                });
+            });
+
+            $('#chat-button').click(function() {
+                const friendId = $(this).data('id');
+                // window.location.href = `{% url 'chat:start_private_chat' %}?friend_id=${friendId}`;
+            });
+        });
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        const csrftoken = getCookie('csrftoken');
+
+        function handleAccept(requestId) {
+            fetch(`/accounts/friend-request/accept/${requestId}/`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken,
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.detail);
+                location.reload();  // 페이지를 새로고침하여 변경 사항을 반영
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function handleReject(requestId) {
+            fetch(`/accounts/friend-request/reject/${requestId}/`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken,
+                }
+            })
+            .then(response => {
+                if (response.status === 204) {
+                    alert('Friend request rejected.');
+                    location.reload();  // 페이지를 새로고침하여 변경 사항을 반영
+                } else {
+                    return response.json();
+                }
+            })
+            .then(data => {
+                if (data && data.detail) {
+                    alert(data.detail);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
 </body>
+</html>
