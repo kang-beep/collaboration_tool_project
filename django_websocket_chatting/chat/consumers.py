@@ -3,6 +3,7 @@ from asgiref.sync import async_to_sync  # 비동기 함수를 동기식으로 �
 from channels.generic.websocket import JsonWebsocketConsumer  # WebSocket에 대한 기본 컨슈머 클래스입니다.
 
 from chat.models import Room  # chat 앱에서 Room 모델을 가져옵니다.
+from datetime import datetime  # 타임스탬프를 위해 datetime 모듈을 가져옵니다.
 
 # ChatConsumer 정의. JsonWebsocketConsumer의 하위 클래스입니다.
 class ChatConsumer(JsonWebsocketConsumer):
@@ -10,10 +11,9 @@ class ChatConsumer(JsonWebsocketConsumer):
     # ChatConsumer의 생성자 함수입니다.
     def __init__(self, *args, **kwargs):
         # 상위 클래스의 생성자를 호출합니다.
-        super().__init__(*args, **kwargs)
+        super().__init__(args, kwargs)
         self.group_name = ""  # group_name을 빈 문자열로 초기화합니다.
         self.room = None  # room 객체를 None으로 초기화합니다.
-
 
     # WebSocket이 연결 과정 중일 때 호출됩니다.
     def connect(self):
@@ -57,7 +57,6 @@ class ChatConsumer(JsonWebsocketConsumer):
                 # WebSocket 연결을 수락합니다.
                 self.accept()
 
-
     # WebSocket이 닫힐 때 호출됩니다.
     def disconnect(self, code):
         # group_name이 있으면 현재 채널을 그룹에서 제거합니다.
@@ -92,6 +91,7 @@ class ChatConsumer(JsonWebsocketConsumer):
         if _type == "chat.message":
             sender = user.username
             message = content["message"]
+            timestamp = content.get("timestamp", datetime.now().strftime("%H:%M:%S"))
             # 그룹에 채팅 메시지를 전송합니다.
             async_to_sync(self.channel_layer.group_send)(
                 self.group_name,
@@ -99,11 +99,11 @@ class ChatConsumer(JsonWebsocketConsumer):
                     "type": "chat.message",
                     "message": message,
                     "sender": sender,
+                    "timestamp": timestamp,
                 }
             )
         else:
             print(f"잘못된 메시지 유형 : ${_type}")
-
 
     # 사용자가 채팅에 참가할 때의 처리입니다.
     def chat_user_join(self, message_dict):
@@ -125,6 +125,7 @@ class ChatConsumer(JsonWebsocketConsumer):
             "type": "chat.message",
             "message": message_dict["message"],
             "sender": message_dict["sender"],
+            "timestamp": message_dict["timestamp"],  # 타임스탬프를 포함합니다.
         })
 
     # 채팅방이 삭제될 때의 처리입니다.
