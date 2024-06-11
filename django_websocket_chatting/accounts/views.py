@@ -81,13 +81,20 @@ class SendFriendRequestView(generics.CreateAPIView):
     serializer_class = FriendRequestSerializer
     
     def create(self, request, *args, **kwargs):
-        print(request.data.get('to_user'))
+        username =request.data.get('to_user')
+        try:
+            to_user = CustomUser.objects.get(username=username)
+        except CustomUser.DoesNotExist:
+            return Response({'detail': '등록된 유저가 조회되지 않습니다.'}, status=status.HTTP_400_BAD_REQUEST)
+        
         to_user = get_object_or_404(CustomUser, username=request.data.get('to_user'))
+        
+        
         if FriendRequest.objects.filter(from_user=request.user, to_user=to_user).exists():
-            return Response({'detail': 'Friend request already sent'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'detail': '이미 친구요청을 보낸 사용자입니다.'}, status=status.HTTP_400_BAD_REQUEST)
         
         FriendRequest.objects.create(from_user=request.user, to_user=to_user)
-        return Response({'detail': 'Friend request sent.'}, status=status.HTTP_201_CREATED)
+        return Response({'detail': '친구요청을 보냈습니다!'}, status=status.HTTP_201_CREATED)
 
 # 친구 요청을 수락하는 API 엔드포인트
 class AcceptFriendRequestView(generics.UpdateAPIView):
@@ -140,10 +147,10 @@ def friend_management(request):
 def friend_profile(request):
     friend_id = request.GET.get('id')
     friend = get_object_or_404(CustomUser, id=friend_id)
-    profile_data = {
+    data = {
         'username': friend.username,
-        'name': friend.name,
+        'name' : friend.name,
         'email': friend.email,
-        'id': friend.id,
+        'profile_picture': friend.profile_picture.url if friend.profile_picture else ''
     }
-    return JsonResponse(profile_data)
+    return JsonResponse(data)

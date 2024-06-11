@@ -22,6 +22,8 @@ class CustomUser(AbstractUser):
     # 친구 목록 필드 추가 
     friends = models.ManyToManyField('self', blank=True)
     
+
+    
 # 친구 요청 모델
 class FriendRequest(models.Model):
     
