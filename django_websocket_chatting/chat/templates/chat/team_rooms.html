@@ -14,11 +14,14 @@
             padding: 0;
             height: 100vh;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
         .container-fluid {
             display: flex;
             height: 100%;
             padding: 0;
+            flex-grow: 1;
         }
         .header {
             background-color: #ffffff7a;
@@ -26,11 +29,31 @@
             text-align: center;
             color: #00796b;
             border: 1px solid #00796b;
-            border-radius: 40px; 
+            border-radius: 40px;
             margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            position: relative;
+            z-index: 1;
         }
         .header h1 {
             margin: 0;
+            flex-grow: 1;
+        }
+        .header .profile-btn {
+            background-color: #00796b;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            display: inline-block;
+            margin-right: 10px;
+        }
+        .header .profile-btn:hover {
+            background-color: #004d40;
         }
         .chat-list {
             list-style-type: none;
@@ -40,6 +63,7 @@
             height: calc(70vh - 60px);
             background: #ffffff7a;
             box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+            flex-grow: 1;
         }
         .chat-list li {
             background-color: white;
@@ -140,6 +164,11 @@
             padding-bottom: 10px;
             margin: 0 auto;
             border-bottom: 3px solid #f8f9faf2;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            z-index: 2;
         }
         .container {
             background: #f8f9fa59;
@@ -155,7 +184,8 @@
           font-size: 2rem;
           color: white;
           text-shadow: 0px 0px 10px #0000008c;
-          font-weight: bold; 
+          font-weight: bold;
+          flex-grow: 1;
         }
         .fa-comment{
           margin-left: 10px; 
@@ -163,11 +193,77 @@
           padding: 5px;
           text-shadow: 0px 0px 10px #0000008c;
         }
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -250px;
+            width: 250px;
+            height: 100%;
+            background-color: #00796b;
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            color: white;
+            transition: left 0.3s ease;
+            z-index: 3;
+        }
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            margin: 10px 0;
+        }
+        .sidebar a:hover {
+            text-decoration: underline;
+        }
+        .sidebar-btn {
+            background-color: #00796b;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            display: inline-block;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+        .sidebar-btn:hover {
+            background-color: #004d40;
+        }
+        .sidebar-close-btn {
+            background-color: #00796b;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            text-decoration: none;
+            display: block;
+            text-align: right;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        .sidebar-close-btn:hover {
+            background-color: #004d40;
+        }
+        .sidebar-open {
+            left: 0;
+        }
     </style>
 </head>
 <body>
+    <div class="sidebar" id="sidebar">
+        <button class="sidebar-close-btn" onclick="toggleSidebar()">✖</button>
+        <h2>Aidea Menu</h2><hr>
+        <a href="#">홈</a>
+        <a href="#">친구목록</a>
+        <a href="#">친구추가</a>
+        <a href="#">등등등...</a>
+    </div>
     <div class="container-secound">
-        <div><span class="textCht">Aidea Chat</span><i class="fa-regular fa-comment fa-3x"></i></div>
+        <button class="sidebar-btn" onclick="toggleSidebar()"><i class="fa-solid fa-bars fa-1.5x"></i></button>
+        <div class="textCht">Aidea Chat <i class="fa-regular fa-comment fa-2x"></i></div>
+        <a href="{% url 'accounts:profile' %}" class="profile-btn"><i class="fa-regular fa-user fa-2x"></i></a>
     </div>
     <div class="container-fluid">
         <!-- Main content -->
@@ -219,9 +315,7 @@
                     <div class="new-chat-btn">
                         <a href="{% url 'chat:room_new' team.id %}">새 채팅방 만들기</a>
                     </div>
-                    <div>
-                        <a href="{% url 'ocr-home' %}">OCR Home 바로가기</a>
-                    </div>
+
                     <div class="card" style="width: 18rem;">
                         <img src="..." class="card-img-top" alt="...">
                         <div class="card-body">
@@ -238,6 +332,7 @@
                             <a href="#" class="btn btn-primary">Go somewhere</a>
                         </div>
                     </div>
+                    
                     <div class="container">
                         <div><i class="fa-solid fa-toolbox fa-4x"></i><br><br></div>
                         <div class="row">
@@ -266,5 +361,10 @@
         </main>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script>
+        function toggleSidebar() {
+            document.getElementById("sidebar").classList.toggle("sidebar-open");
+        }
+    </script>
 </body>
 </html>
