@@ -37,6 +37,7 @@
             width: 100%;
             position: relative;
             z-index: 1;
+            box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
         }
         .header h1 {
             margin: 0;
@@ -59,17 +60,16 @@
             list-style-type: none;
             padding: 0;
             margin: 20px;
-            overflow-y: auto;
-            height: calc(70vh - 60px);
             background: #ffffff7a;
             box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
             flex-grow: 1;
+            border-radius: 30px;
         }
         .chat-list li {
-            background-color: white;
+            background-color: #ffffffa8;
             margin: 10px 0;
-            padding: 15px;
-            border-radius: 8px;
+            padding: 12px;
+            border-radius: 40px;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
             display: flex;
             align-items: center;
@@ -84,7 +84,7 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background-color: #00bcd4;
+            background-color: rgba(13, 110, 253, 0.25);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -149,11 +149,13 @@
             max-width: 300px; /* 원하는 너비로 설정 */
             max-height: 300px;
             margin: 0 auto;
+            
         }
         #carouselExampleIndicators .carousel-inner img {
             width: 100%;
             height: auto;
             max-height: 300px;
+            
         }
         .fa-readme,
         .fa-magnifying-glass {
@@ -186,6 +188,8 @@
           text-shadow: 0px 0px 10px #0000008c;
           font-weight: bold;
           flex-grow: 1;
+          margin-top: 10px;
+          margin-right: 10px;
         }
         .fa-comment{
           margin-left: 10px; 
@@ -199,7 +203,7 @@
             left: -250px;
             width: 250px;
             height: 100%;
-            background-color: #00796b;
+            background-color: #518f87;
             padding: 20px;
             box-shadow: 2px 0 5px rgba(0,0,0,0.1);
             overflow-y: auto;
@@ -218,21 +222,23 @@
             text-decoration: underline;
         }
         .sidebar-btn {
-            background-color: #00796b;
-            color: white;
+            background-color: #B2DFDB;
+            color: #ffffff;
             border: none;
-            padding: 10px 20px;
+            padding: 5px 12px;
             border-radius: 20px;
             text-decoration: none;
             display: inline-block;
             margin-left: 10px;
+            margin-top: 10px;
             cursor: pointer;
+            text-shadow: 0px 0px 10px #0000008c;
         }
         .sidebar-btn:hover {
             background-color: #004d40;
         }
         .sidebar-close-btn {
-            background-color: #00796b;
+            background-color: #518f87;
             color: white;
             border: none;
             padding: 5px 10px;
@@ -245,24 +251,41 @@
         }
         .sidebar-close-btn:hover {
             background-color: #004d40;
-        }
+        }   
         .sidebar-open {
             left: 0;
         }
+        .carousel-inner {
+            border-radius: 50px;
+          box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;
+        }
+        .fa-user{
+          text-shadow: 0px 0px 10px #0000008c;
+          color: #ffffff;
+          margin-right: 15px;
+          margin-top: 10px;
+          size: 10px;
+        }
+        
     </style>
 </head>
 <body>
     <div class="sidebar" id="sidebar">
         <button class="sidebar-close-btn" onclick="toggleSidebar()">✖</button>
         <h2>Aidea Menu</h2><hr>
-        <a href="#">홈</a>
-        <a href="#">친구목록</a>
-        <a href="#">친구추가</a>
+        <a href="#"><i class="fa-solid fa-house"></i>  홈</a>
+        <a href="#"><i class="fa-solid fa-list"></i>  친구목록</a>
+        <a href="#"><i class="fa-solid fa-plus"></i>  친구추가</a>
         <a href="#">등등등...</a>
     </div>
     <div class="container-secound">
-        <button class="sidebar-btn" onclick="toggleSidebar()"><i class="fa-solid fa-bars fa-1.5x"></i></button>
-        <div class="textCht">Aidea Chat <i class="fa-regular fa-comment fa-2x"></i></div>
+        <button class="sidebar-btn" onclick="toggleSidebar()"><i class="fa-solid fa-bars fa-2x"></i></button>
+        <div class="textCht" onclick="goToTeamRooms(1)">Aidea Chat</div>
+        <script>
+            function goToTeamRooms(teamId) {
+                window.location.href = `/chat/teams/${teamId}/`;
+            }
+        </script>
         <a href="{% url 'accounts:profile' %}" class="profile-btn"><i class="fa-regular fa-user fa-2x"></i></a>
     </div>
     <div class="container-fluid">
@@ -316,22 +339,7 @@
                         <a href="{% url 'chat:room_new' team.id %}">새 채팅방 만들기</a>
                     </div>
 
-                    <div class="card" style="width: 18rem;">
-                        <img src="..." class="card-img-top" alt="...">
-                        <div class="card-body">
-                            <h5 class="card-title">Card title</h5>
-                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                            <a href="#" class="btn btn-primary">Go somewhere</a>
-                        </div>
-                    </div>
-                    <div class="card" style="width: 18rem;">
-                        <img src="..." class="card-img-top" alt="...">
-                        <div class="card-body">
-                            <h5 class="card-title">Card title</h5>
-                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                            <a href="#" class="btn btn-primary">Go somewhere</a>
-                        </div>
-                    </div>
+                    
                     
                     <div class="container">
                         <div><i class="fa-solid fa-toolbox fa-4x"></i><br><br></div>
