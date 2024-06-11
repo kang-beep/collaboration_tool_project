@@ -6,6 +6,7 @@ from django.contrib.auth import login, authenticate
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_POST, require_GET
 from django.http import JsonResponse
+from django.core.files.storage import default_storage
 
 from rest_framework.decorators import api_view
 from rest_framework import status, generics
@@ -14,6 +15,8 @@ from rest_framework.permissions import IsAuthenticated
 
 from .serializers import CustomUserSerializer, FriendRequestSerializer
 from .models import CustomUser, FriendRequest
+
+app_name = 'accounts'
 
 @api_view(['GET', 'POST'])
 def signup(request):
@@ -59,9 +62,18 @@ logout = LogoutView.as_view(
     next_page="home:front",
 )
 
+
 @login_required
 def profile(request):
-    return render(request, 'accounts/profile.html')
+    if request.method == 'POST' and request.FILES.get('profile_picture'):
+        profile_picture = request.FILES['profile_picture']
+        file_name = default_storage.save(f"profile_pictures/{profile_picture.name}", profile_picture)
+        request.user.profile_picture = file_name
+        request.user.save()
+        return redirect('accounts:profile')
+
+    return render(request, 'accounts/profile.html', {'user': request.user})
+
 
 # 친구 요청을 보내는 엔드 포인트 
 class SendFriendRequestView(generics.CreateAPIView):
