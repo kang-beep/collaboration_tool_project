@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Private Chat with {{ friend.username }}</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h2>Private Chat with {{ friend.username }}</h2>
+        <div id="chat-box" style="height: 400px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;">
+            <!-- 채팅 메시지들이 여기에 추가됩니다. -->
+        </div>
+        <form id="chat-form">
+            {% csrf_token %}
+            <div class="input-group mt-3">
+                <input type="text" id="message-input" class="form-control" placeholder="메시지를 입력하세요...">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="submit">전송</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            const ws = new WebSocket('ws://' + window.location.host + '/ws/chat/private_chat/{{ friend.username }}/');
+
+            ws.onopen = function(event) {
+                console.log("WebSocket is open now.");
+            };
+
+            ws.onmessage = function(event) {
+                const data = JSON.parse(event.data);
+                const message = data.message;
+                const sender = data.sender;
+
+                const messageElement = `<div><strong>${sender}:</strong> ${message}</div>`;
+                $('#chat-box').append(messageElement);
+            };
+
+            ws.onclose = function(event) {
+                console.log("WebSocket is closed now.");
+            };
+
+            $('#chat-form').submit(function(event) {
+                event.preventDefault();
+
+                const messageInput = $('#message-input');
+                const message = messageInput.val();
+
+                if (message) {
+                    ws.send(JSON.stringify({
+                        'message': message
+                    }));
+                    messageInput.val('');  // 입력 필드를 초기화합니다.
+                }
+            });
+        });
+    </script>
+</body>
+</html>

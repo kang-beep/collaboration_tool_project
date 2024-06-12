@@ -151,6 +151,8 @@ def friend_profile(request):
         'username': friend.username,
         'name' : friend.name,
         'email': friend.email,
-        'profile_picture': friend.profile_picture.url if friend.profile_picture else ''
+        'profile_picture': friend.profile_picture.url if friend.profile_picture else '',
+        'is_online' : friend.is_online,
+        
     }
     return JsonResponse(data)

@@ -18,4 +18,6 @@ urlpatterns = [
     path('friends/', views.ListFriendsView.as_view(), name='list_friends'),
     path('friend-management/', views.friend_management, name='friend_management'),
     path('friend-profile/', views.friend_profile, name='friend_profile'),   # Friend profile
+    
+    
 ]

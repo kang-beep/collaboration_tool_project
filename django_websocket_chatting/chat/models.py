@@ -137,3 +137,14 @@ class RoomMember(models.Model):
         encoder=ExtendedJSONEncoder,  # 사용자 정의 JSON 인코더
         decoder=ExtendedJSONDecoder,  # 사용자 정의 JSON 디코더
     )
+
+
+# 1대1 채팅 기능
+class PrivateMessage(models.Model):
+    sender = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='sent_messages', on_delete=models.CASCADE)
+    receiver = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='received_messages', on_delete=models.CASCADE)
+    message = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['timestamp']

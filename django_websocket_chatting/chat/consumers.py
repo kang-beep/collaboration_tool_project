@@ -1,9 +1,14 @@
 # 필요한 함수와 클래스를 가져옵니다.
-from asgiref.sync import async_to_sync  # 비동기 함수를 동기식으로 호출하기 위해 사용됩니다.
-from channels.generic.websocket import JsonWebsocketConsumer  # WebSocket에 대한 기본 컨슈머 클래스입니다.
+from asgiref.sync import async_to_sync, sync_to_async  # 비동기 함수를 동기식으로 호출하기 위해 사용됩니다.
+from channels.generic.websocket import JsonWebsocketConsumer, AsyncWebsocketConsumer  # WebSocket에 대한 기본 컨슈머 클래스입니다.
+from django.contrib.auth import get_user_model
+from channels.db import database_sync_to_async
 
-from chat.models import Room  # chat 앱에서 Room 모델을 가져옵니다.
+from chat.models import Room, PrivateMessage  # chat.models Room,PrivateMessage 모델을 가져옵니다.
 from datetime import datetime  # 타임스탬프를 위해 datetime 모듈을 가져옵니다.
+from accounts.models import CustomUser
+
+import json
 
 # ChatConsumer 정의. JsonWebsocketConsumer의 하위 클래스입니다.
 class ChatConsumer(JsonWebsocketConsumer):
@@ -132,3 +137,62 @@ class ChatConsumer(JsonWebsocketConsumer):
     def chat_room_deleted(self, message_dict):
         custom_code = 4000  # 방 삭제에 대한 사용자 정의 코드입니다.
         self.close(code=custom_code)  # 사용자 정의 코드로 WebSocket을 닫습니다.
+
+
+class PrivateChatConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        self.room_id = self.scope['url_route']['kwargs']['room_id']
+        self.room_group_name = f'private_chat_{self.room_id}'
+
+        await self.channel_layer.group_add(
+            self.room_group_name,
+            self.channel_name
+        )
+
+        await self.accept()
+
+    async def disconnect(self, close_code):
+        await self.channel_layer.group_discard(
+            self.room_group_name,
+            self.channel_name
+        )
+
+    async def receive(self, text_data):
+        data = json.loads(text_data)
+        message = data['message']
+        sender = self.scope['user']
+
+        user1_id, user2_id = map(int, self.room_id.split('-'))
+        receiver_id = user2_id if sender.id == user1_id else user1_id
+        receiver = await sync_to_async(CustomUser.objects.get)(id=receiver_id)
+
+        if sender.is_authenticated:
+            await sync_to_async(PrivateMessage.objects.create)(
+                sender=sender, receiver=receiver, message=message
+            )
+
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    'type': 'chat_message',
+                    'message': message,
+                    'sender': sender.username
+                }
+            )
+
+    async def chat_message(self, event):
+        message = event['message']
+        sender = event['sender']
+
+        await self.send(text_data=json.dumps({
+            'message': message,
+            'sender': sender
+        }))
+
+    @database_sync_to_async
+    def get_receiver(self, username):
+        return CustomUser.objects.get(username=username)
+
+    @database_sync_to_async
+    def create_private_message(self, sender, receiver, message):
+        return PrivateMessage.objects.create(sender=sender, receiver=receiver, message=message)

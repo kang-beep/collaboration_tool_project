@@ -21,6 +21,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 
 # chat 앱의 라우팅 설정을 가져옵니다.
 import chat.routing  # noqa: E402
+import accounts.routing 
 
 # 전체 ASGI 어플리케이션 구성을 정의합니다.
 application = ProtocolTypeRouter({
@@ -30,7 +31,8 @@ application = ProtocolTypeRouter({
     "websocket": AllowedHostsOriginValidator(
         AuthMiddlewareStack(
             URLRouter(
-                chat.routing.websocket_urlpatterns
+                chat.routing.websocket_urlpatterns +
+                accounts.routing.websocket_urlpatterns
             )
         )
     ),

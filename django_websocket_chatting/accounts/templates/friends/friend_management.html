@@ -7,14 +7,36 @@
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <style>
+        .online .status-indicator {
+            background-color: green;
+        }
+        .offline .status-indicator {
+            background-color: red;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-left: 5px;
+        }
+        #chat-button {
+            display: none; /* 버튼을 기본적으로 숨깁니다 */
+        }
+        #loading-spinner {
+            display: none;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <h2>Friends List</h2>
-        <ul>
+        <ul id="friend-list">
             {% for friend in friends %}
-                <li>
+                <li data-id="{{ friend.id }}" class="{{ friend.is_online|yesno:'online,offline'}}"> 
                     <a href="#" class="friend-profile" data-id="{{ friend.id }}" data-toggle="modal" data-target="#profileModal">{{ friend.username }}</a>
+                    <span class="status-indicator"></span>
                 </li>
             {% endfor %}
         </ul>
@@ -52,9 +74,15 @@
                 </div>
                 <div class="modal-body" id="profile-info">
                     <!-- Profile info will be loaded here -->
+                    <div id="loading-spinner" class="text-center">
+                        <div class="spinner-border" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="chat-button">1:1 대화하기</button>
                 </div>
             </div>
         </div>
@@ -62,14 +90,41 @@
 
     <script>
         $(document).ready(function() {
+            // Websocket 연결 설정
+            const ws = new WebSocket('ws://' + window.location.host + '/ws/status/');
+            
+            ws.onopen = function(event) {
+                console.log("Websocket is open now.(friend status socket)");
+            };
+            
+            ws.onmessage = function(event) {
+                const data = JSON.parse(event.data);
+                const userId = data.user_id;
+                const isOnline = data.is_online;
+
+                const friendElement = $(`#friend-list li[data-id='${userId}']`);
+                if (isOnline) {
+                    friendElement.addClass('online').removeClass('offline');
+                } else {
+                    friendElement.addClass('offline').removeClass('online');
+                }
+            };
+
+            ws.onclose = function(event) {
+                console.log("WebSocket is closed now.");
+            };
+            
+            // friend profile 정의
             $('.friend-profile').click(function() {
                 const friendId = $(this).data('id');
+                $('#chat-button').hide(); // 프로필 정보가 로드되기 전까지 숨깁니다.
+                $('#loading-spinner').show(); // 로딩 스피너를 표시합니다.
                 $.ajax({
                     url: `{% url 'accounts:friend_profile' %}`,
                     method: 'GET',
                     data: {id: friendId},
                     success: function(data) {
-                        const profilePicturehtml = data.profile_picutre ? '<img src="${data.profile_picture}" alt="Profile Picture" width="100" height="100">' : '등록된 프로필 이미지 없음';
+                        const profilePicturehtml = data.profile_picture ? `<img src="${data.profile_picture}" alt="Profile Picture" width="100" height="100">` : '등록된 프로필 이미지 없음';
 
                         $('#profile-info').html(
                             `<strong>Username:</strong> ${data.username}<br>
@@ -77,8 +132,16 @@
                             <strong>Email:</strong> ${data.email}<br>
                             <strong>Profile image:</strong> ${profilePicturehtml}`
                         );
+                        
+                        $('#loading-spinner').hide(); // 로딩 스피너를 숨깁니다.
+                        $('#chat-button').data('username', data.username).data('friendId', friendId).show(); // 프로필 정보가 로드된 후 버튼을 표시합니다.
                     }
                 });
+            });
+
+            $('#chat-button').click(function(){
+                const friendUsername = $(this).data('username');
+                window.location.href = `/chat/private_chat/${friendUsername}/`;
             });
 
             $('#send-friend-request-form').submit(function(event) {

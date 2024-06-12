@@ -6,6 +6,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from chat.forms import RoomForm
 from chat.models import Room, Team, TeamRoom
 
+from accounts.models import CustomUser
+
 # def index(request):
 #     teams = Team.objects.all()
 #     return render(request, "chat/team_rooms.html", {
@@ -85,6 +87,16 @@ def room_users(request, room_pk):
     return JsonResponse({
         "username_list": username_list,
     })
+    
+# private view 함수 정의
+def generate_chat_room_id(user1_id, user2_id):
+    return f"{min(user1_id, user2_id)}-{max(user1_id, user2_id)}"
+
+@login_required
+def private_chat(request, username):
+    friend = get_object_or_404(CustomUser, username=username)
+    room_id = generate_chat_room_id(request.user.id, friend.id)
+    return redirect(f'/chat/private_chat/{room_id}/')
 
 # # 필요한 라이브러리와 모듈을 임포트합니다.
 # from django.contrib import messages

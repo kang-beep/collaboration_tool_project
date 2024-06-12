@@ -22,6 +22,8 @@ class CustomUser(AbstractUser):
     # 친구 목록 필드 추가 
     friends = models.ManyToManyField('self', blank=True)
     
+    # 온라인 상태 필드
+    is_online = models.BooleanField(default=False)
 
     
 # 친구 요청 모델
@@ -49,5 +51,3 @@ class FriendRequest(models.Model):
     # 친구 요청을 거부하고 요청을 삭제
     def reject(self):
         self.delete()
-    
-    
