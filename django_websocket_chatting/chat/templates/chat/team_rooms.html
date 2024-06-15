@@ -22,6 +22,7 @@
             height: 100%;
             padding: 0;
             flex-grow: 1;
+            padding: 20px;
         }
         .header {
             background-color: #ffffff7a;
@@ -64,6 +65,7 @@
             box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
             flex-grow: 1;
             border-radius: 30px;
+            margin-bottom: 20px;
         }
         .chat-list li {
             background-color: #ffffffa8;
@@ -84,12 +86,11 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background-color: rgba(13, 110, 253, 0.25);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-size: 20px;
+            color: gray;
+            font-size: inherit;
             margin-right: 15px;
         }
         .new-chat-btn {
@@ -99,7 +100,7 @@
         }
         .new-chat-btn a {
             text-decoration: none;
-            background-color: #00bcd4;
+            background-color: #00796b;
             color: white;
             padding: 10px 20px;
             border-radius: 20px;
@@ -193,9 +194,8 @@
         }
         .fa-comment{
           margin-left: 10px; 
-          color: white;
+          color: #B2DFDB;
           padding: 5px;
-          text-shadow: 0px 0px 10px #0000008c;
         }
         .sidebar {
             position: fixed;
@@ -257,6 +257,7 @@
         }
         .carousel-inner {
             border-radius: 50px;
+            margin-bottom: 20px;
           box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;
         }
         .fa-user{
@@ -273,17 +274,22 @@
     <div class="sidebar" id="sidebar">
         <button class="sidebar-close-btn" onclick="toggleSidebar()">✖</button>
         <h2>Aidea Menu</h2><hr>
-        <a href="#">팀 인원 목록</a>
-        <a href="#">친구 목록</a>
+        <a href="#"><i class="fa-solid fa-house"></i>  홈</a>
+        <a href="{% }"><i class="fa-solid fa-list"></i>  친구목록</a>
+        <a href="#"><i class="fa-solid fa-plus"></i>  친구추가</a>
+        <a href="#">등등등...</a>
     </div>
+
     <div class="container-secound">
         <button class="sidebar-btn" onclick="toggleSidebar()"><i class="fa-solid fa-bars fa-2x"></i></button>
-        <div class="textCht" onclick="goToTeamRooms(1)">Aidea Chat</div>
+        <div class="textCht" onclick="goToTeamRooms()">Aidea Chat</div>
         <script>
-            function goToTeamRooms(teamId) {
+            function goToTeamRooms() {
+                const teamId = "{{ team.id }}";  // Django 템플릿 변수를 사용하여 teamId를 가져옵니다.
                 window.location.href = `/chat/teams/${teamId}/`;
             }
         </script>
+
         <a href="{% url 'accounts:profile' %}" class="profile-btn"><i class="fa-regular fa-user fa-2x"></i></a>
     </div>
     <div class="container-fluid">
@@ -321,6 +327,7 @@
                     </button>
                 </div>
                 <!-- Chat rooms (70%) -->
+                <div class="container">     
                 <div class="col-md-12">
                     <div class="header">
                         <h1>{{ team.name }} - Chat Room </h1>
@@ -328,7 +335,7 @@
                     <ul class="chat-list">
                         {% for room in room_list %}
                         <li>
-                            <div class="chat-icon">{{ room.name|slice:":1" }}</div>
+                            <div class="chat-icon"><i class="fa-solid fa-comment fa-2x"></i></div>
                             <a href="{% url 'chat:room_chat' room.pk %}">{{ room.name }}</a>
                         </li>
                         {% endfor %}
@@ -336,9 +343,9 @@
                     <div class="new-chat-btn">
                         <a href="{% url 'chat:room_new' team.id %}">새 채팅방 만들기</a>
                     </div>
+                </div>
+            </div>
 
-                    
-                    
                     <div class="container">
                         <div><i class="fa-solid fa-toolbox fa-4x"></i><br><br></div>
                         <div class="row">
@@ -347,7 +354,7 @@
                                     <div class="card-body">
                                         <h5 class="card-title"><i class="fa-brands fa-readme fa-2x"></i><br><br>텍스트 요약, Docsumm</h5>
                                         <p class="card-text">문장 텍스트를 입력하면 해당 텍스트의 요약내용을 확인할 수 있습니다.</p>
-                                        <a href="{% url 'docsumm:generate-doc-summ' %}" class="btn btn-primary">이동하기</a>
+                                        <a href="{% url 'docsumm:generate-doc-summ' %}" class="btn btn-primary" style="background-color: #00796b; border-color: #00796b;">이동하기</a>
                                     </div>
                                 </div>
                             </div>
@@ -356,7 +363,7 @@
                                     <div class="card-body">
                                         <h5 class="card-title"><i class="fa-solid fa-magnifying-glass fa-2x"></i><br><br>광학 문자 인식, OCR</h5>
                                         <p class="card-text">이미지 및 문서 파일을 업로드하여 파일의 텍스트를 추출할 수 있습니다.</p>
-                                        <a href="{% url 'ocr-home' %}" class="btn btn-primary">이동하기</a>
+                                        <a href="{% url 'ocr-home' %}" class="btn btn-primary" style="background-color: #00796b; border-color: #00796b;">이동하기</a>
                                     </div>
                                 </div>
                             </div>

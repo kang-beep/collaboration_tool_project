@@ -14,7 +14,6 @@ from easyocr import Reader
 from docx import Document
 import fitz
 
-warnings.filterwarnings('ignore')
 
 class BaseOcr(ABC):
     def __init__(self):
