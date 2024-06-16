@@ -138,13 +138,48 @@ class RoomMember(models.Model):
         decoder=ExtendedJSONDecoder,  # 사용자 정의 JSON 디코더
     )
 
+# 채팅방에서 주고받은 메시지를 저장하는 모델입니다.
+class TeamMessage(models.Model):
+    # 메시지가 속한 채팅방을 나타내는 외래 키입니다.
+    room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='messages')
+    # 메시지를 보낸 사용자를 나타내는 외래 키입니다.
+    sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    # 메시지 텍스트를 저장하는 필드입니다. 빈 값을 허용합니다.
+    message = models.TextField(blank=True, null=True)
+    # 메시지 이미지를 저장하는 필드입니다. 빈 값을 허용합니다.
+    image = models.ImageField(upload_to='chat_images/', blank=True, null=True)
+    # 메시지 생성 시각을 저장하는 필드입니다.
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    # 메시지를 시간 순으로 정렬합니다.
+    class Meta:
+        ordering = ['timestamp']
+
+    # 메시지나 이미지가 하나라도 있어야 저장되도록 합니다.
+    def save(self, *args, **kwargs):
+        if not self.message and not self.image:
+            raise ValueError("Either message or image must be provided.")
+        super().save(*args, **kwargs)
 
 # 1대1 채팅 기능
 class PrivateMessage(models.Model):
+    # 메시지를 보낸 사용자를 나타내는 외래 키입니다.
     sender = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='sent_messages', on_delete=models.CASCADE)
+    # 메시지를 받는 사용자를 나타내는 외래 키입니다.
     receiver = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='received_messages', on_delete=models.CASCADE)
-    message = models.TextField()
+    # 메시지 텍스트를 저장하는 필드입니다. 빈 값을 허용합니다.
+    message = models.TextField(blank=True, null=True)
+    # 메시지 이미지를 저장하는 필드입니다. 빈 값을 허용합니다.
+    image = models.ImageField(upload_to='private_chat_images/', blank=True, null=True)
+    # 메시지 생성 시각을 저장하는 필드입니다.
     timestamp = models.DateTimeField(auto_now_add=True)
     
+    # 메시지를 시간 순으로 정렬합니다.
     class Meta:
         ordering = ['timestamp']
+
+    # 메시지나 이미지가 하나라도 있어야 저장되도록 합니다.
+    def save(self, *args, **kwargs):
+        if not self.message and not self.image:
+            raise ValueError("Either message or image must be provided.")
+        super().save(*args, **kwargs)
