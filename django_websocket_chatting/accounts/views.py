@@ -141,6 +141,13 @@ def friend_management(request):
     })
     
 
+# 자신의 친구들 반환
+@login_required
+def get_friends_list(request):
+    friends = request.user.friends.all()
+    friends_data = [{'id': friend.id, 'username': friend.username} for friend in friends]
+    return JsonResponse({'friends': friends_data})
+
 # 친구 프로필 데이터 반환
 @login_required
 @require_GET
