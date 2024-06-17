@@ -18,7 +18,7 @@ class ChatConsumer(JsonWebsocketConsumer):
     # ChatConsumer의 생성자 함수입니다.
     def __init__(self, *args, **kwargs):
         # 상위 클래스의 생성자를 호출합니다.
-        super().__init__(args, kwargs)
+        super().__init__(*args, **kwargs)
         self.group_name = ""  # group_name을 빈 문자열로 초기화합니다.
         self.room = None  # room 객체를 None으로 초기화합니다.
 
@@ -130,7 +130,7 @@ class ChatConsumer(JsonWebsocketConsumer):
         else:
             print(f"잘못된 메시지 유형 : ${_type}")
 
-    # 사용자가 채팅에 참가할 때의 처리입니다.
+     # 사용자가 채팅에 참가할 때의 처리입니다.
     def chat_user_join(self, message_dict):
         self.send_json({
             "type": "chat.user.join",
@@ -151,7 +151,7 @@ class ChatConsumer(JsonWebsocketConsumer):
             "message": message_dict["message"],
             "sender": message_dict["sender"],
             "timestamp": message_dict["timestamp"],  # 타임스탬프를 포함합니다.
-            "image_url": message_dict["image_url"],  # 이미지 URL을 포함합니다.
+            "image_url": message_dict.get("image_url"),  # 이미지 URL을 포함합니다.
         })
 
     # 채팅방이 삭제될 때의 처리입니다.

@@ -380,7 +380,8 @@
         function toggleSidebar() {
             document.getElementById("sidebar").classList.toggle("sidebar-open");
         }
-        function goToTeamRooms(teamId) {
+        function goToTeamRooms() {
+            const teamId = "{{ team.id }}";  // Django 템플릿 변수를 사용하여 teamId를 가져옵니다.
             window.location.href = `/chat/teams/${teamId}/`;
         }
 

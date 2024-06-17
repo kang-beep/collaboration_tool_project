@@ -19,9 +19,10 @@
         }
         .container-fluid {
             display: flex;
-            height: 100%;
-            padding: 20px;
+            flex-direction: column;
             flex-grow: 1;
+            padding: 20px;
+            overflow: hidden;
         }
         .header {
             background-color: #ffffff7a;
@@ -59,13 +60,13 @@
         .chat-container {
             background: #ffffff7a;
             border-radius: 20px;
-            height: auto;
             padding: 20px;
             margin-top: 20px;
             box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
             flex-grow: 1;
             display: flex;
             flex-direction: column;
+            overflow: hidden;
         }
         .chat-message {
             margin: 10px 0;
@@ -207,6 +208,7 @@
             height: calc(2.25rem + 2px); /* 기본 Bootstrap input 높이에 맞추기 */
         }
         .input-group-prepend .btn {
+            background: #00796b;
             margin-right: 5px;
             height: 100%;
             display: flex;
@@ -246,12 +248,13 @@
         #chat_messages_container {
             flex-grow: 1;
             overflow-y: auto;
-            padding: 10px;
         }
         #message_input_form {
-            background-color: #B2DFDB; /* 배경색과 일치 */
+            background-color: #B2DFDB;
             padding: 10px;
             border-top: 1px solid #ddd;
+            position: sticky;
+            bottom: 0;
         }
         .extra-options {
             display: none;
@@ -327,7 +330,7 @@
                 </div>
             </div>
             <div id="extra_options" class="extra-options">
-                <input type="file" name="image" class="form-control" accept="image/*">
+                <input type="file" name="image" class="form-control" accept="image/*" style="background-color: #E0F7FA;">
                 <button class="btn btn-danger" type="button" onclick="deleteRoom()">채팅방 삭제하기</button>
             </div>
         </form>
@@ -477,7 +480,7 @@
                 if (sender === this.current_username) { // 현재 사용자 이름과 비교
                     element.className += " me";
                 }
-        
+            
                 const wrapper = document.createElement("div");
                 wrapper.className = "message-content";
                 if (message) {
@@ -488,20 +491,34 @@
                 }
                 wrapper.innerHTML += `<span class="timestamp">${timestamp}</span>`;
                 element.appendChild(wrapper);
-        
+            
                 this.chat_messages_tag.appendChild(element);
-                this.chat_messages_tag.scrollTop = this.chat_messages_tag.scrollHeight;
+                this.scroll_to_bottom(); // 메시지를 추가한 후 스크롤을 맨 아래로 설정
+            },
+            
+            scroll_to_bottom() {
+                const chatContainer = document.getElementById('chat_messages_container');
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            },
+            
+            init() {
+                this.chat_messages_tag = document.querySelector("#chat_messages");
+                document.querySelector("#message_form")
+                    .addEventListener("submit", this.onsubmit.bind(this));
+                document.querySelector("#toggle_extra_options")
+                    .addEventListener("click", this.toggle_extra_options.bind(this));
+                this.scroll_to_bottom(); // 초기화 시에도 스크롤을 맨 아래로 설정
             },
             onsubmit(event) {
                 event.preventDefault();
-        
+            
                 const form_data = new FormData(event.target);
-                const message = form_data.get('message');
+                const message = form_data.get('message').trim();
                 const image = form_data.get('image');
                 const timestamp = new Date().toLocaleTimeString();
-        
+            
                 if (message || image) {
-                    if (image) {
+                    if (image && image.size > 0) {
                         const reader = new FileReader();
                         reader.onload = () => {
                             const base64Image = reader.result.split(',')[1]; // Remove the base64 prefix
@@ -522,9 +539,10 @@
                         }));
                     }
                 }
-        
+            
                 event.target.reset();  // reset form
-            },
+            }
+            ,            
             toggle_extra_options() {
                 const extra_options = document.getElementById('extra_options');
                 extra_options.classList.toggle('show');

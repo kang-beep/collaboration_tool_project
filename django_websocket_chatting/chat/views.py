@@ -122,10 +122,13 @@ def private_chat(request, username):
 def send_message(request, room_pk):
     if request.method == 'POST':
         room = get_object_or_404(Room, pk=room_pk)
-        message = request.POST.get('message', '')
+        message = request.POST.get('message', '').strip()
         image = request.FILES.get('image')
 
-        team_message = TeamMessage(room=room, sender=request.user, message=message, image=image)
+        if not message and not image:
+            return JsonResponse({'error': 'Either message or image must be provided.'}, status=400)
+
+        team_message = TeamMessage(room=room, sender=request.user, message=message, image=image if image and image.size > 0 else None)
         team_message.save()
 
         response_data = {
@@ -137,3 +140,5 @@ def send_message(request, room_pk):
         return JsonResponse(response_data)
 
     return JsonResponse({'error': 'Invalid request'}, status=400)
+
+
