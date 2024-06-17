@@ -163,6 +163,7 @@ class ChatConsumer(JsonWebsocketConsumer):
 class PrivateChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.room_id = self.scope['url_route']['kwargs']['room_id']
+        print("consumers.py room_id recived", self.room_id)
         self.room_group_name = f'private_chat_{self.room_id}'
 
         await self.channel_layer.group_add(
@@ -197,17 +198,27 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
                 {
                     'type': 'chat_message',
                     'message': message,
-                    'sender': sender.username
+                    'sender': sender.username,
+                    'sender_id': sender.id,
+                    'sender_name': sender.name,  # 추가된 부분
+
                 }
             )
 
     async def chat_message(self, event):
         message = event['message']
         sender = event['sender']
-
+        sender_id = event['sender_id']
+        sender_name = event['sender_name']  # 추가된 부분
+        
+        print(sender_name,"sender_name")
+        
         await self.send(text_data=json.dumps({
             'message': message,
-            'sender': sender
+            'sender': sender,
+            'sender_id': sender_id,
+            'sender_name': sender_name,  # 추가된 부분
+
         }))
 
     @database_sync_to_async

@@ -274,21 +274,23 @@
     <div class="sidebar" id="sidebar">
         <button class="sidebar-close-btn" onclick="toggleSidebar()">✖</button>
         <h2>Aidea Menu</h2><hr>
-        <a href="#"><i class="fa-solid fa-house"></i>  홈</a>
-        <a href="{% }"><i class="fa-solid fa-list"></i>  친구목록</a>
-        <a href="#"><i class="fa-solid fa-plus"></i>  친구추가</a>
-        <a href="#">등등등...</a>
+        <a href="#" onclick="toggleSubmenu('team-members')">팀 인원 목록</a>
+        <ul id="team-members" style="display: none;">
+            <li>팀원 1</li>
+            <li>팀원 2</li>
+            <li>팀원 3</li>
+        </ul>
+        <a href="#" onclick="toggleSubmenu('friends-list')">친구 목록</a>
+        <ul id="friends-list" style="display: none;">
+            <li>친구 1</li>
+            <li>친구 2</li>
+            <li>친구 3</li>
+        </ul>
     </div>
 
     <div class="container-secound">
         <button class="sidebar-btn" onclick="toggleSidebar()"><i class="fa-solid fa-bars fa-2x"></i></button>
-        <div class="textCht" onclick="goToTeamRooms()">Aidea Chat</div>
-        <script>
-            function goToTeamRooms() {
-                const teamId = "{{ team.id }}";  // Django 템플릿 변수를 사용하여 teamId를 가져옵니다.
-                window.location.href = `/chat/teams/${teamId}/`;
-            }
-        </script>
+        <div class="textCht" onclick="goToTeamRooms(1)">Aidea Chat</div>
 
         <a href="{% url 'accounts:profile' %}" class="profile-btn"><i class="fa-regular fa-user fa-2x"></i></a>
     </div>
@@ -377,6 +379,18 @@
     <script>
         function toggleSidebar() {
             document.getElementById("sidebar").classList.toggle("sidebar-open");
+        }
+        function goToTeamRooms(teamId) {
+            window.location.href = `/chat/teams/${teamId}/`;
+        }
+
+        function toggleSubmenu(id) {
+            var submenu = document.getElementById(id);
+            if (submenu.style.display === "none") {
+                submenu.style.display = "block";
+            } else {
+                submenu.style.display = "none";
+            }
         }
     </script>
 </body>

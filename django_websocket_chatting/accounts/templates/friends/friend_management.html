@@ -99,17 +99,25 @@
             
             ws.onmessage = function(event) {
                 const data = JSON.parse(event.data);
+                console.log("Message received:", data);  // 메시지 로그
                 const userId = data.user_id;
                 const isOnline = data.is_online;
-
+                console.log("User ID:", userId, "Is Online:", isOnline);
                 const friendElement = $(`#friend-list li[data-id='${userId}']`);
-                if (isOnline) {
-                    friendElement.addClass('online').removeClass('offline');
-                } else {
-                    friendElement.addClass('offline').removeClass('online');
+                if (friendElement.length > 0) {
+                    if (isOnline) {
+                        friendElement.addClass('online').removeClass('offline');
+                    } else {
+                        friendElement.addClass('offline').removeClass('online');
+                    }
                 }
-            };
 
+            };
+            
+            ws.onerror = function(event) {
+                console.error("WebSocket error observed:", event);
+            };
+            
             ws.onclose = function(event) {
                 console.log("WebSocket is closed now.");
             };

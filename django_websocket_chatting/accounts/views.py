@@ -147,6 +147,7 @@ def friend_management(request):
 def friend_profile(request):
     friend_id = request.GET.get('id')
     friend = get_object_or_404(CustomUser, id=friend_id)
+    print(friend.is_online)
     data = {
         'username': friend.username,
         'name' : friend.name,
