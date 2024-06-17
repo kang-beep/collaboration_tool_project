@@ -17,13 +17,55 @@
             display: flex;
             flex-direction: column;
         }
-        .container { 
-            max-width: 1000px; 
-            margin: 50px auto; 
-            padding: 20px; 
-            background-color: #FFFFFF; 
-            border-radius: 30px; 
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        .container-fluid {
+            display: flex;
+            height: 100%;
+            padding: 20px;
+            flex-grow: 1;
+        }
+        .header {
+            background-color: #ffffff7a;
+            padding: 10px;
+            text-align: center;
+            color: #00796b;
+            border: 1px solid #00796b;
+            border-radius: 40px;
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+            box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+        }
+        .header h1 {
+            margin: 0;
+            flex-grow: 1;
+        }
+        .header .profile-btn {
+            background-color: #00796b;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            display: inline-block;
+            margin-right: 10px;
+        }
+        .header .profile-btn:hover {
+            background-color: #004d40;
+        }
+        .chat-container {
+            background: #ffffff7a;
+            border-radius: 20px;
+            height: auto;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
         }
         .chat-message {
             margin: 10px 0;
@@ -149,7 +191,7 @@
         }
         .sidebar-close-btn:hover {
             background-color: #004d40;
-        }   
+        }
         .sidebar-open {
             left: 0;
         }
@@ -174,14 +216,84 @@
             margin-top: 10px;
             margin-right: 10px;
         }
-        .fa-user{
+        .fa-person-circle-check {
             text-shadow: 0px 0px 10px #0000008c;
             color: #ffffff;
             margin-right: 15px;
             margin-top: 10px;
             size: 10px;
+            cursor: pointer;
         }
-    </style>
+        .input-group {
+            display: flex;
+            position: relative;
+            align-items: center;
+        }
+        .input-group .form-control, .input-group-prepend .btn, .input-group-append .btn {
+            height: calc(2.25rem + 2px); /* 기본 Bootstrap input 높이에 맞추기 */
+        }
+        .input-group-prepend .btn {
+            margin-right: 5px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+        }
+        .input-group-append .btn {
+            background: #00796b;
+            height: 100%;
+            display: flex;
+            align-items: center;
+        }
+        .user-list-container {
+            display: none;
+            position: fixed;
+            top: 70px;
+            right: 50%;
+            transform: translateX(50%);
+            width: 250px;
+            background-color: #FFFFFF;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 4;
+            overflow-y: auto;
+            max-height: 500px;
+            text-align: center;
+        }
+        .user-list-container .card-header {
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            background-color: #004d40c2;
+            color: white;
+            text-align: center;
+        }
+        .user-list-container .card-body {
+            padding: 10px;
+        }
+        #chat_messages_container {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+        #message_input_form {
+            background-color: #B2DFDB; /* 배경색과 일치 */
+            padding: 10px;
+            border-top: 1px solid #ddd;
+        }
+        .extra-options {
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            background-color: #80CBC4; /* 배경보다 조금 진한 색상 */
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-top: 10px;
+        }
+        .extra-options.show {
+            display: flex;
+        }
+    </style>    
 </head>
 <body>
     <div class="sidebar" id="sidebar">
@@ -194,51 +306,59 @@
     </div>
     <div class="container-secound">
         <button class="sidebar-btn" onclick="toggleSidebar()"><i class="fa-solid fa-bars fa-2x"></i></button>
-        <div class="textCht" onclick="goToTeamRooms(1)">Aidea Chat</div>
-        <script>
-            function goToTeamRooms(teamId) {
-                window.location.href = `/chat/teams/${teamId}/`;
-            }
-        </script>
-        <a href="{% url 'accounts:profile' %}" class="profile-btn"><i class="fa-regular fa-user fa-2x"></i></a>
+        <div class="textCht" onclick="goToTeamRooms()">Aidea Chat</div>
+        <i class="fa-solid fa-person-circle-check fa-2x" onclick="toggleUserList()"></i>
     </div>
-    <div class="container my-5">
-        <div class="card mb-4">
-            <div class="card-header">
-                접속 유저 <span id="user_count"></span>
-            </div>
-            <div class="card-body">
-                <ul id="user_list" style="list-style-type: none; padding: 0;"></ul>
-            </div>
+    <div class="user-list-container" id="userListContainer">
+        <div class="card-header">
+            접속 유저 <span id="user_count"></span>
         </div>
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="card" style="height: 600px;">
-                    <div class="card-header">
-                        채팅방 : 채팅방 이름
-                    </div>
-                    <div class="card-body">
-                        <div id="chat_messages" class="w-100"></div>
-                    </div>
-                    <div class="card-footer">
-                        <form id="message_form">
-                            <input type="text" name="message" class="form-control" autofocus autocomplete="off" placeholder="메시지를 입력하세요"/>
-                        </form>
-                    </div>
+        <div class="card-body">
+            <ul id="user_list" style="list-style-type: none; padding: 0;"></ul>
+        </div>
+    </div>
+    
+    <div class="container-fluid">
+        <div class="chat-container">
+            <div id="chat_messages_container">
+                <div id="chat_messages" class="w-100">
+                    {% for message in messages %}
+                        <div class="chat-message{% if message.sender == request.user %} me{% endif %}">
+                            <div class="message-content">
+                                {% if message.message %}
+                                    {{ message.message }}
+                                {% endif %}
+                                {% if message.image %}
+                                    <img src="{{ message.image.url }}" alt="Image" style="max-width: 100%; height: auto;">
+                                {% endif %}
+                                <span class="timestamp">{{ message.timestamp }}</span>
+                            </div>
+                        </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>
-        
-        <div class="mt-3">
-            <a href="{% url 'chat:team_rooms' team.id %}" class="btn btn-primary">대기실로 이동</a>
-            {% if request.user == room.owner %}
-                <a href="{% url 'chat:room_delete' room.pk %}" class="btn btn-danger">
-                    채팅방 삭제하기
-                </a>
-            {% endif %}
-        </div>
     </div>
-
+    
+    <div id="message_input_form">
+        <form id="message_form" enctype="multipart/form-data" method="POST">
+            {% csrf_token %}
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <button class="btn btn-secondary" type="button" id="toggle_extra_options">+</button>
+                </div>
+                <input type="text" name="message" class="form-control" autofocus autocomplete="off" placeholder="메시지를 입력하세요"/>
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="submit"><i class="fa-regular fa-paper-plane"></i> </button>
+                </div>
+            </div>
+            <div id="extra_options" class="extra-options">
+                <input type="file" name="image" class="form-control" accept="image/*">
+                <button class="btn btn-danger" type="button" onclick="deleteRoom()">채팅방 삭제하기</button>
+            </div>
+        </form>
+    </div>
+    
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -252,161 +372,219 @@
             </div>
         </div>
     </div>
-
+    
     <script>
-    function toggleSidebar() {
-        document.getElementById("sidebar").classList.toggle("sidebar-open");
-    }
-    const handlers = {
-        chat_messages_tag: null,
-        ws: null,
-        retry: 0,
-        username_set: new Set(),
-        current_username: "{{ request.user.username }}", // 현재 사용자 이름을 Django 템플릿에서 가져옵니다.
-
-        init() {
-            this.chat_messages_tag = document.querySelector("#chat_messages");
-            document.querySelector("#message_form")
-                .addEventListener("submit", this.onsubmit.bind(this));
-        },
-        connect(ws_url) {
-            if(this.ws) this.ws.close();
-
-            this.ws = new WebSocket(ws_url || this.ws?.url);
-
-            this.ws.onopen = this.onopen.bind(this);
-            this.ws.onclose = this.onclose.bind(this);
-            this.ws.onerror = this.onerror.bind(this);
-            this.ws.onmessage = this.onmessage.bind(this);
-        },
-        reconnect() {
-            this.connect();
-        },
-        onopen() {
-            console.log("웹소켓 서버와 접속");
-            this.retry = 0;
-
-            fetch('/room_users/') // Modify this URL according to your server setup
-                .then(response => response.json())
-                .then(({ username_list }) => {
-                    this.username_set = new Set([...this.username_set, ...username_list]);
-                    this.update_user_list();
-                });
-        },
-        onclose(event) {
-            const close_code = event.code;
-
-            if(close_code === 4000) {
-                this.modal("채팅방이 삭제되었습니다. 대기실로 이동합니다.", () => {
-                    window.location.href = "/";
-                });
-            }
-            else if(!event.wasClean) {
-                console.error("웹소켓 서버가 죽었거나, 네트워크 장애입니다.");
-                if(this.retry < 3) {
-                    this.retry += 1;
-                    setTimeout(() => {
-                        this.reconnect();
-                        console.log(`[${this.retry}] 접속 재시도 ...`);
-                    }, 1000 * this.retry)
-                }
-                else {
-                    console.log("웹소켓 서버에 접속할 수 없습니다. 대기실로 이동합니다.");
-                    window.location.href = "/";
-                }
-            }
-        },
-        onerror() {
-            console.log("웹소켓 에러가 발생했습니다. 대기실로 이동합니다.");
-            window.location.href = "/";
-        },
-        onmessage(event) {
-            const message_json = event.data;
-            console.log("메세지 수신 :", message_json);
-
-            const { type, message, sender, username, timestamp } = JSON.parse(message_json);
-            switch(type) {
-                case "chat.message":
-                    this.append_message(message, sender, timestamp);
-                    break;
-                case "chat.user.join":
-                    this.append_message(`${username}님이 들어오셨습니다.`, null, timestamp);
-                    this.username_set.add(username);
-                    this.update_user_list();
-                    break;
-                case "chat.user.leave":
-                    this.append_message(`${username}님이 나가셨습니다.`, null, timestamp);
-                    this.username_set.delete(username);
-                    this.update_user_list();
-                    break;
-                default:
-                    console.error(`Invalid message type : ${type}`);
-            }
-        },
-        append_message(message, sender, timestamp) {
-            const element = document.createElement("div");
-            element.className = "chat-message";
-            if (sender === this.current_username) { // 현재 사용자 이름과 비교
-                element.className += " me";
-            }
-
-            const wrapper = document.createElement("div");
-            wrapper.className = "message-content";
-            wrapper.innerHTML = message + `<span class="timestamp">${timestamp}</span>`;
-            element.appendChild(wrapper);
-
-            this.chat_messages_tag.appendChild(element);
-            this.chat_messages_tag.scrollTop = this.chat_messages_tag.scrollHeight;
-        },
-        onsubmit(event) {
-            event.preventDefault();
-
-            const form_data = new FormData(event.target);
-            const props = Object.fromEntries(form_data);
-            event.target.reset();  // reset form
-
-            const { message } = props;
-            const timestamp = new Date().toLocaleTimeString();
-            console.log("웹소켓으로 전송할 메세지 :", message);
-
-            this.ws.send(JSON.stringify({
-                type: "chat.message",
-                message: message,
-                timestamp: timestamp
-            }))
-        },
-        update_user_list() {
-            const html = [...this.username_set]
-                .map(username => `<li>${username}</li>`)
-                .join('');
-            document.querySelector("#user_list").innerHTML = html;
-
-            document.querySelector("#user_count").textContent =
-                `(${this.username_set.size}명)`;
-        },
-        modal(message, ok_handler) {
-            const modal_ele = document.querySelector("#staticBackdrop");
-            const body_ele = modal_ele.querySelector(".modal-body");
-            const button_ele = modal_ele.querySelector(".modal-footer button");
-
-            body_ele.textContent = message;
-
-            button_ele.addEventListener("click", () => {
-                if(ok_handler) ok_handler();
-                modal.hide();
-            });
-
-            const modal = new bootstrap.Modal(modal_ele);
-            modal.show();
+        function goToTeamRooms() {
+            const teamId = "{{ team.id }}";  // Django 템플릿 변수를 사용하여 teamId를 가져옵니다.
+            window.location.href = `/chat/teams/${teamId}/`;
         }
-    };
-
-    handlers.init();
-
-    const protocol = location.protocol === "http:" ? "ws:" : "wss:";
-    const ws_url = protocol + "//" + location.host + "/ws/chat/rooms/1/"; // Modify this URL according to your server setup
-    handlers.connect(ws_url);
+        
+        function toggleSidebar() {
+            document.getElementById("sidebar").classList.toggle("sidebar-open");
+        }
+        
+        function toggleUserList() {
+            const userListContainer = document.getElementById('userListContainer');
+            if (userListContainer.style.display === 'none' || userListContainer.style.display === '') {
+                userListContainer.style.display = 'block';
+            } else {
+                userListContainer.style.display = 'none';
+            }
+        }
+        
+        function deleteRoom() {
+            const roomPk = "{{ room.pk }}";
+            fetch(`/chat/rooms/${roomPk}/delete/`, {
+                method: "POST",
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                window.location.href = `/chat/teams/{{ team.id }}/`;
+            })
+            .catch(error => console.error('Error deleting room:', error));
+        }
+        
+        const handlers = {
+            chat_messages_tag: null,
+            ws: null,
+            retry: 0,
+            username_set: new Set(),
+            current_username: "{{ request.user.username }}", // 현재 사용자 이름을 Django 템플릿에서 가져옵니다.
+        
+            init() {
+                this.chat_messages_tag = document.querySelector("#chat_messages");
+                document.querySelector("#message_form")
+                    .addEventListener("submit", this.onsubmit.bind(this));
+                document.querySelector("#toggle_extra_options")
+                    .addEventListener("click", this.toggle_extra_options.bind(this));
+            },
+            connect(ws_url) {
+                if(this.ws) this.ws.close();
+        
+                this.ws = new WebSocket(ws_url || this.ws?.url);
+        
+                this.ws.onopen = this.onopen.bind(this);
+                this.ws.onclose = this.onclose.bind(this);
+                this.ws.onerror = this.onerror.bind(this);
+                this.ws.onmessage = this.onmessage.bind(this);
+            },
+            reconnect() {
+                this.connect();
+            },
+            onopen() {
+                console.log("웹소켓 서버와 접속");
+                this.retry = 0;
+        
+                fetch(`/chat/rooms/{{ room.pk }}/users/`) // Modify this URL according to your server setup
+                    .then(response => response.json())
+                    .then(({ username_list }) => {
+                        this.username_set = new Set([...this.username_set, ...username_list]);
+                        this.update_user_list();
+                    });
+            },
+            onclose(event) {
+                const close_code = event.code;
+        
+                if(close_code === 4000) {
+                    this.modal("채팅방이 삭제되었습니다. 대기실로 이동합니다.", () => {
+                        window.location.href = "/";
+                    });
+                }
+                else if(!event.wasClean) {
+                    console.error("웹소켓 서버가 죽었거나, 네트워크 장애입니다.");
+                    if(this.retry < 3) {
+                        this.retry += 1;
+                        setTimeout(() => {
+                            this.reconnect();
+                            console.log(`[${this.retry}] 접속 재시도 ...`);
+                        }, 1000 * this.retry)
+                    }
+                    else {
+                        console.log("웹소켓 서버에 접속할 수 없습니다. 대기실로 이동합니다.");
+                        window.location.href = "/";
+                    }
+                }
+            },
+            onerror() {
+                console.log("웹소켓 에러가 발생했습니다. 대기실로 이동합니다.");
+                window.location.href = "/";
+            },
+            onmessage(event) {
+                const message_json = event.data;
+                console.log("메세지 수신 :", message_json);
+        
+                const { type, message, sender, image_url, username, timestamp } = JSON.parse(message_json);
+                switch(type) {
+                    case "chat.message":
+                        this.append_message(message, sender, image_url, timestamp);
+                        break;
+                    case "chat.user.join":
+                        this.append_message(`${username}님이 들어오셨습니다.`, null, null, timestamp);
+                        this.username_set.add(username);
+                        this.update_user_list();
+                        break;
+                    case "chat.user.leave":
+                        this.append_message(`${username}님이 나가셨습니다.`, null, null, timestamp);
+                        this.username_set.delete(username);
+                        this.update_user_list();
+                        break;
+                    default:
+                        console.error(`Invalid message type : ${type}`);
+                }
+            },
+            append_message(message, sender, image_url, timestamp) {
+                const element = document.createElement("div");
+                element.className = "chat-message";
+                if (sender === this.current_username) { // 현재 사용자 이름과 비교
+                    element.className += " me";
+                }
+        
+                const wrapper = document.createElement("div");
+                wrapper.className = "message-content";
+                if (message) {
+                    wrapper.innerHTML += message;
+                }
+                if (image_url) {
+                    wrapper.innerHTML += `<br><img src="${image_url}" alt="Image" style="max-width: 100%; height: auto;">`;
+                }
+                wrapper.innerHTML += `<span class="timestamp">${timestamp}</span>`;
+                element.appendChild(wrapper);
+        
+                this.chat_messages_tag.appendChild(element);
+                this.chat_messages_tag.scrollTop = this.chat_messages_tag.scrollHeight;
+            },
+            onsubmit(event) {
+                event.preventDefault();
+        
+                const form_data = new FormData(event.target);
+                const message = form_data.get('message');
+                const image = form_data.get('image');
+                const timestamp = new Date().toLocaleTimeString();
+        
+                if (message || image) {
+                    if (image) {
+                        const reader = new FileReader();
+                        reader.onload = () => {
+                            const base64Image = reader.result.split(',')[1]; // Remove the base64 prefix
+                            this.ws.send(JSON.stringify({
+                                type: "chat.message",
+                                message: message,
+                                image: `data:image/jpeg;base64,${base64Image}`,
+                                timestamp: timestamp
+                            }));
+                        };
+                        reader.readAsDataURL(image);
+                    } else {
+                        this.ws.send(JSON.stringify({
+                            type: "chat.message",
+                            message: message,
+                            image: null,
+                            timestamp: timestamp
+                        }));
+                    }
+                }
+        
+                event.target.reset();  // reset form
+            },
+            toggle_extra_options() {
+                const extra_options = document.getElementById('extra_options');
+                extra_options.classList.toggle('show');
+            },
+            update_user_list() {
+                const html = [...this.username_set]
+                    .map(username => `<li>${username}</li>`)
+                    .join('');
+                document.querySelector("#user_list").innerHTML = html;
+        
+                document.querySelector("#user_count").textContent =
+                    `(${this.username_set.size}명)`;
+            },
+            modal(message, ok_handler) {
+                const modal_ele = document.querySelector("#staticBackdrop");
+                const body_ele = modal_ele.querySelector(".modal-body");
+                const button_ele = modal_ele.querySelector(".modal-footer button");
+        
+                body_ele.textContent = message;
+        
+                button_ele.addEventListener("click", () => {
+                    if(ok_handler) ok_handler();
+                    modal.hide();
+                });
+            }
+        };
+        
+        handlers.init();
+        
+        const protocol = location.protocol === "http:" ? "ws:" : "wss:";
+        const ws_url = protocol + "//" + location.host + "/ws/chat/rooms/{{ room.pk }}/"; // Modify this URL according to your server setup
+        handlers.connect(ws_url);
     </script>
+        
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
