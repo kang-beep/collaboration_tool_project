@@ -16,13 +16,56 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
         }
-        .container {
-            margin: 50px auto;
+        .container-fluid {
+            display: flex;
+            height: 100%;
             padding: 20px;
-            height: 100vh;
+            flex-grow: 1;
+        }
+        .header {
+            background-color: #ffffff7a;
+            padding: 10px;
+            text-align: center;
+            color: #00796b;
+            border: 1px solid #00796b;
+            border-radius: 40px;
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             width: 100%;
+            position: relative;
+            z-index: 1;
+            box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+        }
+        .header h1 {
+            margin: 0;
+            flex-grow: 1;
+        }
+        .header .profile-btn {
+            background-color: #00796b;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            display: inline-block;
+            margin-right: 10px;
+        }
+        .header .profile-btn:hover {
+            background-color: #004d40;
+        }
+        .chat-container {
+            background: #ffffff7a;
+            border-radius: 20px;
+            height: auto;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
         }
         .chat-message {
             margin: 10px 0;
@@ -122,7 +165,7 @@
         }
         .sidebar-close-btn:hover {
             background-color: #004d40;
-        }   
+        }
         .sidebar-open {
             left: 0;
         }
@@ -147,7 +190,7 @@
             margin-top: 10px;
             margin-right: 10px;
         }
-        .fa-user {
+        .fa-person-circle-check {
             text-shadow: 0px 0px 10px #0000008c;
             color: #ffffff;
             margin-right: 15px;
@@ -155,20 +198,25 @@
             size: 10px;
             cursor: pointer;
         }
-        .mt-3 {
-            display: flex;
-            justify-content: center;
-        }
         .input-group {
             display: flex;
             position: relative;
+            align-items: center;
         }
         .input-group .form-control, .input-group-prepend .btn, .input-group-append .btn {
             height: calc(2.25rem + 2px); /* 기본 Bootstrap input 높이에 맞추기 */
         }
+        .input-group-prepend .btn {
+            margin-right: 5px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+        }
         .input-group-append .btn {
-            background : #00796b;
-            margin-left: 5px;
+            background: #00796b;
+            height: 100%;
+            display: flex;
+            align-items: center;
         }
         .user-list-container {
             display: none;
@@ -219,7 +267,7 @@
         .extra-options.show {
             display: flex;
         }
-    </style>
+    </style>    
 </head>
 <body>
     <div class="sidebar" id="sidebar">
@@ -233,9 +281,8 @@
     <div class="container-secound">
         <button class="sidebar-btn" onclick="toggleSidebar()"><i class="fa-solid fa-bars fa-2x"></i></button>
         <div class="textCht" onclick="goToTeamRooms()">Aidea Chat</div>
-        <i class="fa-regular fa-user fa-2x" onclick="toggleUserList()"></i>
+        <i class="fa-solid fa-person-circle-check fa-2x" onclick="toggleUserList()"></i>
     </div>
-
     <div class="user-list-container" id="userListContainer">
         <div class="card-header">
             접속 유저 <span id="user_count"></span>
@@ -244,42 +291,48 @@
             <ul id="user_list" style="list-style-type: none; padding: 0;"></ul>
         </div>
     </div>
-
-    <div id="chat_messages_container">
-        <div id="chat_messages" class="w-100">
-            {% for message in messages %}
-                <div class="chat-message{% if message.sender == request.user %} me{% endif %}">
-                    <div class="message-content">
-                        {% if message.message %}
-                            {{ message.message }}
-                        {% endif %}
-                        {% if message.image %}
-                            <img src="{{ message.image.url }}" alt="Image" style="max-width: 100%; height: auto;">
-                        {% endif %}
-                        <span class="timestamp">{{ message.timestamp }}</span>
-                    </div>
+    
+    <div class="container-fluid">
+        <div class="chat-container">
+            <div id="chat_messages_container">
+                <div id="chat_messages" class="w-100">
+                    {% for message in messages %}
+                        <div class="chat-message{% if message.sender == request.user %} me{% endif %}">
+                            <div class="message-content">
+                                {% if message.message %}
+                                    {{ message.message }}
+                                {% endif %}
+                                {% if message.image %}
+                                    <img src="{{ message.image.url }}" alt="Image" style="max-width: 100%; height: auto;">
+                                {% endif %}
+                                <span class="timestamp">{{ message.timestamp }}</span>
+                            </div>
+                        </div>
+                    {% endfor %}
                 </div>
-            {% endfor %}
+            </div>
         </div>
     </div>
-
+    
     <div id="message_input_form">
         <form id="message_form" enctype="multipart/form-data" method="POST">
             {% csrf_token %}
             <div class="input-group">
-                <button class="btn btn-secondary" type="button" id="toggle_extra_options">+</button>
+                <div class="input-group-prepend">
+                    <button class="btn btn-secondary" type="button" id="toggle_extra_options">+</button>
+                </div>
                 <input type="text" name="message" class="form-control" autofocus autocomplete="off" placeholder="메시지를 입력하세요"/>
                 <div class="input-group-append">
-                    <button class="btn btn-primary" type="submit" style="background: #00796b;"><i class="fa-regular fa-paper-plane"></i> 전송</button>
+                    <button class="btn btn-primary" type="submit"><i class="fa-regular fa-paper-plane"></i> </button>
                 </div>
             </div>
-            <div id="extra_options" style="display: none; margin-top: 10px;">
-                <input type="file" name="image" class="form-control" accept="image/*" style="margin-bottom: 10px;">
+            <div id="extra_options" class="extra-options">
+                <input type="file" name="image" class="form-control" accept="image/*">
                 <button class="btn btn-danger" type="button" onclick="deleteRoom()">채팅방 삭제하기</button>
             </div>
         </form>
     </div>
-
+    
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -293,7 +346,7 @@
             </div>
         </div>
     </div>
-
+    
     <script>
         function goToTeamRooms() {
             const teamId = "{{ team.id }}";  // Django 템플릿 변수를 사용하여 teamId를 가져옵니다.
@@ -474,11 +527,7 @@
             },
             toggle_extra_options() {
                 const extra_options = document.getElementById('extra_options');
-                if (extra_options.style.display === 'none' || extra_options.style.display === '') {
-                    extra_options.style.display = 'block';
-                } else {
-                    extra_options.style.display = 'none';
-                }
+                extra_options.classList.toggle('show');
             },
             update_user_list() {
                 const html = [...this.username_set]
@@ -511,7 +560,7 @@
         const protocol = location.protocol === "http:" ? "ws:" : "wss:";
         const ws_url = protocol + "//" + location.host + "/ws/chat/rooms/{{ room.pk }}/"; // Modify this URL according to your server setup
         handlers.connect(ws_url);
-        </script>
+    </script>
         
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
