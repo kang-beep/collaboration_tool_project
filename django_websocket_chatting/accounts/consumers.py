@@ -20,3 +20,16 @@ class StatusConsumer(AsyncJsonWebsocketConsumer):
     def update_user_status(self, user, is_online):
         user.is_online = is_online
         user.save()
+        
+    async def send_user_status(self):
+        await self.channel_layer.group_send(
+            "status_updates",
+            {
+                "type": "user_status",
+                "user_id": self.user.id,
+                "is_online": self.user.is_online,
+            },
+        )
+
+    async def user_status(self, event):
+        await self.send_json(event)

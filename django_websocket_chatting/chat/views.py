@@ -96,7 +96,14 @@ def generate_chat_room_id(user1_id, user2_id):
 def private_chat(request, username):
     friend = get_object_or_404(CustomUser, username=username)
     room_id = generate_chat_room_id(request.user.id, friend.id)
-    return redirect(f'/chat/private_chat/{room_id}/')
+
+    print(room_id)
+    
+    return render(request, 'chat/private_chat.html', {
+        'room_name': room_id,
+        'friend_username': friend.name
+    })
+
 
 # # 필요한 라이브러리와 모듈을 임포트합니다.
 # from django.contrib import messages
