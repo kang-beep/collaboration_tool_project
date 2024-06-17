@@ -6,6 +6,7 @@
     <script src="https://kit.fontawesome.com/3c8aeb941b.js" crossorigin="anonymous"></script>
     <title>My Teams</title>
     <style>
+        /* 기존 스타일 유지 */
         body { 
             font-family: Arial, sans-serif; 
             background-color: #B2DFDB; /* 민트색 배경 */
@@ -139,7 +140,9 @@
                     {% endif %}
                     <h2>{{ team.name }}</h2>
                     <p>{{ team.description }}</p>
+                    {% if team.owner == user %}
                     <button class="delete-button" onclick="deleteTeam({{ team.id }}); event.preventDefault();">팀 삭제</button>
+                    {% endif %}
                 </a>
             {% endfor %}
         </div>
@@ -148,10 +151,6 @@
         </div>
     </div>
 
-    <!-- 
-        스크립트 코드 "팀 삭제"에 대한 부분이 정상작동 안됨.
-        모델에 팀 소유자에 대한 필드 추가해야 하는지 검토 필요.
-    -->
     <script>
         function toggleEditMode() {
             document.body.classList.toggle('edit-mode');
@@ -161,7 +160,7 @@
             let cookieValue = null;
             if (document.cookie && document.cookie !== '') {
                 const cookies = document.cookie.split(';');
-                for (let i = 0; i < cookies.length; i++) {
+                for (let i = 0; cookies.length > i; i++) {
                     const cookie = cookies[i].trim();
                     if (cookie.substring(0, name.length + 1) === (name + '=')) {
                         cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
@@ -174,7 +173,7 @@
 
         function deleteTeam(teamId) {
             if (confirm("정말로 이 팀을 삭제하시겠습니까?")) {
-                fetch(`/delete_team/${teamId}/`, {
+                fetch(`/teams/delete_team/${teamId}/`, {  // 경로 수정: 'teams' 추가
                     method: 'DELETE',
                     headers: {
                         'X-CSRFToken': getCookie('csrftoken')
