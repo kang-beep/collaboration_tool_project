@@ -65,8 +65,8 @@ INSTALLED_APPS = [
     'accounts',
     'docsumm',
     'eventcalendar',
-    'ocr',
     'teams',
+    'ocr'
 ]
 
 MIDDLEWARE = [
@@ -144,8 +144,7 @@ CHANNEL_LAYERS = {
         },
     },
 }
-
-ALLOWED_HOSTS = ["*",'10.0.2.2', "localhost", "127.0.0.1"] 
+ALLOWED_HOSTS = ['10.0.2.2', "localhost", "127.0.0.1"] 
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

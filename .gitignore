@@ -12,8 +12,6 @@ venv/
 *.venv
 venv.bak/
 *.virtualenv/
-.venv1/
-.venv_test/
 
 # 데이터베이스
 *.db

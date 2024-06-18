@@ -4,13 +4,11 @@ from channels.generic.websocket import JsonWebsocketConsumer, AsyncWebsocketCons
 from django.contrib.auth import get_user_model
 from channels.db import database_sync_to_async
 
-from chat.models import Room, PrivateMessage, TeamMessage  # chat.models Room,PrivateMessage 모델을 가져옵니다.
+from chat.models import Room, PrivateMessage  # chat.models Room,PrivateMessage 모델을 가져옵니다.
 from datetime import datetime  # 타임스탬프를 위해 datetime 모듈을 가져옵니다.
 from accounts.models import CustomUser
 
 import json
-import base64
-from django.core.files.base import ContentFile
 
 # ChatConsumer 정의. JsonWebsocketConsumer의 하위 클래스입니다.
 class ChatConsumer(JsonWebsocketConsumer):
@@ -98,34 +96,16 @@ class ChatConsumer(JsonWebsocketConsumer):
         if _type == "chat.message":
             sender = user.username
             message = content["message"]
-            image_data = content.get("image")
             timestamp = content.get("timestamp", datetime.now().strftime("%H:%M:%S"))
-            
-            if image_data:
-                format, imgstr = image_data.split(';base64,')
-                ext = format.split('/')[-1]
-                image = ContentFile(base64.b64decode(imgstr), name=f'{user.username}_{timestamp}.{ext}')
-            else:
-                image = None
-
-            team_message = TeamMessage(room=self.room, sender=user, message=message)
-            if image:
-                team_message.image.save(f"{user.username}_{timestamp}.{ext}", image)
-            team_message.save()
-            
             # 그룹에 채팅 메시지를 전송합니다.
-            message_dict = {
-                "type": "chat.message",
-                "message": message,
-                "sender": sender,
-                "timestamp": timestamp,
-            }
-            if image:
-                message_dict["image_url"] = team_message.image.url
-
             async_to_sync(self.channel_layer.group_send)(
                 self.group_name,
-                message_dict
+                {
+                    "type": "chat.message",
+                    "message": message,
+                    "sender": sender,
+                    "timestamp": timestamp,
+                }
             )
         else:
             print(f"잘못된 메시지 유형 : ${_type}")

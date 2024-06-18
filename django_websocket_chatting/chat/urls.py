@@ -22,10 +22,8 @@ urlpatterns = [
     path('rooms/<int:room_pk>/', views.room_chat, name='room_chat'),
     path('rooms/<int:room_pk>/delete/', views.room_delete, name='room_delete'),
     path('rooms/<int:room_pk>/users/', views.room_users, name='room_users'),
-    path("rooms/<int:room_pk>/send_message/", views.send_message, name="send_message"),
     
     
     # private chat
     path('private_chat/<str:username>/', views.private_chat, name='private_chat'),
-    # <str:username> => <str:room_id> (?)
 ]

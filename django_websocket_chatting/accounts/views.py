@@ -81,7 +81,8 @@ class SendFriendRequestView(generics.CreateAPIView):
     serializer_class = FriendRequestSerializer
     
     def create(self, request, *args, **kwargs):
-        username =request.data.get('to_user')
+        username = request.data.get('to_user')
+        print(username)
         try:
             to_user = CustomUser.objects.get(username=username)
         except CustomUser.DoesNotExist:
@@ -140,6 +141,13 @@ def friend_management(request):
         'sent_requests': sent_requests
     })
     
+
+# 자신의 친구들 반환
+@login_required
+def get_friends_list(request):
+    friends = request.user.friends.all()
+    friends_data = [{'id': friend.id, 'username': friend.username, 'name': friend.name, 'is_online': friend.is_online,} for friend in friends]
+    return JsonResponse({'friends': friends_data})
 
 # 친구 프로필 데이터 반환
 @login_required

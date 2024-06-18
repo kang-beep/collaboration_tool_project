@@ -86,7 +86,7 @@
             position: relative;
         }
         .chat-message.me .message-content {
-            background-color: #E0F7FA; /* 조금 더 연한 배경색 */
+            background-color: #B2DFDB; /* 더 연한 배경색 */
             color: #004D40; /* 더 어두운 텍스트 색상 */
         }
         .chat-message.me .message-content .timestamp {
@@ -98,6 +98,32 @@
             color: #666;
             text-align: right;
             margin-top: 5px;
+        }
+        .card {
+            background-color: #FFFFFF; 
+            border: none;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        .card-header {
+            background-color: #004D40; 
+            color: white;
+            font-size: 20px;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+        .card-footer {
+            background-color: #E0F7FA; 
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+        }
+        #chat_messages {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+            height: 500px;
+            overflow-y: auto;
         }
         .btn-primary, .btn-danger {
             margin: 5px;
@@ -567,9 +593,6 @@
                     if(ok_handler) ok_handler();
                     modal.hide();
                 });
-        
-                const modal = new bootstrap.Modal(modal_ele);
-                modal.show();
             }
         };
         

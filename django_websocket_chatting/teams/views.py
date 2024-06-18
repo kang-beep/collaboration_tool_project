@@ -28,14 +28,15 @@ def teams_create(request):
         teams = Team.objects.all()
         form = TeamSerializer()
         return render(request, 'team/teams_create.html', {'teams': teams, 'form': form})
-    
+
+
     elif request.method == 'POST':
         serializer = TeamSerializer(data=request.data)
         if serializer.is_valid():
-            team = serializer.save(owner=request.user)
+            team = serializer.save()
             request.user.teams.add(team)
             return redirect('teams:teams_list')
-        
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
@@ -43,13 +44,10 @@ def teams_create(request):
 @require_http_methods(["DELETE"])
 def delete_team(request, team_id):
     team = get_object_or_404(Team, id=team_id)
-    if team.owner != request.user:
-        return JsonResponse({'status': 'fail', 'error': '팀의 생성자만 팀을 삭제할 수 있습니다.'}, status=403)
     try:
         team.delete()
         return JsonResponse({'status': 'success'})
     except Exception as e:
         return JsonResponse({'status': 'fail', 'error': str(e)}, status=400)
-
 
 
