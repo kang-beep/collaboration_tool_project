@@ -33,6 +33,7 @@ urlpatterns = [
     path('eventcalendar/', include('eventcalendar.urls', namespace='eventcalendar')),
     path('teams/', include('teams.urls')),
     path('ocr/', include('ocr.urls')),
+    path('stt/', include('stt.urls')),
     
     # path('', RedirectView.as_view(pattern_name="chat:index"), name="root"),
 ] 
