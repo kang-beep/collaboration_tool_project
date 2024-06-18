@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://kit.fontawesome.com/3c8aeb941b.js" crossorigin="anonymous"></script>
+    <title>새 채팅방 만들기</title>
+    <style>
+        body { 
+            font-family: 'Roboto', sans-serif; 
+            background-color: #B2DFDB; /* 연한 민트색 배경 */
+            color: #00796b; /* 어두운 민트색 텍스트 */
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        .container { 
+            max-width: 500px; 
+            margin: 50px auto; 
+            padding: 20px; 
+            background-color: #FFFFFF; /* 흰색 배경 */
+            border-radius: 10px; 
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 150px;
+        }
+        h2 { 
+            margin-bottom: 20px; 
+            color: #00796B; /* 진한 민트색 텍스트 */
+            font-size: 24px;
+        }
+        form { 
+            background-color: #E0F7FA; /* 연한 민트색 배경 */
+            border-radius: 10px; 
+            padding: 20px; 
+            text-align: left; 
+        }
+        label { 
+            font-weight: bold; 
+            margin-bottom: 5px;
+            display: inline-block;
+        }
+        input[type="text"], textarea, input[type="file"] {
+            width: 100%; 
+            padding: 10px; 
+            margin-bottom: 15px; 
+            border: 1px solid #ddd; 
+            border-radius: 5px; 
+            box-sizing: border-box; 
+            font-size: 16px;
+        }
+        button[type="submit"] {
+            background-color: #004D40; /* 어두운 민트색 배경 */
+            color: white; /* 하얀색 텍스트 */
+            border: none; 
+            padding: 15px 20px; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            font-size: 16px;
+            width: 100%;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        button[type="submit"]:hover {
+            background-color: #00796B; /* 진한 민트색 배경 */
+        }
+        .btn-primary {
+            background-color: #004D40; /* 어두운 민트색 배경 */
+            border-color: #004D40;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+        }
+        .btn-primary:hover {
+            background-color: #00796B; /* 진한 민트색 배경 */
+            border-color: #00796B;
+        }
+    </style>
+</head>
+<body>
+    <div class="container"><i class="fa-solid fa-users-rectangle fa-5x"></i>
+        <h2>새 채팅방 만들기</h2>
+        
+        <div class="my-3">
+            <form action="" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="roomName"><i class="fa-solid fa-clover"></i> - 채팅방 이름:</label>
+                    <input type="text" class="form-control" id="roomName" name="name" required>
+                </div>
+                <button type="submit" class="btn btn-primary">채팅방 생성하기</button>
+            </form>
+        </div>
+
+        <a href="{% url 'chat:team_rooms' team.id %}" class="btn btn-primary">
+            대기실로 이동
+        </a>        
+    </div>
+</body>
+</html>

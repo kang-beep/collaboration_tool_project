@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Friends List</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <style>
+        .online .status-indicator {
+            background-color: green;
+        }
+        .offline .status-indicator {
+            background-color: red;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-left: 5px;
+        }
+        #chat-button {
+            display: none; /* 버튼을 기본적으로 숨깁니다 */
+        }
+        #loading-spinner {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Friends List</h2>
+        <ul id="friend-list">
+            {% for friend in friends %}
+                <li data-id="{{ friend.id }}" class="{{ friend.is_online|yesno:'online,offline'}}"> 
+                    <a href="#" class="friend-profile" data-id="{{ friend.id }}" data-toggle="modal" data-target="#profileModal">{{ friend.username }}</a>
+                    <span class="status-indicator"></span>
+                </li>
+            {% endfor %}
+        </ul>
+
+        <h2>Received Friend Requests</h2>
+        <ul>
+            {% for request in received_requests %}
+                <li>
+                    {{ request.from_user.username }}
+                    <button type="button" onclick="handleAccept({{ request.pk }})">Accept</button>
+                    <button type="button" onclick="handleReject({{ request.pk }})">Reject</button>
+                </li>
+            {% endfor %}
+        </ul>
+
+        <h2>Send Friend Request</h2>
+        <form id="send-friend-request-form" method="post" action="{% url 'accounts:send-friend-request' %}">
+            {% csrf_token %}
+            <div>친구추가할 친구의 아이디를 입력해주세요(별칭아님)</div>
+            <label for="to_user">Username:</label>
+            <input type="text" id="to_user" name="to_user" required>
+            <button type="submit">Send Request</button>
+        </form>
+    </div>
+
+    <!-- Profile Modal -->
+    <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="profileModalLabel">Friend Profile</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="profile-info">
+                    <!-- Profile info will be loaded here -->
+                    <div id="loading-spinner" class="text-center">
+                        <div class="spinner-border" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="chat-button">1:1 대화하기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            // Websocket 연결 설정
+            const ws = new WebSocket('ws://' + window.location.host + '/ws/status/');
+            
+            ws.onopen = function(event) {
+                console.log("Websocket is open now.(friend status socket)");
+            };
+            
+            ws.onmessage = function(event) {
+                const data = JSON.parse(event.data);
+                console.log("Message received:", data);  // 메시지 로그
+                const userId = data.user_id;
+                const isOnline = data.is_online;
+                console.log("User ID:", userId, "Is Online:", isOnline);
+                const friendElement = $(`#friend-list li[data-id='${userId}']`);
+                if (friendElement.length > 0) {
+                    if (isOnline) {
+                        friendElement.addClass('online').removeClass('offline');
+                    } else {
+                        friendElement.addClass('offline').removeClass('online');
+                    }
+                }
+
+            };
+            
+            ws.onerror = function(event) {
+                console.error("WebSocket error observed:", event);
+            };
+            
+            ws.onclose = function(event) {
+                console.log("WebSocket is closed now.");
+            };
+            
+            // friend profile 정의
+            $('.friend-profile').click(function() {
+                const friendId = $(this).data('id');
+                $('#chat-button').hide(); // 프로필 정보가 로드되기 전까지 숨깁니다.
+                $('#loading-spinner').show(); // 로딩 스피너를 표시합니다.
+                $.ajax({
+                    url: `{% url 'accounts:friend_profile' %}`,
+                    method: 'GET',
+                    data: {id: friendId},
+                    success: function(data) {
+                        const profilePicturehtml = data.profile_picture ? `<img src="${data.profile_picture}" alt="Profile Picture" width="100" height="100">` : '등록된 프로필 이미지 없음';
+
+                        $('#profile-info').html(
+                            `<strong>Username:</strong> ${data.username}<br>
+                            <strong>Name:</strong> ${data.name}<br>
+                            <strong>Email:</strong> ${data.email}<br>
+                            <strong>Profile image:</strong> ${profilePicturehtml}`
+                        );
+                        
+                        $('#loading-spinner').hide(); // 로딩 스피너를 숨깁니다.
+                        $('#chat-button').data('username', data.username).data('friendId', friendId).show(); // 프로필 정보가 로드된 후 버튼을 표시합니다.
+                    }
+                });
+            });
+
+            $('#chat-button').click(function(){
+                const friendUsername = $(this).data('username');
+                window.location.href = `/chat/private_chat/${friendUsername}/`;
+            });
+
+            $('#send-friend-request-form').submit(function(event) {
+                event.preventDefault();
+
+                const formData = $(this).serialize();
+
+                $.ajax({
+                    url: $(this).attr('action'),
+                    method: 'POST',
+                    data: formData,
+                    success: function(data) {
+                        toastr.success(data.detail);
+                    },
+                    error: function(xhr) {
+                        const errorDetail = xhr.responseJSON.detail;
+                        toastr.error(errorDetail);
+                    }
+                });
+            });
+        });
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        const csrftoken = getCookie('csrftoken');
+
+        function handleAccept(requestId) {
+            fetch(`/accounts/friend-request/accept/${requestId}/`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken,
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                toastr.success(data.detail);
+                location.reload();  // 페이지를 새로고침하여 변경 사항을 반영
+            })
+            .catch(error => {
+                const errorDetail = error.responseJSON.detail;
+                toastr.error(errorDetail);
+            });
+        }
+
+        function handleReject(requestId) {
+            fetch(`/accounts/friend-request/reject/${requestId}/`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken,
+                }
+            })
+            .then(response => {
+                if (response.status === 204) {
+                    toastr.success('Friend request rejected.');
+                    location.reload();  // 페이지를 새로고침하여 변경 사항을 반영
+                } else {
+                    return response.json();
+                }
+            })
+            .then(data => {
+                if (data && data.detail) {
+                    toastr.error(data.detail);
+                }
+            })
+            .catch(error => {
+                const errorDetail = error.responseJSON.detail;
+                toastr.error(errorDetail);
+            });
+        }
+    </script>
+</body>
+</html>

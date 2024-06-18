@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Private Chat with {{ friend_username }}</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <style>
+        .message {
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 5px;
+            max-width: 60%;
+        }
+        .message.self {
+            background-color: #d1e7dd;
+            text-align: right;
+            float: right;
+            clear: both;
+        }
+        .message.other {
+            background-color: #f8d7da;
+            text-align: left;
+            float: left;
+            clear: both;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Private Chat with {{ friend_username }}</h2>
+        <div id="chat-box" style="height: 400px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;">
+            <!-- 채팅 메시지들이 여기에 추가됩니다. -->
+        </div>
+        <form id="chat-form">
+            {% csrf_token %}
+            <div class="input-group mt-3">
+                <input type="text" id="message-input" class="form-control" placeholder="메시지를 입력하세요...">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="submit">전송</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            const ws = new WebSocket('ws://' + window.location.host + '/ws/chat/private_chat/{{ room_name }}/');
+
+            ws.onopen = function(event) {
+                console.log("WebSocket is open now.");
+            };
+
+            ws.onmessage = function(event) {
+                const data = JSON.parse(event.data);
+                const message = data.message;
+                const sender = data.sender;
+                const senderId = data.sender_id;
+                const sender_name = data.sender_name;
+
+                const messageElement = $('<div class="message"></div>');
+                
+                if (senderId === {{ user.id }}) {
+                    messageElement.addClass('self');
+                    messageElement.text(`나: ${message}`);  // 나 자신인 경우 '나'로 표시
+                } else {
+                    messageElement.addClass('other');
+                    messageElement.text(`${sender_name}: ${message}`);  // 상대방인 경우 이름으로 표시
+                }
+
+                $('#chat-box').append(messageElement);
+                $('#chat-box').scrollTop($('#chat-box')[0].scrollHeight);
+            };
+
+            ws.onclose = function(event) {
+                console.log("WebSocket is closed now.");
+            };
+
+            $('#chat-form').submit(function(event) {
+                event.preventDefault();
+
+                const messageInput = $('#message-input');
+                const message = messageInput.val();
+
+                if (message) {
+                    ws.send(JSON.stringify({
+                        'message': message
+                    }));
+                    messageInput.val('');  // 입력 필드를 초기화합니다.
+                }
+            });
+        });
+    </script>
+</body>
+</html>

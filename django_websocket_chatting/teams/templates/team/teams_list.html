@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://kit.fontawesome.com/3c8aeb941b.js" crossorigin="anonymous"></script>
+    <title>My Teams</title>
+    <style>
+        /* 기존 스타일 유지 */
+        body { 
+            font-family: Arial, sans-serif; 
+            background-color: #B2DFDB; /* 민트색 배경 */
+            color: #00796b; /* 어두운 민트색 텍스트 */
+            text-align: center;
+        }
+        .container { 
+            max-width: 900px; 
+            margin: 0 auto; 
+            padding: 20px; 
+        }
+        h1 { 
+            margin-bottom: 40px; 
+            color: #00796B; /* 진한 민트색 텍스트 */
+        }
+        .team-list {
+            display: flex; 
+            justify-content: center; 
+            flex-wrap: wrap; 
+            gap: 20px;
+        }
+        .team {
+            background-color: #E0F7FA; /* 연한 민트색 배경 */
+            border-radius: 10px; 
+            padding: 15px; 
+            width: 120px; 
+            text-align: center; 
+            transition: transform 0.3s;
+            text-decoration: none; /* 링크의 밑줄 제거 */
+            color: #004D40; /* 어두운 민트색 텍스트 */
+            position: relative; /* 상대 위치 */
+            display: flex; /* 추가 */
+            flex-direction: column; /* 추가 */
+            align-items: center; /* 추가 */
+            justify-content: center; /* 추가 */
+        }
+        .team:hover {
+            transform: scale(1.1);
+        }
+        .team img, .team .default-image {
+            border-radius: 50%; 
+            width: 100px; 
+            height: 100px; 
+            margin-bottom: 10px;
+        }
+        .team .default-image {
+            background-color: #B2DFDB; /* 민트색 배경 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: #004D40; /* 어두운 민트색 텍스트 */
+        }
+        .team h2 {
+            font-size: 18px; /* 글꼴 크기 줄임 */
+            margin: 10px 0; /* 팀 이름과 팀 설명 간격 줄임 */
+            color: #004D40; /* 어두운 민트색 텍스트 */
+        }
+        .team p {
+            font-size: 14px; 
+            color: #004D40; /* 어두운 민트색 텍스트 */
+        }
+        .create-team {
+            margin-bottom: 40px;
+        }
+        .create-team a {
+            color: white; /* 하얀색 텍스트 */
+            font-size: 18px; 
+            text-decoration: none; 
+            background-color: #00796B; /* 진한 민트색 배경 */
+            padding: 10px 20px; 
+            border-radius: 5px; 
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .create-team a:hover {
+            background-color: #004D40; /* 어두운 민트색 배경 */
+        }
+        .manage-teams {
+            margin-top: 20px;
+        }
+        .manage-teams button {
+            background-color: #00796B; /* 진한 민트색 배경 */
+            color: white; /* 하얀색 텍스트 */
+            font-size: 18px; 
+            text-decoration: none; 
+            padding: 10px 20px; 
+            border-radius: 5px; 
+            transition: background-color 0.3s, color 0.3s;
+            border: none; /* 테두리 없음 */
+            cursor: pointer; /* 커서 모양 변경 */
+        }
+        .manage-teams button:hover {
+            background-color: #004D40; /* 어두운 민트색 배경 */
+        }
+        .fa-comments{
+            color:rgb(15, 163, 143);
+        }
+        .delete-button {
+            display: none;
+            background-color: #b71c1c;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+        .edit-mode .delete-button {
+            display: block;
+        }
+        .delete-button:hover {
+            background-color: #9a0007;
+        }
+    </style>    
+</head>
+<body>
+    <!-- 06/17 커밋용 주석-->
+    <div class="container">
+        <div><i class="fa-solid fa-comments fa-5x"></i></div>
+        <h1>입장할 팀을 선택하세요.</h1>
+        <div class="create-team">
+            <h2><a href="{% url 'teams:teams_create' %}">새로운 팀 생성하기</a></h2>
+        </div>
+        <div class="team-list">
+            {% for team in teams %}
+                <a class="team" href="{% url 'chat:team_rooms' team.id %}" id="team-{{ team.id }}">
+                    {% if team.team_image %}
+                        <img src="{{ team.team_image.url }}" alt="{{ team.name }}">
+                    {% else %}
+                        <div class="default-image"><i class="fas fa-regular fa-user fa-3x"></i></div>
+                    {% endif %}
+                    <h2>{{ team.name }}</h2>
+                    <p>{{ team.description }}</p>
+                    {% if team.owner == user %}
+                    <button class="delete-button" onclick="deleteTeam({{ team.id }}); event.preventDefault();">팀 삭제</button>
+                    {% endif %}
+                </a>
+            {% endfor %}
+        </div>
+        <div class="manage-teams">
+            <button onclick="toggleEditMode()">팀 목록 편집</button>
+        </div>
+    </div>
+
+    <script>
+        function toggleEditMode() {
+            document.body.classList.toggle('edit-mode');
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; cookies.length > i; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        function deleteTeam(teamId) {
+            if (confirm("정말로 이 팀을 삭제하시겠습니까?")) {
+                fetch(`/teams/delete_team/${teamId}/`, {  // 경로 수정: 'teams' 추가
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken')
+                    }
+                }).then(response => {
+                    if (response.ok) {
+                        document.getElementById(`team-${teamId}`).remove();
+                    } else {
+                        response.json().then(data => {
+                            alert(data.error);
+                        });
+                    }
+                });
+            }
+        }
+    </script>
+</body>
+</html>
