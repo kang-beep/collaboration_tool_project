@@ -52,4 +52,3 @@ def delete_team(request, team_id):
         return JsonResponse({'status': 'fail', 'error': str(e)}, status=400)
 
 
-
