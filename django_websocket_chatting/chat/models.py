@@ -7,6 +7,7 @@ from django.db.models.signals import post_delete    # DJango의 모델이 삭제
 from config.json_extended import ExtendedJSONEncoder, ExtendedJSONDecoder   # 사용자 정의 JSON 인코더 및 디코더
 from accounts.models import Team
 
+#6월18일 주석
 # 온라인 상태인 사용자를 관리하는 Mixin 클래스입니다.
 class OnlineUserMixin(models.Model):
     # 이 클래스는 DB 테이블로 만들어지지 않는 추상 클래스로 정의합니다.
