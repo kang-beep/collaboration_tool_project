@@ -7,6 +7,7 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_POST, require_GET
 from django.http import JsonResponse
 from django.core.files.storage import default_storage
+from django.views.decorators.http import require_http_methods
 
 from rest_framework.decorators import api_view
 from rest_framework import status, generics
@@ -149,6 +150,24 @@ def get_friends_list(request):
     friends_data = [{'id': friend.id, 'username': friend.username, 'name': friend.name, 'is_online': friend.is_online,} for friend in friends]
     return JsonResponse({'friends': friends_data})
 
+# 요청된 친구 요청들을 반환
+@login_required
+@require_http_methods(["GET"])
+def get_received_friend_requests(request):
+    received_requests = FriendRequest.objects.filter(to_user=request.user, accepted=False)
+    for req in received_requests :
+        print(req, "received")
+        
+    data = [
+        {
+            'id': req.id,
+            'from_user': req.from_user.username,
+            'timestamp': req.timestamp,
+        } for req in received_requests
+    ]
+    return JsonResponse({'requests': data}, status=200)
+
+
 # 친구 프로필 데이터 반환
 @login_required
 @require_GET
@@ -165,3 +184,18 @@ def friend_profile(request):
         
     }
     return JsonResponse(data)
+
+# 등록된 친구를 삭제하는 기능
+@login_required
+@require_http_methods(["DELETE"])
+def remove_friend(request, friend_id):
+    user = request.user
+    friend = get_object_or_404(CustomUser, id=friend_id)
+
+    if friend not in user.friends.all():
+        return JsonResponse({'detail': 'Not your friend.'}, status=400)
+
+    user.friends.remove(friend)
+    friend.friends.remove(user)
+
+    return JsonResponse({'detail': 'Friend removed successfully.'}, status=204)

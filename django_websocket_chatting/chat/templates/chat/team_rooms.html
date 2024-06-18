@@ -361,15 +361,20 @@
         <ul id="friends-list" style="display: none;">
             <!-- 친구 목록 js 동적으로 생성 -->
         </ul>
-        <ul>
+        <a href="#" onclick="toggleSubmenu('friend-request-form')">친구 추가</a>
+        <ul id="friend-request-form" style="display: none;">
             <li>
                 <div>
-                    친구추가
                     <form class="friend-request-form" onsubmit="sendFriendRequest(event);">
                         <input type="text" id="friend-username" class="friend-request-input" placeholder="친구 아이디 입력">
                         <button type="submit" class="friend-request-btn">확인</button>
                     </form>
                 </div>
+            </li>
+            <li> 받은 친구 요청 목록:
+                <ul id="received-friend-requests">
+                    <!-- 친구 요청 목록이 여기에 동적으로 추가됩니다 -->
+                </ul>
             </li>
         </ul>
     </div>
@@ -482,6 +487,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-primary" id="chat-button">1:1 대화하기</button>
+                    <button type="button" class="btn btn-danger" id="remove-friend-button">친구 끊기</button>
                 </div>
             </div>
         </div>
@@ -548,6 +554,25 @@
             });
         }
 
+        function removeFriend(friendId) {
+            $.ajax({
+                url: `/accounts/friend/remove/${friendId}/`,
+                type: 'DELETE',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                },
+                success: function(response) {
+                    toastr.success('Friend removed successfully.');
+                    $('#profileModal').modal('hide'); // 모달 닫기
+                    loadFriendsList();  // 친구 목록을 다시 로드하여 최신 상태를 반영
+                },
+                error: function(xhr) {
+                    const errorDetail = xhr.responseJSON ? xhr.responseJSON.detail : 'Error occurred';
+                    toastr.error(errorDetail);
+                }
+            });
+        }
+
         function bindFriendProfileClicks() {
             $('.friend-profile').click(function() {
                 const friendId = $(this).data('id');
@@ -569,12 +594,17 @@
 
                         $('#loading-spinner').hide(); // 로딩 스피너를 숨깁니다.
                         $('#chat-button').data('username', data.username).data('friendId', friendId).show(); // 프로필 정보가 로드된 후 버튼을 표시합니다.
+                        $('#remove-friend-button').off('click').on('click', function() {
+                            removeFriend(friendId); // 친구 삭제 함수 호출
+                        }).show();
                     }
                 });
             });
         }
 
         $(document).ready(function() {
+
+            
             // Websocket 연결 설정
             const ws = new WebSocket('ws://' + window.location.host + '/ws/status/');
             ws.onopen = function(event) {
@@ -617,54 +647,9 @@
                 window.location.href = `/chat/private_chat/${friendUsername}/`;
             });
             
+            // 친구 요청 불러오기
+            loadFriendRequests();
 
-
-        function handleAccept(requestId) {
-            fetch(`/accounts/friend-request/accept/${requestId}/`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': csrftoken,
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                toastr.success(data.detail);
-                location.reload();  // 페이지를 새로고침하여 변경 사항을 반영
-            })
-            .catch(error => {
-                const errorDetail = error.responseJSON.detail;
-                toastr.error(errorDetail);
-            });
-        }
-
-
-        function handleReject(requestId) {
-            fetch(`/accounts/friend-request/reject/${requestId}/`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': csrftoken,
-                }
-            })
-            .then(response => {
-                if (response.status === 204) {
-                    toastr.success('Friend request rejected.');
-                    location.reload();  // 페이지를 새로고침하여 변경 사항을 반영
-                } else {
-                    return response.json();
-                }
-            })
-            .then(data => {
-                if (data && data.detail) {
-                    toastr.error(data.detail);
-                }
-            })
-            .catch(error => {
-                const errorDetail = error.responseJSON.detail;
-                toastr.error(errorDetail);
-            });
-        }
 
         });
 
@@ -699,7 +684,66 @@
             });
         }
         
+        function loadFriendRequests() {
+            $.ajax({
+                url: '{% url "accounts:get_received_friend_requests" %}',  // 이 URL 엔드포인트를 생성해야 합니다
+                method: 'GET',
+                success: function(data) {
+                    var requestList = $('#received-friend-requests');
+                    requestList.empty();  // 기존 목록을 초기화
+                    data.requests.forEach(function(request) {
+                        requestList.append(
+                            '<li>' + request.from_user + 
+                                '<button class="btn btn-success btn-sm" onclick="handleAccept(' + request.id + ')">수락</button>' +
+                                '<button class="btn btn-danger btn-sm" onclick="handleReject(' + request.id + ')">거절</button>' +
+                            '</li>'
+                        );
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error("Failed to load friend requests:", error);
+                }
+            });
+        }
+
+        function handleAccept(requestId) {
+            $.ajax({
+                url: `/accounts/friend-request/accept/${requestId}/`,
+                type: 'PUT',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                },
+                success: function(response) {
+                    toastr.success(response.detail);
+                    loadFriendRequests();  // 변경 사항을 반영하기 위해 친구 요청 목록을 다시 로드
+                },
+                error: function(xhr) {
+                    const errorDetail = xhr.responseJSON ? xhr.responseJSON.detail : 'Error occurred';
+                    toastr.error(errorDetail);
+                }
+            });
+        }
         
+        function handleReject(requestId) {
+            $.ajax({
+                url: `/accounts/friend-request/reject/${requestId}/`,
+                type: 'DELETE',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                },
+                success: function(response) {
+                    toastr.success('Friend request rejected.');
+                    loadFriendRequests();  // 변경 사항을 반영하기 위해 친구 요청 목록을 다시 로드
+                },
+                error: function(xhr) {
+                    const errorDetail = xhr.responseJSON ? xhr.responseJSON.detail : 'Error occurred';
+                    toastr.error(errorDetail);
+                }
+            });
+        }
+        
+
+
     </script>
 </body>
 </html>
