@@ -139,7 +139,6 @@ class RoomMember(models.Model):
         decoder=ExtendedJSONDecoder,  # 사용자 정의 JSON 디코더
     )
 
-<<<<<<< HEAD
 # 채팅방에서 주고받은 메시지를 저장하는 모델입니다.
 class TeamMessage(models.Model):
     # 메시지가 속한 채팅방을 나타내는 외래 키입니다.
@@ -185,15 +184,3 @@ class PrivateMessage(models.Model):
         if not self.message and not self.image:
             raise ValueError("Either message or image must be provided.")
         super().save(*args, **kwargs)
-=======
-
-# 1대1 채팅 기능
-class PrivateMessage(models.Model):
-    sender = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='sent_messages', on_delete=models.CASCADE)
-    receiver = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='received_messages', on_delete=models.CASCADE)
-    message = models.TextField()
-    timestamp = models.DateTimeField(auto_now_add=True)
-    
-    class Meta:
-        ordering = ['timestamp']
->>>>>>> kangsan/mybranch
