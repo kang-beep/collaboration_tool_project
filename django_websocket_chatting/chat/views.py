@@ -110,13 +110,6 @@ def generate_chat_room_id(user1_id, user2_id):
 
 
 @login_required
-def private_chat(request, username):
-    friend = get_object_or_404(CustomUser, username=username)
-    room_id = generate_chat_room_id(request.user.id, friend.id)
-    return redirect(f'/chat/private_chat/{room_id}/')
-
-
-@login_required
 @require_POST
 @csrf_exempt
 def send_message(request, room_pk):

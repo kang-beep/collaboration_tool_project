@@ -157,7 +157,8 @@ def get_received_friend_requests(request):
     received_requests = FriendRequest.objects.filter(to_user=request.user, accepted=False)
     for req in received_requests :
         print(req, "received")
-        
+    
+    print(received_requests, "received")
     data = [
         {
             'id': req.id,

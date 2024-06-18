@@ -47,7 +47,8 @@ class FriendRequest(models.Model):
         self.save()
         self.from_user.friends.add(self.to_user)
         self.to_user.friends.add(self.from_user)
-    
+        self.delete()  # 친구 요청을 수락한 후 해당 요청 삭제
+        
     # 친구 요청을 거부하고 요청을 삭제
     def reject(self):
         self.delete()
