@@ -95,3 +95,6 @@ venv/
 # Default ignored files
 /shelf/
 /workspace.xml
+
+# migrations 제외
+migrations/
