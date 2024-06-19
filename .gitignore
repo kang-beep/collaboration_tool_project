@@ -14,7 +14,6 @@ venv.bak/
 *.virtualenv/
 .venv1/
 .venv_test/
-.venv_gh/
 
 # 데이터베이스
 *.db
@@ -57,7 +56,7 @@ db.sqlite3-journal
 
 # Environments
 .env
-.venv/
+.venv
 env/
 venv/
 ENV/

@@ -79,6 +79,12 @@
         .btn-upload:hover {
             background: #81f0ea;
         }
+        #uploaded_image {
+            display: none;
+            max-width: 100%;
+            height: auto;
+            margin-top: 1rem;
+        }
         #preview {
             display: none;
             max-width: 100%;
@@ -124,8 +130,9 @@
         <div id="result">
             <hr>
             <h2>결과</h2>
-            <p class="subtitle"><br>아래쪽에 이미지에서 추출된 텍스트가 출력됩니다.</p>
+            <p class="subtitle"><br>아래에 추출된 텍스트가 출력됩니다.</p>
             <hr>
+            <img id="uploaded_image" src="#" alt="Uploaded Image">
             <pre id="ocr_result"></pre>
         </div>
     </div>
@@ -166,6 +173,8 @@
                 if (data.error) {
                     document.getElementById("ocr_result").innerHTML = "Error: " + data.error;
                 } else {
+                    document.getElementById("uploaded_image").src = data.uploaded_file_url;
+                    document.getElementById("uploaded_image").style.display = "block";
                     document.getElementById("ocr_result").innerText = data.text.join('\n');
                 }
             })
