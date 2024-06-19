@@ -80,25 +80,17 @@
                     <textarea class="form-control" id="docs-input" name="docs-input" rows="10" placeholder="문서내용을 입력해주세요."></textarea>
                 </div>
                 <div class="py-4">
-                    <button class="btn btn-primary btn-lg" id="docsumm-btn">요약하기!</button>
+                    <button class="btn btn-primary btn-lg" id="docsumm-btn" style="background-color: #026d68;">요약하기</button>
                 </div>
             </form>
         </div>
-        <hr>
-        <div class="text-center">
-            <p>결과는 아래에 표기됩니다.</p>
+        <div id="result">
+            <hr>
+            <h2>결과</h2>
+            <p class="subtitle"><br>아래에 내용을 요약한 요약문이 출력됩니다.</p>
+            <hr>
+            <div id="result-summ"></div>
         </div>
-        <div id="top-title" class="text-center py-3">
-            <h1>결과 출력</h1>
-            <p>uuid 아이디</p>
-        </div>
-        <hr>
-        <div class="text-center">
-            <div class="spinner-border" id="summ-loading-spinner" role="status">
-                <span class="sr-only"></span>
-            </div>
-        </div>
-        <div id="result-summ"></div>
         <div class="footer-space"></div>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>

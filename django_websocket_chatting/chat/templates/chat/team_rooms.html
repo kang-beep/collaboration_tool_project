@@ -159,7 +159,8 @@
             
         }
         .fa-readme,
-        .fa-magnifying-glass {
+        .fa-magnifying-glass,
+        .fa-microphone {
             color: #00796b;
         }
         .container-secound {
@@ -271,6 +272,7 @@
     </style>
 </head>
 <body>
+    <!-- 6/18 주석-->
     <div class="sidebar" id="sidebar">
         <button class="sidebar-close-btn" onclick="toggleSidebar()">✖</button>
         <h2>Aidea Menu</h2><hr>
@@ -354,9 +356,18 @@
                             <div class="col-sm-6 mb-3 mb-sm-0">
                                 <div class="card">
                                     <div class="card-body">
-                                        <h5 class="card-title"><i class="fa-brands fa-readme fa-2x"></i><br><br>텍스트 요약, Docsumm</h5>
+                                        <h5 class="card-title"><i class="fa-brands fa-readme fa-2x"></i><br><br>문서 요약, Docsumm</h5>
                                         <p class="card-text">문장 텍스트를 입력하면 해당 텍스트의 요약내용을 확인할 수 있습니다.</p>
                                         <a href="{% url 'docsumm:generate-doc-summ' %}" class="btn btn-primary" style="background-color: #00796b; border-color: #00796b;">이동하기</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 mb-3 mb-sm-0">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><i class="fa-solid fa-microphone fa-2x"></i><br><br>음성 인식, Speech To Text</h5>
+                                        <p class="card-text">음성 파일을 업로드하여 간편하게 텍스트로 추출할 수 있습니다.</p>
+                                        <a href="{% url 'speech_to_text' %}" class="btn btn-primary" style="background-color: #00796b; border-color: #00796b;">이동하기</a>
                                     </div>
                                 </div>
                             </div>
@@ -369,6 +380,7 @@
                                     </div>
                                 </div>
                             </div>
+                            
                         </div>
                     </div>
                 </div>

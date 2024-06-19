@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.db import models
 
+#주석
 class Team(models.Model):
     name = models.CharField(max_length=100, verbose_name='팀 이름')
     
