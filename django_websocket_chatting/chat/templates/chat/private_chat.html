@@ -1,37 +1,96 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
-    <title>Private Chat with {{ friend_username }}</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ friend_username }}와의 개인 채팅</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <style>
+        body {
+            background-color: #B2DFDB;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .container {
+            background: #ffffff7a;
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            max-width: 800px; /* 컨테이너 최대 너비 설정 */
+            margin: 20px auto; /* 가운데 정렬 */
+        }
+        .chat-box {
+            flex-grow: 1;
+            overflow-y: scroll;
+            border: 1px solid #ccc;
+            padding: 10px;
+            background: #E0F7FA;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
         .message {
             margin: 5px 0;
             padding: 10px;
-            border-radius: 5px;
-            max-width: 60%;
+            border-radius: 10px;
+            max-width: 50%;
+            clear: both;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            word-wrap: break-word; /* 텍스트가 박스 너비를 넘어갈 경우 줄바꿈 */
         }
         .message.self {
             background-color: #d1e7dd;
-            text-align: right;
-            float: right;
-            clear: both;
+            align-self: flex-end;  /* 오른쪽으로 배치 */
+            text-align: right;  /* 텍스트 정렬을 오른쪽으로 */
+            margin-left: auto; /* 왼쪽 여백 자동 설정으로 오른쪽 정렬 보장 */
         }
         .message.other {
             background-color: #f8d7da;
+            align-self: flex-start;
             text-align: left;
-            float: left;
-            clear: both;
+        }
+        .input-group {
+            display: flex;
+            position: relative;
+            align-items: center;
+        }
+        .input-group .form-control, .input-group-append .btn {
+            height: calc(2.25rem + 2px); /* 기본 Bootstrap input 높이에 맞추기 */
+        }
+        .input-group-append .btn {
+            background: #00796b;
+            height: 100%;
+            display: flex;
+            align-items: center;
+        }
+        h2 {
+            color: #00796b;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>Private Chat with {{ friend_username }}</h2>
-        <div id="chat-box" style="height: 400px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;">
+        <h2>{{ friend_username }}와의 개인 채팅</h2>
+        <div id="chat-box" class="chat-box">
             <!-- 채팅 메시지들이 여기에 추가됩니다. -->
         </div>
         <form id="chat-form">
@@ -64,7 +123,7 @@
                 
                 if (senderId === {{ user.id }}) {
                     messageElement.addClass('self');
-                    messageElement.text(`나: ${message}`);  // 나 자신인 경우 '나'로 표시
+                    messageElement.text(`${message}`);  // 나 자신인 경우 '나'로 표시
                 } else {
                     messageElement.addClass('other');
                     messageElement.text(`${sender_name}: ${message}`);  // 상대방인 경우 이름으로 표시

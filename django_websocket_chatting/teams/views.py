@@ -116,3 +116,19 @@ def leave_team(request, team_id):
     team.users.remove(request.user)
     return JsonResponse({'success': '팀에서 탈퇴했습니다.'}, status=200)
 
+@login_required
+def get_team_members(request):
+    team_id = request.GET.get('team_id')
+    team = get_object_or_404(Team, id=team_id)
+    
+    team_members = team.members.all()
+    members_data = []
+    for member in team_members:
+        members_data.append({
+            'id': member.id,
+            'name': member.username,
+            'is_online': member.is_online  # 'is_online'은 User 모델에 정의된 속성이라고 가정합니다
+        })
+
+    return JsonResponse({'team_members': members_data})
+

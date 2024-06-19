@@ -210,11 +210,11 @@
         .sidebar {
             position: fixed;
             top: 0;
-            left: -250px;
-            width: 250px;
+            left: -200px;  /* 너비를 줄입니다 */
+            width: 200px;  /* 너비를 줄입니다 */
             height: 100%;
             background-color: #518f87;
-            padding: 20px;
+            padding: 10px;  /* 패딩을 줄입니다 */
             box-shadow: 2px 0 5px rgba(0,0,0,0.1);
             overflow-y: auto;
             display: flex;
@@ -223,6 +223,20 @@
             transition: left 0.3s ease;
             z-index: 3;
         }
+        
+        @media (max-width: 320px) {
+            .sidebar {
+                left: -160px;  /* 너비를 모바일 뷰에 맞춰 더 줄입니다 */
+                width: 160px;  /* 너비를 모바일 뷰에 맞춰 더 줄입니다 */
+            }
+            .sidebar-btn {
+                padding: 3px 6px;  /* 버튼 패딩 줄임 */
+            }
+            .sidebar-close-btn {
+                padding: 2px 2px;  /* 닫기 버튼 패딩 줄임 */
+            }
+        }
+
         .sidebar a {
             color: white;
             text-decoration: none;
@@ -320,11 +334,11 @@
         }
         
         .friend-request-input {
-            padding: 10px;
-            border-radius: 20px;
+            padding: 5px;
+            border-radius: 10px;
             border: 1px solid #00796b;
-            margin-bottom: 10px;
-            width: 80%;
+            margin-bottom: 5px;
+            width: 80%;  /* 폭을 줄입니다 */
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
         }
         
@@ -332,8 +346,8 @@
             background-color: #00796b;
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 20px;
+            padding: 5px 10px;  /* 버튼 크기를 줄입니다 */
+            border-radius: 10px;  /* 버튼의 모서리를 줄입니다 */
             cursor: pointer;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
         }
@@ -342,20 +356,48 @@
             background-color: #004d40;
         }
 
+        /* 모달 스타일 추가 */
+        .modal-content {
+            border-radius: 20px;
+            box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;
+        }
+        .modal-header {
+            border-bottom: none;
+        }
+        .modal-footer {
+            border-top: none;
+        }
+        .modal-body {
+            text-align: center;
+        }
+        .modal-body img {
+            border-radius: 50%;
+            box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+            margin-bottom: 20px;
+        }
+        #logout-button {
+            text-align: center;
+            margin-top: auto; /* 상단 여백 자동으로 설정 */
+            margin-bottom: 20px; /* 하단 여백 */
+            align-self: center; /* 가운데 정렬 */
+        }
+        .chat-icon {
+            font-size: 2rem; /* 원하는 크기로 조정 */
+            color: #00796b; /* 말풍선 색상 녹색으로 설정 */
+        }
     </style>
 </head>
 <body>
     <!-- 6/18 주석-->
     <div class="sidebar" id="sidebar">
         <button class="sidebar-close-btn" onclick="toggleSidebar()">✖</button>
-        <h2>Aidea Menu</h2><hr>
+        <h4>{{team.name}}</h4>
         <a href="#" onclick="toggleSubmenu('team-members')">팀 인원 목록</a>
         <ul id="team-members" style="display: none;">
             <!-- 팀원 목록이 여기에 동적으로 추가됩니다 -->
         </ul>
 
         <a href="#" onclick="toggleSubmenu('friends-list')">친구 목록</a>
-        <br>
         <ul id="friends-list" style="display: none;">
             <!-- 친구 목록 js 동적으로 생성 -->
         </ul>
@@ -369,13 +411,20 @@
                     </form>
                 </div>
             </li>
-            <li> 받은 친구 요청 목록:
+            <li> 받은 친구 요청 목록
                 <ul id="received-friend-requests">
                     <!-- 친구 요청 목록이 여기에 동적으로 추가됩니다 -->
                 </ul>
             </li>
         </ul>
+
+        <a href="#" id="logout-button">
+            <i class="fa-solid fa-right-from-bracket fa-2x" style="color: white;"></i>
+            로그아웃
+        </a>
+
     </div>
+    
     <div class="container-secound">
         <button class="sidebar-btn" onclick="toggleSidebar()"><i class="fa-solid fa-bars fa-2x"></i></button>
         <div class="textCht" onclick="goToTeamRooms(1)">Aidea Chat</div>
@@ -390,21 +439,21 @@
                     <div class="carousel-indicators">
                         <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
                         <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
                     </div>
                     <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            {% if team.team_image %}
+                            <img src="{{ team.team_image.url }}" alt="{{ team.name }}">
+                            {% else %}
+                            <img src="/media/basic/none_team_image.png" class="d-block w-100" alt="Image description">
+                            {% endif %}
+                        </div>
                         <div class="carousel-item active">
                             <!-- Calendar space (30%) -->
                             <a href="{% url 'eventcalendar:calendar' %}" class="col-md-12 calendar-container" style="text-decoration: none; color: inherit;">
                                 <img src="https://thumbnail10.coupangcdn.com/thumbnails/remote/492x492ex/image/vendor_inventory/5a3b/1fc08c53cd15ae8210074886a4a0a46bfa9c64c068fc20826fe539069067.jpg" class="d-block h-20" alt="...">
                                 <!-- Add your calendar implementation here -->
                             </a>
-                        </div>
-                        <div class="carousel-item">
-                            <img src="..." class="d-block w-100" alt="...">
-                        </div>
-                        <div class="carousel-item">
-                            <img src="..." class="d-block w-100" alt="...">
                         </div>
                     </div>
                     <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
@@ -418,10 +467,7 @@
                 </div>
                 <!-- Chat rooms (70%) -->
                 <div class="container">     
-                <div class="col-md-12">
-                    <div class="header">
-                        <h1>{{ team.name }} - Chat Room </h1>
-                    </div>
+                    <div class="chat-icon"><i class="fa-solid fa-comments fa-2x"></i></div>
                     <ul class="chat-list">
                         {% for room in room_list %}
                         <li>
@@ -431,7 +477,7 @@
                         {% endfor %}
                     </ul>
                     <div class="new-chat-btn">
-                        <a href="{% url 'chat:room_new' team.id %}">새 채팅방 만들기</a>
+                        <a href="{% url 'chat:room_new' team.id %}">채팅방 만들기</a>
                     </div>
                 </div>
             </div>
@@ -469,7 +515,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="profileModalLabel">Friend Profile</h5>
+                    <h5 class="modal-title" id="profileModalLabel">Profile</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -525,6 +571,8 @@
                 submenu.style.display = "block";
                 if (id === "friends-list") {
                     loadFriendsList();
+                } else if (id === "team-members"){
+                    loadTeamMembers();
                 }
             } else {
                 submenu.style.display = "none";
@@ -541,7 +589,7 @@
                     data.friends.forEach(function(friend) {
                         var statusClass = friend.is_online ? 'online' : 'offline';
                         friendsList.append(
-                            '<li data-id="' + friend.id + '" class="' + statusClass + '"><a href="#" class="friend-profile" data-id="' + friend.id + '" data-toggle="modal" data-target="#profileModal">' + friend.name + ' <span class="status-indicator"></span></a></li><br>'
+                            '<li data-id="' + friend.id + '" class="' + statusClass + '"><a href="#" class="friend-profile" data-id="' + friend.id + '" data-toggle="modal" data-target="#profileModal">' + friend.name + ' <span class="status-indicator"></span></a></li>'
                         );
                     });
                     bindFriendProfileClicks();
@@ -574,6 +622,14 @@
         function bindFriendProfileClicks() {
             $('.friend-profile').click(function() {
                 const friendId = $(this).data('id');
+                $('#profile-info').html(''); // 프로필 정보를 초기화합니다.
+                $('#profile-info').append(`
+                <div id="loading-spinner" class="text-center">
+                    <div class="spinner-border" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                </div>
+                `); // 로딩 스피너를 추가합니다.
                 $('#chat-button').hide(); // 프로필 정보가 로드되기 전까지 숨깁니다.
                 $('#loading-spinner').show(); // 로딩 스피너를 표시합니다.
                 $.ajax({
@@ -648,6 +704,22 @@
             // 친구 요청 불러오기
             loadFriendRequests();
 
+            // 로그아웃 버튼 클릭 이벤트
+            $('#logout-button').click(function() {
+                $.ajax({
+                    url: '{% url "accounts:logout" %}', // 로그아웃 URL에 맞게 수정하세요
+                    type: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrftoken
+                    },
+                    success: function(response) {
+                        window.location.href = '{% url "accounts:login" %}'; // 로그아웃 후 리디렉션할 URL에 맞게 수정하세요
+                    },
+                    error: function(xhr, status, error) {
+                        toastr.error('로그아웃에 실패했습니다. 다시 시도해주세요.');
+                    }
+                });
+            });
 
         });
 
@@ -740,7 +812,82 @@
             });
         }
         
+        // 팀 멤버를 불러오는 동작 부분
+        function toggleSubmenu(id) {
+            var submenu = document.getElementById(id);
+            if (submenu.style.display === "none") {
+                submenu.style.display = "block";
+                if (id === "friends-list") {
+                    loadFriendsList();
+                } else if (id === "team-members") {
+                    loadTeamMembers();
+                }
+            } else {
+                submenu.style.display = "none";
+            }
+        }
 
+
+        var teamId = {{ team.id }};    // team.id 값 가져오기
+        function loadTeamMembers() {
+            $.ajax({
+                url: '{% url "teams:get_team_members" %}',  // 팀 멤버를 불러오는 엔드포인트를 생성해야 합니다
+                method: 'GET',
+                data: { team_id: teamId },  // team_id 값을 포함하여 요청을 보냅니다
+                success: function(data) {
+                    var teamMembersList = $('#team-members');
+                    teamMembersList.empty();  // 기존 목록을 초기화
+                    data.team_members.forEach(function(member) {
+                        var statusClass = member.is_online ? 'online' : 'offline';
+                        teamMembersList.append(
+                            '<li data-id="' + member.id + '" class="' + statusClass + '"><a href="#" class="team-member-profile" data-id="' + member.id + '" data-toggle="modal" data-target="#profileModal">' + member.name + ' <span class="status-indicator"></span></a></li>'
+                        );
+                    });
+                    bindTeamMemberProfileClicks();
+                },
+                error: function(xhr, status, error) {
+                    console.error("Failed to load team members:", error);
+                }
+            });
+        }
+        
+        function bindTeamMemberProfileClicks() {
+            $('.team-member-profile').click(function() {
+                const memberId = $(this).data('id');
+                $('#profile-info').html(''); // 프로필 정보를 초기화합니다.
+                $('#profile-info').append(`
+                <div id="loading-spinner" class="text-center">
+                    <div class="spinner-border" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                </div>
+                `); // 로딩 스피너를 추가합니다.
+        
+                $('#loading-spinner').show(); // 로딩 스피너를 표시합니다.
+                $('#chat-button').hide(); // 프로필 정보가 로드되기 전까지 숨깁니다.
+                $('#remove-friend-button').hide(); // 팀 인원을 클릭할 때 친구 끊기 버튼을 숨깁니다.
+                $.ajax({
+                    url: `{% url 'accounts:friend_profile' %}`,
+                    method: 'GET',
+                    data: {id: memberId},
+                    success: function(data) {
+                        const profilePicturehtml = data.profile_picture ? `<img src="${data.profile_picture}" alt="Profile Picture" width="100" height="100">` : '등록된 프로필 이미지 없음';
+                        $('#profile-info').html(
+                            `<strong>Username:</strong> ${data.username}<br>
+                            <strong>Name:</strong> ${data.name}<br>
+                            <strong>Email:</strong> ${data.email}<br>
+                            <strong>Profile image:</strong> ${profilePicturehtml}`
+                        );
+        
+                        $('#loading-spinner').hide(); // 로딩 스피너를 숨깁니다.
+                        $('#chat-button').data('username', data.username).data('memberId', memberId).show(); // 프로필 정보가 로드된 후 버튼을 표시합니다.
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Failed to load profile:", error);
+                    }
+                });
+            });
+        }
 
     </script>
 </body>

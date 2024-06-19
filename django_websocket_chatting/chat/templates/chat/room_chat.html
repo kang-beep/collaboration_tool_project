@@ -276,10 +276,15 @@
     <div class="sidebar" id="sidebar">
         <button class="sidebar-close-btn" onclick="toggleSidebar()">✖</button>
         <h2>Aidea Menu</h2><hr>
-        <a href="#"><i class="fa-solid fa-house"></i>  홈</a>
-        <a href="#"><i class="fa-solid fa-list"></i>  친구목록</a>
-        <a href="#"><i class="fa-solid fa-plus"></i>  친구추가</a>
-        <a href="#">등등등...</a>
+        <a href="{% url 'chat:team_rooms' team.id %}"><i class="fa-solid fa-house"></i>돌아가기</a>
+        <div>채팅 목록</div>
+        <ul>
+            {% for room in room_list %}
+            <li>
+                <a href="{% url 'chat:room_chat' room.pk %}">{{ room.name }}</a>
+            </li>
+            {% endfor %}
+        </ul>
     </div>
     <div class="container-secound">
         <button class="sidebar-btn" onclick="toggleSidebar()"><i class="fa-solid fa-bars fa-2x"></i></button>
@@ -309,6 +314,7 @@
                                     <img src="{{ message.image.url }}" alt="Image" style="max-width: 100%; height: auto;">
                                 {% endif %}
                                 <span class="timestamp">{{ message.timestamp }}</span>
+                                <span class="timestamp">{{ message.sender.name }}</span>
                             </div>
                         </div>
                     {% endfor %}

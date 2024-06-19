@@ -2,7 +2,7 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.hashers import make_password
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, logout, authenticate
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_POST, require_GET
 from django.http import JsonResponse
@@ -58,10 +58,11 @@ def user_login(request):
             return JsonResponse({'error_message': '로그인 정보가 올바르지 않습니다.'}, status=400)
     return render(request, 'accounts/login.html')
 
-
-logout = LogoutView.as_view(
-    next_page="home:front",
-)
+def logout_view(request):
+    if request.method == 'POST':
+        logout(request)
+        return JsonResponse({'success': 'Logged out successfully'})
+    return JsonResponse({'error': 'Invalid request'}, status=400)
 
 
 @login_required

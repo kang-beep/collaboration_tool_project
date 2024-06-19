@@ -46,11 +46,13 @@ def room_new(request, team_id):
 def room_chat(request, room_pk):
     room = get_object_or_404(Room, pk=room_pk)
     team = TeamRoom.objects.filter(room=room).first().team
+    room_qs = team.rooms.all() # 방 목록 불러오기
     messages = TeamMessage.objects.filter(room=room).order_by('timestamp')  # 기존 메시지 내역 불러오기
     return render(request, "chat/room_chat.html", {
         "room": room,
         "team": team,
         "messages": messages,
+        "room_list": room_qs,
     })
 
 
@@ -129,6 +131,7 @@ def send_message(request, room_pk):
             'image_url': team_message.image.url if team_message.image else None,
             'timestamp': team_message.timestamp.strftime('%Y-%m-%d %H:%M:%S'),
             'sender': request.user.username,
+            'sender_name' : request.user.name,
         }
         return JsonResponse(response_data)
 

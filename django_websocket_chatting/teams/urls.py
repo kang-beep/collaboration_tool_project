@@ -15,4 +15,5 @@ urlpatterns = [
     path('reject_invitation/<int:invitation_id>/', views.reject_invitation, name='reject_invitation'),
     path('leave_team/<int:team_id>/', views.leave_team, name='leave_team'),
     path('get_invitations/', views.get_invitations, name='get_invitations'),
+    path('get_team_members/', views.get_team_members, name='get_team_members'),
 ]
