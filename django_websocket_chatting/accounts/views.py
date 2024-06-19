@@ -83,8 +83,7 @@ class SendFriendRequestView(generics.CreateAPIView):
     serializer_class = FriendRequestSerializer
     
     def create(self, request, *args, **kwargs):
-        username = request.data.get('to_user')
-        print(username)
+        username =request.data.get('to_user')
         try:
             to_user = CustomUser.objects.get(username=username)
         except CustomUser.DoesNotExist:

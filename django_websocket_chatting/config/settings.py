@@ -66,6 +66,7 @@ INSTALLED_APPS = [
     'docsumm',
     'eventcalendar',
     'ocr',
+    'stt',
     'teams',
 ]
 
