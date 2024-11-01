@@ -1,0 +1,18 @@
+version: '3.1'
+
+services:
+  db:
+    image: mariadb:latest
+    container_name: mariadb_container
+    environment:
+      MYSQL_ROOT_PASSWORD: 2468!!  # 루트 사용자 비밀번호
+      MYSQL_DATABASE: capstone  # 생성할 데이터베이스 이름
+      MYSQL_USER: kang-beep      # 생성할 사용자 이름
+      MYSQL_PASSWORD: 2468!!  # 생성할 사용자 비밀번호
+    ports:
+      - "6306:3306"  # 로컬 호스트의 3306 포트를 컨테이너의 3306 포트에 매핑
+    volumes:
+      - db_data:/var/lib/mysql  # 데이터베이스 데이터를 저장할 볼륨
+
+volumes:
+  db_data:

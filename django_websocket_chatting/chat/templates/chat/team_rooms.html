@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Rooms</title>
+    <script src="https://kit.fontawesome.com/3c8aeb941b.js" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+    <style>
+        /* Your existing CSS */
+        body {
+            background-color: #B2DFDB;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .container-fluid {
+            display: flex;
+            height: 100%;
+            padding: 0;
+            flex-grow: 1;
+            padding: 20px;
+        }
+        .header {
+            background-color: #ffffff7a;
+            padding: 10px;
+            text-align: center;
+            color: #00796b;
+            border: 1px solid #00796b;
+            border-radius: 40px;
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+            box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+        }
+        .header h1 {
+            margin: 0;
+            flex-grow: 1;
+        }
+        .header .profile-btn {
+            background-color: #00796b;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            display: inline-block;
+            margin-right: 10px;
+        }
+        .header .profile-btn:hover {
+            background-color: #004d40;
+        }
+        .chat-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 20px;
+            background: #ffffff7a;
+            box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+            flex-grow: 1;
+            border-radius: 30px;
+            margin-bottom: 20px;
+        }
+        .chat-list li {
+            background-color: #ffffffa8;
+            margin: 10px 0;
+            padding: 12px;
+            border-radius: 40px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+            display: flex;
+            align-items: center;
+        }
+        .chat-list li a {
+            text-decoration: none;
+            color: #212121;
+            font-weight: bold;
+            flex-grow: 1;
+        }
+        .chat-list .chat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: gray;
+            font-size: inherit;
+            margin-right: 15px;
+        }
+        .new-chat-btn {
+            display: block;
+            margin: 20px;
+            text-align: center;
+        }
+        .new-chat-btn a {
+            text-decoration: none;
+            background-color: #00796b;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+            transition: background-color 0.3s;
+        }
+        .new-chat-btn a:hover {
+            background-color: #00acc1;
+        }
+        main {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        .calendar-container {
+            height: 100%;
+            background-color: #FFFFFF;
+            margin-bottom: 20px;
+            padding: 0px;
+            cursor: pointer;
+        }
+        .card-body {
+            background-color: #E0F7FA;
+            border-radius: 20px;
+        }
+        .card {
+            border-radius: 20px;
+            box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+            margin: 20px;
+        }
+        .fa-toolbox {
+            padding-top: 20px;
+            color: #00796b;
+        }
+        .fa-quote-left {
+            margin-left: 140px;
+            color: #00796b;
+        }
+        .fa-quote-right {
+            color: #00796b;
+            margin-left: 110px;
+        }
+        .carousel-item.active {
+            box-sizing: border-box;
+        }
+        #carouselExampleIndicators {
+            max-width: 300px; /* 원하는 너비로 설정 */
+            max-height: 300px;
+            margin: 0 auto;
+            
+        }
+        #carouselExampleIndicators .carousel-inner img {
+            width: 100%;
+            height: auto;
+            max-height: 300px;
+            
+        }
+        .fa-readme,
+        .fa-magnifying-glass,
+        .fa-microphone {
+            color: #00796b;
+        }
+        .container-secound {
+            text-align: center;
+            padding-bottom: 10px;
+            margin: 0 auto;
+            border-bottom: 3px solid #f8f9faf2;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            z-index: 2;
+        }
+        .container {
+            background: #f8f9fa59;
+            border-radius: 20px;
+            height: auto;
+            padding: 20px;
+            margin-top: 30px;
+            box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+            text-align: center;
+        }
+        .textCht {
+          font-family: Arial, sans-serif;
+          font-size: 2rem;
+          color: white;
+          text-shadow: 0px 0px 10px #0000008c;
+          font-weight: bold;
+          flex-grow: 1;
+          margin-top: 10px;
+          margin-right: 10px;
+        }
+        .fa-comment{
+          margin-left: 10px; 
+          color: #B2DFDB;
+          padding: 5px;
+        }
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -200px;  /* 너비를 줄입니다 */
+            width: 200px;  /* 너비를 줄입니다 */
+            height: 100%;
+            background-color: #518f87;
+            padding: 10px;  /* 패딩을 줄입니다 */
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            color: white;
+            transition: left 0.3s ease;
+            z-index: 3;
+        }
+        
+        @media (max-width: 320px) {
+            .sidebar {
+                left: -160px;  /* 너비를 모바일 뷰에 맞춰 더 줄입니다 */
+                width: 160px;  /* 너비를 모바일 뷰에 맞춰 더 줄입니다 */
+            }
+            .sidebar-btn {
+                padding: 3px 6px;  /* 버튼 패딩 줄임 */
+            }
+            .sidebar-close-btn {
+                padding: 2px 2px;  /* 닫기 버튼 패딩 줄임 */
+            }
+        }
+
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            margin: 10px 0;
+        }
+        .sidebar a:hover {
+            text-decoration: underline;
+        }
+        .sidebar-btn {
+            background-color: #B2DFDB;
+            color: #ffffff;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 20px;
+            text-decoration: none;
+            display: inline-block;
+            margin-left: 10px;
+            margin-top: 10px;
+            cursor: pointer;
+            text-shadow: 0px 0px 10px #0000008c;
+        }
+        .sidebar-btn:hover {
+            background-color: #004d40;
+        }
+        .sidebar-close-btn {
+            background-color: #518f87;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            text-decoration: none;
+            display: block;
+            text-align: right;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        .sidebar-close-btn:hover {
+            background-color: #004d40;
+        }   
+        .sidebar-open {
+            left: 0;
+        }
+        .carousel-inner {
+            border-radius: 50px;
+            margin-bottom: 20px;
+          box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;
+        }
+        .fa-user{
+          text-shadow: 0px 0px 10px #0000008c;
+          color: #ffffff;
+          margin-right: 15px;
+          margin-top: 10px;
+          size: 10px;
+        }
+
+        .online .status-indicator {
+            background-color: green;
+        }
+        .offline .status-indicator {
+            background-color: red;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-left: 5px;
+        }
+        #chat-button {
+            display: none; /* 버튼을 기본적으로 숨깁니다 */
+        }
+        #loading-spinner {
+            display: none;
+        }
+        
+        .online .status-indicator {
+            background-color: green;
+        }
+        .offline .status-indicator {
+            background-color: red;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-left: 5px;
+        }
+
+        .friend-request-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .friend-request-input {
+            padding: 5px;
+            border-radius: 10px;
+            border: 1px solid #00796b;
+            margin-bottom: 5px;
+            width: 80%;  /* 폭을 줄입니다 */
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+        }
+        
+        .friend-request-btn {
+            background-color: #00796b;
+            color: white;
+            border: none;
+            padding: 5px 10px;  /* 버튼 크기를 줄입니다 */
+            border-radius: 10px;  /* 버튼의 모서리를 줄입니다 */
+            cursor: pointer;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+        }
+        
+        .friend-request-btn:hover {
+            background-color: #004d40;
+        }
+
+        /* 모달 스타일 추가 */
+        .modal-content {
+            border-radius: 20px;
+            box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;
+        }
+        .modal-header {
+            border-bottom: none;
+        }
+        .modal-footer {
+            border-top: none;
+        }
+        .modal-body {
+            text-align: center;
+        }
+        .modal-body img {
+            border-radius: 50%;
+            box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+            margin-bottom: 20px;
+        }
+        #logout-button {
+            text-align: center;
+            margin-top: auto; /* 상단 여백 자동으로 설정 */
+            margin-bottom: 20px; /* 하단 여백 */
+            align-self: center; /* 가운데 정렬 */
+        }
+        .chat-icon {
+            font-size: 2rem; /* 원하는 크기로 조정 */
+            color: #00796b; /* 말풍선 색상 녹색으로 설정 */
+        }
+
+        /* 모달 스타일 */
+        .custom-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 350px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+        }
+
+        .modal-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #E0F7FA;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #00796b;
+            color: white;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+        }
+
+        .modal-body {
+            padding: 20px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        /* 모달 탭 스타일 */
+        .modal-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 10px;
+            background: #E0F7FA;
+            border-radius: 10px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 8px 15px;
+            border: none;
+            background: transparent;
+            color: #00796b;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            background: #00796b;
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 15px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* 오버레이 스타일 */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        /* 리스트 스타일 */
+        .member-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .member-list li {
+            padding: 12px 15px;
+            margin: 5px 0;
+            background: #E0F7FA;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .member-list li .status {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-left: 10px;
+        }
+
+        .member-list li .online {
+            background: #4CAF50;
+        }
+
+        .member-list li .offline {
+            background: #F44336;
+        }
+        
+        .utils-dropdown {
+            position: relative;
+        }
+        
+        .utils-menu {
+            display: none;
+            list-style: none;
+            padding-left: 20px;
+            margin-top: 5px;
+        }
+        
+        .utils-menu.show {
+            display: block;
+        }
+        
+        .utils-menu li {
+            padding: 8px 0;
+        }
+        
+        .utils-menu li a {
+            color: white;
+            text-decoration: none;
+            display: block;
+            padding: 5px 10px;
+            transition: background-color 0.3s;
+        }
+        
+        .utils-menu li a:hover {
+            background-color: #004d40;
+            border-radius: 5px;
+        }
+        
+        .utils-menu li i {
+            margin-right: 8px;
+        }
+
+        .sidebar-main-menu {
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+        
+        .sidebar-bottom-menu {
+            margin-top: auto;  /* 이렇게 하면 상단 메뉴들과 최대한 간격을 벌립니다 */
+            padding: 20px 0;   /* 위아래 여백 */
+            border-top: 1px solid rgba(255, 255, 255, 0.1);  /* 구분선 추가 */
+        }
+        
+        .sidebar-bottom-menu a {
+            display: block;
+            padding: 10px 0;   /* 버튼 간격 */
+        }
+    </style>
+</head>
+<body>
+    <!-- 사이드바 -->
+    <div class="sidebar" id="sidebar">
+        <button class="sidebar-close-btn" onclick="toggleSidebar()">✖</button>
+        <a href="{% url 'accounts:profile' %}" id="my-profile">
+            <i class="fa-solid fa-user fa-lg"> 내 계정</i>
+        </a>
+        <br>
+        <h4>{{team.name}}</h4>
+        <br>
+
+        <!-- 팀 메뉴 -->
+        <a href="#" onclick="ModalManager.openModal('team-modal')">
+            <i class="fa-solid fa-people-carry-box"> 팀</i>
+        </a>
+
+        <br>
+
+        <!-- 친구 메뉴 -->
+        <a href="#" onclick="ModalManager.openModal('friends-modal')">
+            <i class="fa-solid fa-users"> 친구</i>
+        </a>
+
+        <br>
+
+        <!-- 달력 메뉴 -->
+        <a href="{% url 'eventcalendar:calendar' %}" id="calendar-side">
+            <i class="fa-regular fa-calendar"> 달력/일정</i>
+        </a>
+
+        <br>
+
+        <!-- 기능 메뉴 -->
+        <div class="utils-dropdown">
+            <a href="#" onclick="toggleUtilsMenu()">
+                <i class="fa-solid fa-puzzle-piece"> 기능 </i>
+            </a>
+            <ul class="utils-menu" id="utilsMenu">
+                <li>
+                    <a href="{% url 'docsumm:generate-doc-summ' %}">
+                        <i class="fa-brands fa-readme"></i> 문서 요약 (Docsumm)
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'speech_to_text' %}">
+                        <i class="fa-solid fa-microphone"></i> 음성 인식 (STT)
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'ocr-home' %}">
+                        <i class="fa-solid fa-magnifying-glass"></i> 광학 문자 인식 (OCR)
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- 하단 메뉴들 -->
+        <div class="sidebar-bottom-menu">
+            <a href="#" id="logout-button">
+                <i class="fa-solid fa-right-from-bracket fa-lg"> 로그아웃</i>
+            </a>
+        </div>
+    </div>
+
+    <!-- 새로운 팀 모달 -->
+    <div class="custom-modal" id="team-modal">
+        <div class="modal-header">
+            <h5>팀 멤버</h5>
+            <button class="close-btn" onclick="ModalManager.closeModal('team-modal')">×</button>
+        </div>
+        <div class="modal-body">
+            <ul id="team-members-list" class="member-list">
+                <!-- 팀 멤버 목록이 여기에 동적으로 추가됩니다 -->
+            </ul>
+        </div>
+    </div>
+
+    <!-- 새로운 친구 모달 -->
+    <div class="custom-modal" id="friends-modal">
+        <div class="modal-header">
+            <h5>친구 관리</h5>
+            <button class="close-btn" onclick="ModalManager.closeModal('friends-modal')">×</button>
+        </div>
+        <div class="modal-body">
+            <div class="modal-tabs">
+                <button class="tab-btn active" onclick="ModalManager.showTab('friends-list')">친구 목록</button>
+                <button class="tab-btn" onclick="ModalManager.showTab('add-friend')">친구 추가</button>
+                <button class="tab-btn" onclick="ModalManager.showTab('friend-requests')">받은 요청</button>
+            </div>
+            
+            <!-- 친구 목록 탭 -->
+            <div id="friends-list" class="tab-content active">
+                <ul class="member-list">
+                    <!-- 친구 목록이 여기에 동적으로 추가됩니다 -->
+                </ul>
+            </div>
+            
+            <!-- 친구 추가 탭 -->
+            <div id="add-friend" class="tab-content">
+                <form class="friend-request-form" onsubmit="FriendManager.sendFriendRequest(event)">
+                    <div class="input-group">
+                        <input type="text" id="friend-username" class="form-control" placeholder="친구 아이디 입력">
+                        <button type="submit" class="btn btn-primary">요청</button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- 받은 요청 탭 -->
+            <div id="friend-requests" class="tab-content">
+                <ul id="received-friend-requests" class="request-list">
+                    <!-- 받은 친구 요청이 여기에 동적으로 추가됩니다 -->
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container-secound">
+        <button class="sidebar-btn" onclick="toggleSidebar()"><i class="fa-solid fa-bars fa-2x"></i></button>
+        <div class="textCht" onclick="goToTeamRooms(1)">Aidea Chat</div>
+
+        <a href="{% url 'accounts:profile' %}" class="profile-btn"><i class="fa-regular fa-user fa-2x"></i></a>
+    </div>
+    <div class="container-fluid">
+        <!-- Main content -->
+        <main role="main" class="main-content">
+            <div class="row">
+                <div id="carouselExampleIndicators" class="carousel slide">
+                    <div class="carousel-indicators">
+                        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                    </div>
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            {% if team.team_image %}
+                            <img src="{{ team.team_image.url }}" alt="{{ team.name }}">
+                            {% else %}
+                            <img src="/media/basic/none_team_image.png" class="d-block w-100" alt="Image description">
+                            {% endif %}
+                        </div>
+                        <div class="carousel-item active">
+                            <!-- Calendar space (30%) -->
+                            <a href="{% url 'eventcalendar:calendar' %}" class="col-md-12 calendar-container" style="text-decoration: none; color: inherit;">
+                                <img src="https://thumbnail10.coupangcdn.com/thumbnails/remote/492x492ex/image/vendor_inventory/5a3b/1fc08c53cd15ae8210074886a4a0a46bfa9c64c068fc20826fe539069067.jpg" class="d-block h-20" alt="...">
+                                <!-- Add your calendar implementation here -->
+                            </a>
+                        </div>
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+                <!-- Chat rooms (70%) -->
+                <div class="container">     
+                    <div class="chat-icon"><i class="fa-solid fa-comments fa-2x"></i></div>
+                    <ul class="chat-list">
+                        {% for room in room_list %}
+                        <li>
+                            <div class="chat-icon"><i class="fa-solid fa-comment fa-2x"></i></div>
+                            <a href="{% url 'chat:room_chat' room.pk %}">{{ room.name }}</a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    <div class="new-chat-btn">
+                        <a href="{% url 'chat:room_new' team.id %}">채팅방 만들기</a>
+                    </div>
+                </div>
+            </div>
+
+                    <div class="container">
+                        <div><i class="fa-solid fa-toolbox fa-4x"></i><br><br></div>
+                        <div class="row">
+                            <div class="col-sm-6 mb-3 mb-sm-0">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><i class="fa-brands fa-readme fa-2x"></i><br><br>문서 요약, Docsumm</h5>
+                                        <p class="card-text">문장 텍스트를 입력하면 해당 텍스트의 요약내용을 확인할 수 있습니다.</p>
+                                        <a href="{% url 'docsumm:generate-doc-summ' %}" class="btn btn-primary" style="background-color: #00796b; border-color: #00796b;">이동하기</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 mb-3 mb-sm-0">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><i class="fa-solid fa-microphone fa-2x"></i><br><br>음성 인식, Speech To Text</h5>
+                                        <p class="card-text">음성 파일을 업로드하여 간편하게 텍스트로 추출할 수 있습니다.</p>
+                                        <a href="{% url 'speech_to_text' %}" class="btn btn-primary" style="background-color: #00796b; border-color: #00796b;">이동하기</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><i class="fa-solid fa-magnifying-glass fa-2x"></i><br><br>광학 문자 인식, OCR</h5>
+                                        <p class="card-text">이미지 및 문서 파일을 업로드하여 파일의 텍스트를 추출할 수 있습니다.</p>
+                                        <a href="{% url 'ocr-home' %}" class="btn btn-primary" style="background-color: #00796b; border-color: #00796b;">이동하기</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Profile Modal -->
+    <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="profileModalLabel">Profile</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="profile-info">
+                    <!-- Profile info will be loaded here -->
+                    <div id="loading-spinner" class="text-center">
+                        <div class="spinner-border" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="chat-button">1:1 대화하기</button>
+                    <button type="button" class="btn btn-danger" id="remove-friend-button">친구 끊기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="modal-overlay" class="modal-overlay"></div>
+    
+    <script>
+        // 유틸리티 함수
+        const Utils = {
+            getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+        };
+
+        // 모달 관리 객체
+        const ModalManager = {
+            openModal(modalId) {
+                const modal = document.getElementById(modalId);
+                const overlay = document.getElementById('modal-overlay');
+                
+                if (modal && overlay) {
+                    modal.style.display = 'block';
+                    overlay.style.display = 'block';
+                    
+                    if (modalId === 'team-modal') TeamManager.loadMembers();
+                    if (modalId === 'friends-modal') {
+                        FriendManager.loadFriendsList();
+                        FriendManager.loadFriendRequests();
+                    }
+                }
+            },
+
+            closeModal(modalId) {
+                const modal = document.getElementById(modalId);
+                const overlay = document.getElementById('modal-overlay');
+                
+                if (modal && overlay) {
+                    modal.style.display = 'none';
+                    overlay.style.display = 'none';
+                }
+            },
+
+            showTab(tabId) {
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.querySelectorAll('.tab-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+
+                const tab = document.getElementById(tabId);
+                const tabBtn = document.querySelector(`[onclick="ModalManager.showTab('${tabId}')"]`);
+                
+                if (tab && tabBtn) {
+                    tab.classList.add('active');
+                    tabBtn.classList.add('active');
+                }
+            }
+        };
+
+        // 친구 관리 객체
+        const FriendManager = {
+            loadFriendsList() {
+                $.ajax({
+                    url: '{% url "accounts:get_friends_list" %}',
+                    method: 'GET',
+                    success: (data) => {
+                        const friendsList = $('#friends-list .member-list');
+                        friendsList.empty();
+                        
+                        data.friends.forEach(friend => {
+                            const statusClass = friend.is_online ? 'online' : 'offline';
+                            friendsList.append(`
+                                <li data-user-id="${friend.id}" class="${statusClass}">
+                                    <span>${friend.name}</span>
+                                    <div class="action-buttons">
+                                        <button onclick="FriendManager.openChat('${friend.username}')" 
+                                                class="btn btn-sm btn-primary">채팅</button>
+                                        <button onclick="FriendManager.removeFriend(${friend.id})" 
+                                                class="btn btn-sm btn-danger">삭제</button>
+                                    </div>
+                                    <span class="status"></span>
+                                </li>
+                            `);
+                        });
+                    },
+                    error: (xhr, status, error) => {
+                        console.error("Failed to load friends list:", error);
+                        toastr.error('친구 목록을 불러오는데 실패했습니다.');
+                    }
+                });
+            },
+
+            sendFriendRequest(event) {
+                event.preventDefault();
+                const username = $('#friend-username').val().trim();
+                
+                if (!username) {
+                    toastr.error('친구 아이디를 입력해주세요.');
+                    return;
+                }
+
+                $.ajax({
+                    url: '{% url "accounts:send-friend-request" %}',
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': Utils.getCookie('csrftoken') },
+                    data: { to_user: username },
+                    success: (response) => {
+                        toastr.success('친구 요청을 보냈습니다.');
+                        $('#friend-username').val('');
+                    },
+                    error: (xhr) => {
+                        const message = xhr.responseJSON?.detail || '요청 실패';
+                        toastr.error(message);
+                    }
+                });
+            },
+
+            loadFriendRequests() {
+                $.ajax({
+                    url: '{% url "accounts:get_received_friend_requests" %}',
+                    method: 'GET',
+                    success: (data) => {
+                        const requestList = $('#friend-requests .request-list');
+                        requestList.empty();
+                        
+                        data.requests.forEach(request => {
+                            requestList.append(`
+                                <li>
+                                    <span>${request.from_user}</span>
+                                    <div class="action-buttons">
+                                        <button onclick="FriendManager.handleRequest(${request.id}, 'accept')" 
+                                                class="btn btn-sm btn-success">수락</button>
+                                        <button onclick="FriendManager.handleRequest(${request.id}, 'reject')" 
+                                                class="btn btn-sm btn-danger">거절</button>
+                                    </div>
+                                </li>
+                            `);
+                        });
+                    }
+                });
+            },
+
+            handleRequest(requestId, action) {
+                const isAccept = action === 'accept';
+                $.ajax({
+                    url: `/accounts/friend-request/${action}/${requestId}/`,
+                    type: isAccept ? 'PUT' : 'DELETE',
+                    headers: { 'X-CSRFToken': Utils.getCookie('csrftoken') },
+                    success: () => {
+                        toastr.success(`친구 요청을 ${isAccept ? '수락' : '거절'}했습니다.`);
+                        this.loadFriendRequests();
+                        if (isAccept) this.loadFriendsList();
+                    },
+                    error: () => toastr.error('요청 처리에 실패했습니다.')
+                });
+            },
+
+            openChat(username) {
+                window.location.href = `/chat/private_chat/${username}/`;
+            },
+
+            removeFriend(friendId) {
+                if (!confirm('정말 친구를 삭제하시겠습니까?')) return;
+                
+                $.ajax({
+                    url: `/accounts/friend/remove/${friendId}/`,
+                    type: 'DELETE',
+                    headers: { 'X-CSRFToken': Utils.getCookie('csrftoken') },
+                    success: () => {
+                        toastr.success('친구가 삭제되었습니다.');
+                        this.loadFriendsList();
+                    },
+                    error: () => toastr.error('친구 삭제에 실패했습니다.')
+                });
+            }
+        };
+
+        // 팀 관리 객체
+        const TeamManager = {
+            loadMembers() {
+                $.ajax({
+                    url: '{% url "teams:get_team_members" %}',
+                    method: 'GET',
+                    data: { team_id: {{ team.id }} },
+                    success: (data) => {
+                        const teamMembersList = $('#team-members-list');
+                        teamMembersList.empty();
+                        
+                        data.team_members.forEach(member => {
+                            const statusClass = member.is_online ? 'online' : 'offline';
+                            teamMembersList.append(`
+                                <li data-user-id="${member.id}" class="${statusClass}">
+                                    <span>${member.name}</span>
+                                    <span class="status"></span>
+                                    <button onclick="FriendManager.openChat('${member.username}')" 
+                                            class="btn btn-sm btn-primary">채팅</button>
+                                </li>
+                            `);
+                        });
+                    },
+                    error: (xhr) => {
+                        toastr.error('팀 멤버 목록을 불러오는데 실패했습니다.');
+                    }
+                });
+            }
+        };
+
+        // 웹소켓 관리 객체
+        const WebSocketManager = {
+            socket: null,
+
+            init() {
+                this.socket = new WebSocket('ws://' + window.location.host + '/ws/status/');
+                this.socket.onopen = this.handleOpen.bind(this);
+                this.socket.onmessage = this.handleMessage.bind(this);
+                this.socket.onerror = this.handleError.bind(this);
+                this.socket.onclose = this.handleClose.bind(this);
+            },
+
+            handleOpen() {
+                console.log("WebSocket connected");
+            },
+
+            handleMessage(event) {
+                const data = JSON.parse(event.data);
+                this.updateUserStatus(data);
+            },
+
+            handleError(error) {
+                console.error("WebSocket error:", error);
+            },
+
+            handleClose() {
+                console.log("WebSocket disconnected");
+                // 필요한 경우 재연결 로직 추가
+            },
+
+            updateUserStatus(data) {
+                const { user_id, is_online } = data;
+                $(`.member-list li[data-user-id="${user_id}"]`).each(function() {
+                    $(this).removeClass('online offline')
+                        .addClass(is_online ? 'online' : 'offline');
+                });
+            }
+        };
+
+        // 페이지 초기화
+        $(document).ready(() => {
+            // 웹소켓 연결
+            WebSocketManager.init();
+
+            // 모달 오버레이 클릭 이벤트
+            $('#modal-overlay').click(() => {
+                $('.custom-modal').hide();
+                $('#modal-overlay').hide();
+            });
+
+            // 로그아웃 이벤트
+            $('#logout-button').click(() => {
+                $.ajax({
+                    url: '{% url "accounts:logout" %}',
+                    type: 'POST',
+                    headers: { 'X-CSRFToken': Utils.getCookie('csrftoken') },
+                    success: () => {
+                        window.location.href = '{% url "accounts:login" %}';
+                    },
+                    error: () => {
+                        toastr.error('로그아웃에 실패했습니다.');
+                    }
+                });
+            });
+
+            // 사이드바 토글 함수
+            window.toggleSidebar = () => {
+                $('#sidebar').toggleClass('sidebar-open');
+            };
+
+            // 팀 페이지 이동 함수
+            window.goToTeamRooms = () => {
+                const teamId = {{ team.id }};
+                window.location.href = `/chat/teams/${teamId}/`;
+            };
+
+            // toastr 옵션 설정
+            toastr.options = {
+                closeButton: true,
+                progressBar: true,
+                positionClass: "toast-top-right",
+                timeOut: 3000
+            };
+        });
+        
+        function toggleUtilsMenu() {
+            const menu = document.getElementById('utilsMenu');
+            menu.classList.toggle('show');
+        }
+        
+        // 다른 곳을 클릭하면 메뉴가 닫히도록 설정
+        document.addEventListener('click', function(event) {
+            const utilsDropdown = document.querySelector('.utils-dropdown');
+            if (!utilsDropdown.contains(event.target)) {
+                document.getElementById('utilsMenu').classList.remove('show');
+            }
+        });
+    </script>
+</body>
+</html>
