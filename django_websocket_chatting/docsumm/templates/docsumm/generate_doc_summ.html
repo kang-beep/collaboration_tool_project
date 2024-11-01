@@ -96,6 +96,8 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
         var csrftoken = $('[name=csrfmiddlewaretoken]').val();
+        var summaryText = "";  // 요약된 내용을 저장할 변수
+    
         $(document).ready(function() {
             $('#docsumm-btn').click(function(e) {
                 e.preventDefault();
@@ -116,7 +118,8 @@
                         xhr.setRequestHeader("X-CSRFToken", csrftoken);
                     },
                     success: function(data) {
-                        $('#result-summ').html('<p><b>키워드</b>: ' + data.keywords + '</p><p><b>요약</b>: ' + data.summary + '</p>');
+                        summaryText = data.summary;  // 요약 내용을 저장
+                        $('#result-summ').html('<p><b>키워드</b>: ' + data.keywords + '</p><p><b>요약</b>: ' + summaryText + '</p>');
                     },
                     error: function(xhr, status, error) {
                         console.log("Error:", error);
@@ -125,6 +128,15 @@
                         $('#docsumm-btn').prop('disabled', false);
                         $('#summ-loading-spinner').hide();
                     }
+                });
+            });
+    
+            // 요약 텍스트 복사 기능
+            $('#result-summ').click(function() {
+                navigator.clipboard.writeText(summaryText).then(function() {
+                    alert("요약된 내용이 복사되었습니다!");
+                }).catch(function(error) {
+                    console.log("복사 실패:", error);
                 });
             });
         });

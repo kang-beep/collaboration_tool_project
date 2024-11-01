@@ -113,7 +113,18 @@
                     scrollTop: $('#result-text').offset().top
                 }, "fast");
             });
+    
+            // 텍스트 복사 기능 추가
+            $('#result-text').click(function() {
+                var textToCopy = $(this).find('p').text(); // 인식된 텍스트를 가져옴
+                navigator.clipboard.writeText(textToCopy).then(function() {
+                    alert("인식된 텍스트가 복사되었습니다!");
+                }).catch(function(error) {
+                    console.log("복사 실패:", error);
+                });
+            });
         });
     </script>
+    
 </body>
 </html>

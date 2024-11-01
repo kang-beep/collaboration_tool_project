@@ -173,6 +173,16 @@
                 console.error("Error:", error);
                 document.getElementById("ocr_result").innerHTML = "처리 중 에러가 발생했습니다.";
             });
+
+            // 텍스트 복사 기능 추가
+            document.getElementById("ocr_result").onclick = function() {
+                var textToCopy = this.innerText; // 추출된 텍스트를 가져옴
+                navigator.clipboard.writeText(textToCopy).then(function() {
+                    alert("추출된 텍스트가 복사되었습니다!");
+                }).catch(function(error) {
+                    console.log("복사 실패:", error);
+                });
+            };
         }
     </script>
 </body>

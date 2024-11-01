@@ -71,33 +71,39 @@
         .chat-message {
             margin: 10px 0;
             display: flex;
-            align-items: center;
+            flex-direction: column; /* 세로로 정렬 */
+            align-items: flex-start; /* 기본적으로 왼쪽 정렬 */
         }
+        
+        .sender-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #00796B; /* 발신자 이름 색상 */
+        }
+        
         .chat-message.me {
-            justify-content: flex-end;
+            align-items: flex-end; /* 자신의 메시지는 오른쪽 정렬 */
         }
-        .chat-message .message-content {
+        
+        .message-content {
             background-color: #F1F1F1;
             color: #00796B;
             border-radius: 10px;
             padding: 10px;
-            max-width: 80%;
+            max-width: 60%;
             word-wrap: break-word;
             position: relative;
         }
+        
         .chat-message.me .message-content {
-            background-color: #E0F7FA; /* 조금 더 연한 배경색 */
-            color: #004D40; /* 더 어두운 텍스트 색상 */
-        }
-        .chat-message.me .message-content .timestamp {
-            color: #00695C; /* 타임스탬프 텍스트 색상 */
+            background-color: #E0F7FA; /* 본인이 보낸 메시지 배경색 */
         }
         .timestamp {
             display: block;
             font-size: 0.8em;
             color: #666;
             text-align: right;
-            margin-top: 5px;
+            margin-top: 0.5px;
         }
         .btn-primary, .btn-danger {
             margin: 5px;
@@ -306,6 +312,8 @@
                 <div id="chat_messages" class="w-100">
                     {% for message in messages %}
                         <div class="chat-message{% if message.sender == request.user %} me{% endif %}">
+                            <!-- 발신자 이름을 메시지 박스 위에 표시 -->
+                            <div class="sender-name">{{ message.sender.name }}</div>
                             <div class="message-content">
                                 {% if message.message %}
                                     {{ message.message }}
@@ -314,7 +322,6 @@
                                     <img src="{{ message.image.url }}" alt="Image" style="max-width: 100%; height: auto;">
                                 {% endif %}
                                 <span class="timestamp">{{ message.timestamp }}</span>
-                                <span class="timestamp">{{ message.sender.name }}</span>
                             </div>
                         </div>
                     {% endfor %}
@@ -397,7 +404,7 @@
             ws: null,
             retry: 0,
             username_set: new Set(),
-            current_username: "{{ request.user.username }}", // 현재 사용자 이름을 Django 템플릿에서 가져옵니다.
+            current_username: "{{ request.user.name }}", // 현재 사용자 이름을 Django 템플릿에서 가져옵니다.
         
             init() {
                 this.chat_messages_tag = document.querySelector("#chat_messages");
@@ -483,24 +490,35 @@
             append_message(message, sender, image_url, timestamp) {
                 const element = document.createElement("div");
                 element.className = "chat-message";
-                if (sender === this.current_username) { // 현재 사용자 이름과 비교
+                
+                if (sender === this.current_username) {
                     element.className += " me";
                 }
             
+                const senderName = document.createElement("div");
+                senderName.className = "sender-name";
+                senderName.textContent = sender;
+            
                 const wrapper = document.createElement("div");
                 wrapper.className = "message-content";
+            
                 if (message) {
                     wrapper.innerHTML += message;
                 }
+                
                 if (image_url) {
                     wrapper.innerHTML += `<br><img src="${image_url}" alt="Image" style="max-width: 100%; height: auto;">`;
                 }
+                
                 wrapper.innerHTML += `<span class="timestamp">${timestamp}</span>`;
+            
+                element.appendChild(senderName);
                 element.appendChild(wrapper);
             
                 this.chat_messages_tag.appendChild(element);
-                this.scroll_to_bottom(); // 메시지를 추가한 후 스크롤을 맨 아래로 설정
-            },
+                
+                this.scroll_to_bottom();
+            },       
             
             scroll_to_bottom() {
                 const chatContainer = document.getElementById('chat_messages_container');
@@ -521,7 +539,9 @@
                 const form_data = new FormData(event.target);
                 const message = form_data.get('message').trim();
                 const image = form_data.get('image');
-                const timestamp = new Date().toLocaleTimeString();
+                // 타임스탬프를 원하는 형식으로 생성
+                const options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true };
+                const timestamp = new Date().toLocaleString('ko-KR', options);
             
                 if (message || image) {
                     if (image && image.size > 0) {
