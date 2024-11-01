@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ friend_username }}와의 개인 채팅</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <style>
+        body {
+            background-color: #B2DFDB;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .container {
+            background: #ffffff7a;
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            max-width: 800px; /* 컨테이너 최대 너비 설정 */
+            margin: 20px auto; /* 가운데 정렬 */
+        }
+        .chat-box {
+            flex-grow: 1;
+            overflow-y: scroll;
+            border: 1px solid #ccc;
+            padding: 10px;
+            background: #E0F7FA;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .message {
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 10px;
+            max-width: 50%;
+            clear: both;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            word-wrap: break-word; /* 텍스트가 박스 너비를 넘어갈 경우 줄바꿈 */
+        }
+        .message.self {
+            background-color: #d1e7dd;
+            align-self: flex-end;  /* 오른쪽으로 배치 */
+            text-align: right;  /* 텍스트 정렬을 오른쪽으로 */
+            margin-left: auto; /* 왼쪽 여백 자동 설정으로 오른쪽 정렬 보장 */
+        }
+        .message.other {
+            background-color: #f8d7da;
+            align-self: flex-start;
+            text-align: left;
+        }
+        .input-group {
+            display: flex;
+            position: relative;
+            align-items: center;
+        }
+        .input-group .form-control, .input-group-append .btn {
+            height: calc(2.25rem + 2px); /* 기본 Bootstrap input 높이에 맞추기 */
+        }
+        .input-group-append .btn {
+            background: #00796b;
+            height: 100%;
+            display: flex;
+            align-items: center;
+        }
+        h2 {
+            color: #00796b;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .extra-options {
+            display: none;
+            margin-top: 10px;
+        }
+        .extra-options.show {
+            display: block;
+        }
+        .message img {
+            max-width: 200px;
+            border-radius: 5px;
+            margin-top 5px;
+        }
+        .timestamp {
+            font-size: 0.8em;
+            color: #666;
+            margin-top: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>{{ friend_username }}와의 개인 채팅</h2>
+        <div id="chat-box" class="chat-box">
+            <!-- 채팅 메시지들이 여기에 추가됩니다. -->
+        </div>
+        <form id="chat-form">
+            {% csrf_token %}
+            <!-- 메시지 전송부분 -->
+            <div class="input-group mt-3">
+                <div class="input-group-prepend">
+                    <button class="btn btn-secondary" type="button" id="toggle_extra_options">+</button>
+                </div>
+                <input type="text" id="message-input" class="form-control" placeholder="메시지를 입력하세요...">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="submit">전송</button>
+                </div>
+            </div>
+            <!-- 이미지 전송 부분-->
+            <div id="extra_options" class="extra-options">
+                <input type="file" name="image" class="form-control" accept="image/*" style="background-color: #E0F7FA;">
+            </div>
+        </form>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            const ws = new WebSocket('ws://' + window.location.host + '/ws/chat/private_chat/{{ room_name }}/');
+
+            ws.onopen = function(event) {
+                console.log("WebSocket is open now.");
+            };
+
+            ws.onmessage = function(event) {
+                const data = JSON.parse(event.data);
+                const message = data.message;
+                const sender = data.sender;
+                const senderId = data.sender_id;
+                const sender_name = data.sender_name;
+                const imageUrl = data.image_url;
+                const timestamp = data.timestamp;
+
+                const messageElement = $('<div class="message"></div>');
+                
+                // 메시지 내용 구성
+                let content = '';
+                if (message) {
+                    content += `<div class="text">${message}</div>`;
+                }
+                if (imageUrl) {
+                    content += `<img src="${imageUrl}" alt="Shared image">`; // 이 부분 수정
+                }
+                content += `<div class="timestamp">${timestamp}</div>`; // 이 부분도 수정
+
+                if (senderId === {{ user.id }}) {
+                    messageElement.addClass('self');
+                    messageElement.html(content);  // .text() 대신 .html() 사용
+                } else {
+                    messageElement.addClass('other');
+                    messageElement.html(`<div>${sender_name}</div>${content}`);  // .text() 대신 .html() 사용
+                }
+
+                $('#chat-box').append(messageElement);
+                $('#chat-box').scrollTop($('#chat-box')[0].scrollHeight);
+            };
+
+            ws.onclose = function(event) {
+                console.log("WebSocket is closed now.");
+            };
+            
+            // 추가 옵션 토글 버튼 이벤트
+            $('#toggle_extra_options').click(function(){
+                $('#extra_options').toggleClass('show');
+            });
+
+            // 폼 제출 이벤트
+            $('#chat-form').submit(function(event) {
+                event.preventDefault();
+
+                const messageInput = $('#message-input');
+                const message = messageInput.val();
+                const imageInput = $('input[name="image"]')[0];
+                const image = imageInput.files[0];
+
+                if (message || image) {
+                    if (image) {
+                        // 이미지가 있는 경우
+                        const reader = new FileReader();
+                        reader.onload = function() {
+                            ws.send(JSON.stringify({
+                                'message': message,
+                                'image': reader.result
+                            }));
+                        };
+                        reader.readAsDataURL(image);
+                    } else {
+                        // 텍스트 메시지만 있는 경우
+                        ws.send(JSON.stringify({
+                            'message': message
+                        }));
+                    }
+
+                    // 입력 필드 초기화
+                    messageInput.val('');
+                    imageInput.value = '';
+                    $('#extra_options').removeClass('show');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

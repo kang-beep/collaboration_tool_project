@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Room</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://kit.fontawesome.com/3c8aeb941b.js" crossorigin="anonymous"></script>
+    <style>
+        body {
+            background-color: #B2DFDB;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .container-fluid {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            padding: 20px;
+            overflow: hidden;
+        }
+        .header {
+            background-color: #ffffff7a;
+            padding: 10px;
+            text-align: center;
+            color: #00796b;
+            border: 1px solid #00796b;
+            border-radius: 40px;
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+            box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+        }
+        .header h1 {
+            margin: 0;
+            flex-grow: 1;
+        }
+        .header .profile-btn {
+            background-color: #00796b;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            display: inline-block;
+            margin-right: 10px;
+        }
+        .header .profile-btn:hover {
+            background-color: #004d40;
+        }
+        .chat-container {
+            background: #ffffff7a;
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .chat-message {
+            margin: 10px 0;
+            display: flex;
+            flex-direction: column; /* 세로로 정렬 */
+            align-items: flex-start; /* 기본적으로 왼쪽 정렬 */
+        }
+        
+        .sender-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #00796B; /* 발신자 이름 색상 */
+        }
+        
+        .chat-message.me {
+            align-items: flex-end; /* 자신의 메시지는 오른쪽 정렬 */
+        }
+        
+        .message-content {
+            background-color: #F1F1F1;
+            color: #00796B;
+            border-radius: 10px;
+            padding: 10px;
+            max-width: 60%;
+            word-wrap: break-word;
+            position: relative;
+        }
+        
+        .chat-message.me .message-content {
+            background-color: #E0F7FA; /* 본인이 보낸 메시지 배경색 */
+        }
+        .timestamp {
+            display: block;
+            font-size: 0.8em;
+            color: #666;
+            text-align: right;
+            margin-top: 0.5px;
+        }
+        .btn-primary, .btn-danger {
+            margin: 5px;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .btn-primary:hover {
+            background-color: #00796B;
+        }
+        .btn-danger:hover {
+            background-color: #c62828;
+        }
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -250px;
+            width: 250px;
+            height: 100%;
+            background-color: #518f87;
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            color: white;
+            transition: left 0.3s ease;
+            z-index: 3;
+        }
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            margin: 10px 0;
+        }
+        .sidebar a:hover {
+            text-decoration: underline;
+        }
+        .sidebar-btn {
+            background-color: #B2DFDB;
+            color: #ffffff;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 20px;
+            text-decoration: none;
+            display: inline-block;
+            margin-left: 10px;
+            margin-top: 10px;
+            cursor: pointer;
+            text-shadow: 0px 0px 10px #0000008c;
+        }
+        .sidebar-btn:hover {
+            background-color: #004d40;
+        }
+        .sidebar-close-btn {
+            background-color: #518f87;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            text-decoration: none;
+            display: block;
+            text-align: right;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        .sidebar-close-btn:hover {
+            background-color: #004d40;
+        }
+        .sidebar-open {
+            left: 0;
+        }
+        .container-secound {
+            text-align: center;
+            padding-bottom: 10px;
+            margin: 0 auto;
+            border-bottom: 3px solid #f8f9faf2;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            z-index: 2;
+        }
+        .textCht {
+            font-family: Arial, sans-serif;
+            font-size: 2rem;
+            color: white;
+            text-shadow: 0px 0px 10px #0000008c;
+            font-weight: bold;
+            flex-grow: 1;
+            margin-top: 10px;
+            margin-right: 10px;
+        }
+        .fa-person-circle-check {
+            text-shadow: 0px 0px 10px #0000008c;
+            color: #ffffff;
+            margin-right: 15px;
+            margin-top: 10px;
+            size: 10px;
+            cursor: pointer;
+        }
+        .input-group {
+            display: flex;
+            position: relative;
+            align-items: center;
+        }
+        .input-group .form-control, .input-group-prepend .btn, .input-group-append .btn {
+            height: calc(2.25rem + 2px); /* 기본 Bootstrap input 높이에 맞추기 */
+        }
+        .input-group-prepend .btn {
+            background: #00796b;
+            margin-right: 5px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+        }
+        .input-group-append .btn {
+            background: #00796b;
+            height: 100%;
+            display: flex;
+            align-items: center;
+        }
+        .user-list-container {
+            display: none;
+            position: fixed;
+            top: 70px;
+            right: 50%;
+            transform: translateX(50%);
+            width: 250px;
+            background-color: #FFFFFF;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 4;
+            overflow-y: auto;
+            max-height: 500px;
+            text-align: center;
+        }
+        .user-list-container .card-header {
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            background-color: #004d40c2;
+            color: white;
+            text-align: center;
+        }
+        .user-list-container .card-body {
+            padding: 10px;
+        }
+        #chat_messages_container {
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+        #message_input_form {
+            background-color: #B2DFDB;
+            padding: 10px;
+            border-top: 1px solid #ddd;
+            position: sticky;
+            bottom: 0;
+        }
+        .extra-options {
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            background-color: #80CBC4; /* 배경보다 조금 진한 색상 */
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-top: 10px;
+        }
+        .extra-options.show {
+            display: flex;
+        }
+    </style>    
+</head>
+<body>
+    <div class="sidebar" id="sidebar">
+        <button class="sidebar-close-btn" onclick="toggleSidebar()">✖</button>
+        <h2>Aidea Menu</h2><hr>
+        <a href="{% url 'chat:team_rooms' team.id %}"><i class="fa-solid fa-house"></i>돌아가기</a>
+        <div>채팅 목록</div>
+        <ul>
+            {% for room in room_list %}
+            <li>
+                <a href="{% url 'chat:room_chat' room.pk %}">{{ room.name }}</a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="container-secound">
+        <button class="sidebar-btn" onclick="toggleSidebar()"><i class="fa-solid fa-bars fa-2x"></i></button>
+        <div class="textCht" onclick="goToTeamRooms()">Aidea Chat</div>
+        <i class="fa-solid fa-person-circle-check fa-2x" onclick="toggleUserList()"></i>
+    </div>
+    <div class="user-list-container" id="userListContainer">
+        <div class="card-header">
+            접속 유저 <span id="user_count"></span>
+        </div>
+        <div class="card-body">
+            <ul id="user_list" style="list-style-type: none; padding: 0;"></ul>
+        </div>
+    </div>
+    
+    <div class="container-fluid">
+        <div class="chat-container">
+            <div id="chat_messages_container">
+                <div id="chat_messages" class="w-100">
+                    {% for message in messages %}
+                        <div class="chat-message{% if message.sender == request.user %} me{% endif %}">
+                            <!-- 발신자 이름을 메시지 박스 위에 표시 -->
+                            <div class="sender-name">{{ message.sender.name }}</div>
+                            <div class="message-content">
+                                {% if message.message %}
+                                    {{ message.message }}
+                                {% endif %}
+                                {% if message.image %}
+                                    <img src="{{ message.image.url }}" alt="Image" style="max-width: 100%; height: auto;">
+                                {% endif %}
+                                <span class="timestamp">{{ message.timestamp }}</span>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="message_input_form">
+        <form id="message_form" enctype="multipart/form-data" method="POST">
+            {% csrf_token %}
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <button class="btn btn-secondary" type="button" id="toggle_extra_options">+</button>
+                </div>
+                <input type="text" name="message" class="form-control" autofocus autocomplete="off" placeholder="메시지를 입력하세요"/>
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="submit"><i class="fa-regular fa-paper-plane"></i> </button>
+                </div>
+            </div>
+            <div id="extra_options" class="extra-options">
+                <input type="file" name="image" class="form-control" accept="image/*" style="background-color: #E0F7FA;">
+                <button class="btn btn-danger" type="button" onclick="deleteRoom()">채팅방 삭제하기</button>
+            </div>
+        </form>
+    </div>
+    
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">알림</h5>
+                </div>
+                <div class="modal-body"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function goToTeamRooms() {
+            const teamId = "{{ team.id }}";  // Django 템플릿 변수를 사용하여 teamId를 가져옵니다.
+            window.location.href = `/chat/teams/${teamId}/`;
+        }
+        
+        function toggleSidebar() {
+            document.getElementById("sidebar").classList.toggle("sidebar-open");
+        }
+        
+        function toggleUserList() {
+            const userListContainer = document.getElementById('userListContainer');
+            if (userListContainer.style.display === 'none' || userListContainer.style.display === '') {
+                userListContainer.style.display = 'block';
+            } else {
+                userListContainer.style.display = 'none';
+            }
+        }
+        
+        function deleteRoom() {
+            const roomPk = "{{ room.pk }}";
+            fetch(`/chat/rooms/${roomPk}/delete/`, {
+                method: "POST",
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                window.location.href = `/chat/teams/{{ team.id }}/`;
+            })
+            .catch(error => console.error('Error deleting room:', error));
+        }
+        
+        const handlers = {
+            chat_messages_tag: null,
+            ws: null,
+            retry: 0,
+            username_set: new Set(),
+            current_username: "{{ request.user.name }}", // 현재 사용자 이름을 Django 템플릿에서 가져옵니다.
+        
+            init() {
+                this.chat_messages_tag = document.querySelector("#chat_messages");
+                document.querySelector("#message_form")
+                    .addEventListener("submit", this.onsubmit.bind(this));
+                document.querySelector("#toggle_extra_options")
+                    .addEventListener("click", this.toggle_extra_options.bind(this));
+            },
+            connect(ws_url) {
+                if(this.ws) this.ws.close();
+        
+                this.ws = new WebSocket(ws_url || this.ws?.url);
+        
+                this.ws.onopen = this.onopen.bind(this);
+                this.ws.onclose = this.onclose.bind(this);
+                this.ws.onerror = this.onerror.bind(this);
+                this.ws.onmessage = this.onmessage.bind(this);
+            },
+            reconnect() {
+                this.connect();
+            },
+            onopen() {
+                console.log("웹소켓 서버와 접속");
+                this.retry = 0;
+        
+                fetch(`/chat/rooms/{{ room.pk }}/users/`) // Modify this URL according to your server setup
+                    .then(response => response.json())
+                    .then(({ username_list }) => {
+                        this.username_set = new Set([...this.username_set, ...username_list]);
+                        this.update_user_list();
+                    });
+            },
+            onclose(event) {
+                const close_code = event.code;
+        
+                if(close_code === 4000) {
+                    this.modal("채팅방이 삭제되었습니다. 대기실로 이동합니다.", () => {
+                        window.location.href = "/";
+                    });
+                }
+                else if(!event.wasClean) {
+                    console.error("웹소켓 서버가 죽었거나, 네트워크 장애입니다.");
+                    if(this.retry < 3) {
+                        this.retry += 1;
+                        setTimeout(() => {
+                            this.reconnect();
+                            console.log(`[${this.retry}] 접속 재시도 ...`);
+                        }, 1000 * this.retry)
+                    }
+                    else {
+                        console.log("웹소켓 서버에 접속할 수 없습니다. 대기실로 이동합니다.");
+                        window.location.href = "/";
+                    }
+                }
+            },
+            onerror() {
+                console.log("웹소켓 에러가 발생했습니다. 대기실로 이동합니다.");
+                window.location.href = "/";
+            },
+            onmessage(event) {
+                const message_json = event.data;
+                console.log("메세지 수신 :", message_json);
+        
+                const { type, message, sender, image_url, username, timestamp } = JSON.parse(message_json);
+                switch(type) {
+                    case "chat.message":
+                        this.append_message(message, sender, image_url, timestamp);
+                        break;
+                    case "chat.user.join":
+                        this.append_message(`${username}님이 들어오셨습니다.`, null, null, timestamp);
+                        this.username_set.add(username);
+                        this.update_user_list();
+                        break;
+                    case "chat.user.leave":
+                        this.append_message(`${username}님이 나가셨습니다.`, null, null, timestamp);
+                        this.username_set.delete(username);
+                        this.update_user_list();
+                        break;
+                    default:
+                        console.error(`Invalid message type : ${type}`);
+                }
+            },
+            append_message(message, sender, image_url, timestamp) {
+                const element = document.createElement("div");
+                element.className = "chat-message";
+                
+                if (sender === this.current_username) {
+                    element.className += " me";
+                }
+            
+                const senderName = document.createElement("div");
+                senderName.className = "sender-name";
+                senderName.textContent = sender;
+            
+                const wrapper = document.createElement("div");
+                wrapper.className = "message-content";
+            
+                if (message) {
+                    wrapper.innerHTML += message;
+                }
+                
+                if (image_url) {
+                    wrapper.innerHTML += `<br><img src="${image_url}" alt="Image" style="max-width: 100%; height: auto;">`;
+                }
+                
+                wrapper.innerHTML += `<span class="timestamp">${timestamp}</span>`;
+            
+                element.appendChild(senderName);
+                element.appendChild(wrapper);
+            
+                this.chat_messages_tag.appendChild(element);
+                
+                this.scroll_to_bottom();
+            },       
+            
+            scroll_to_bottom() {
+                const chatContainer = document.getElementById('chat_messages_container');
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            },
+            
+            init() {
+                this.chat_messages_tag = document.querySelector("#chat_messages");
+                document.querySelector("#message_form")
+                    .addEventListener("submit", this.onsubmit.bind(this));
+                document.querySelector("#toggle_extra_options")
+                    .addEventListener("click", this.toggle_extra_options.bind(this));
+                this.scroll_to_bottom(); // 초기화 시에도 스크롤을 맨 아래로 설정
+            },
+            onsubmit(event) {
+                event.preventDefault();
+            
+                const form_data = new FormData(event.target);
+                const message = form_data.get('message').trim();
+                const image = form_data.get('image');
+                // 타임스탬프를 원하는 형식으로 생성
+                const options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true };
+                const timestamp = new Date().toLocaleString('ko-KR', options);
+            
+                if (message || image) {
+                    if (image && image.size > 0) {
+                        const reader = new FileReader();
+                        reader.onload = () => {
+                            const base64Image = reader.result.split(',')[1]; // Remove the base64 prefix
+                            this.ws.send(JSON.stringify({
+                                type: "chat.message",
+                                message: message,
+                                image: `data:image/jpeg;base64,${base64Image}`,
+                                timestamp: timestamp
+                            }));
+                        };
+                        reader.readAsDataURL(image);
+                    } else {
+                        this.ws.send(JSON.stringify({
+                            type: "chat.message",
+                            message: message,
+                            image: null,
+                            timestamp: timestamp
+                        }));
+                    }
+                }
+            
+                event.target.reset();  // reset form
+            }
+            ,            
+            toggle_extra_options() {
+                const extra_options = document.getElementById('extra_options');
+                extra_options.classList.toggle('show');
+            },
+            update_user_list() {
+                const html = [...this.username_set]
+                    .map(username => `<li>${username}</li>`)
+                    .join('');
+                document.querySelector("#user_list").innerHTML = html;
+        
+                document.querySelector("#user_count").textContent =
+                    `(${this.username_set.size}명)`;
+            },
+            modal(message, ok_handler) {
+                const modal_ele = document.querySelector("#staticBackdrop");
+                const body_ele = modal_ele.querySelector(".modal-body");
+                const button_ele = modal_ele.querySelector(".modal-footer button");
+        
+                body_ele.textContent = message;
+        
+                button_ele.addEventListener("click", () => {
+                    if(ok_handler) ok_handler();
+                    modal.hide();
+                });
+        
+                const modal = new bootstrap.Modal(modal_ele);
+                modal.show();
+            }
+        };
+        
+        handlers.init();
+        
+        const protocol = location.protocol === "http:" ? "ws:" : "wss:";
+        const ws_url = protocol + "//" + location.host + "/ws/chat/rooms/{{ room.pk }}/"; // Modify this URL according to your server setup
+        handlers.connect(ws_url);
+    </script>
+        
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
